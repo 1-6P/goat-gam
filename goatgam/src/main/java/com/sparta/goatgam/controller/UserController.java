@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
-    @GetMapping("/users")
+    @GetMapping("/user")
     public List<UserInfoDto> getAllUsers (){
         List<User> users = userRepository.findAll();
 
