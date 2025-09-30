@@ -2,12 +2,15 @@ package com.sparta.goatgam.controller;
 
 import com.sparta.goatgam.dto.SignupRequestDto;
 import com.sparta.goatgam.dto.UserInfoDto;
+import com.sparta.goatgam.entity.User;
 import com.sparta.goatgam.entity.UserRoleEnum;
+import com.sparta.goatgam.repository.UserRepository;
 import com.sparta.goatgam.security.UserDetailsImpl;
 import com.sparta.goatgam.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -24,7 +27,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class UserController {
+
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @PostMapping("/signup")
     public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
@@ -41,17 +46,22 @@ public class UserController {
 
         return "redirect:/api/v1/login-page";
     }
-    @GetMapping("/users")
-    @ResponseBody
-    public UserInfoDto getAllUsers (@AuthenticationPrincipal UserDetailsImpl userDetails){
-        Long userId = userDetails.getUser().getUserId();
-        String username = userDetails.getUser().getUsername();
-        String email = userDetails.getUser().getEmail();
-        String phoneNumber = userDetails.getUser().getPhoneNumber();
-        String address = userDetails.getUser().getAddress();
-        UserRoleEnum role = userDetails.getUser().getRole();
-        boolean isAdmin = (role == UserRoleEnum.Master || role == UserRoleEnum.Manager);
 
-        return new UserInfoDto(userId, username, email, phoneNumber, address, true, isAdmin);
+    @PreAuthorize("hasAnyAuthority('Master','Manager')")
+    @GetMapping("/users")
+    public List<UserInfoDto> getAllUsers (){
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(user -> new UserInfoDto(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getPhoneNumber(),
+                        user.getAddress(),
+                        true, // 활성화 여부 (필요하면 user.isActive() 같은 값으로 교체)
+                        user.getRole() == UserRoleEnum.Master || user.getRole() == UserRoleEnum.Manager
+                ))
+                .toList();
     }
 }
