@@ -29,14 +29,24 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
+        String uri = req.getRequestURI();
+
+        // 인증 없이 열어둘 경로
+        if (uri.startsWith("/api/v1/auth/")){
+            filterChain.doFilter(req, res);
+            return;
+        }
         String tokenValue = jwtUtil.getJwtFromHeader(req);
 
         if (StringUtils.hasText(tokenValue)) {
 
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
+                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid JWT Token"); // 명시적으로 403에러 뜨게
                 return;
             }
 
@@ -46,6 +56,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 setAuthentication(info.getSubject());
             } catch (Exception e) {
                 log.error(e.getMessage());
+                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Authentication Failed");
                 return;
             }
         }

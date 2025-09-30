@@ -3,6 +3,7 @@ package com.sparta.goatgam.dto;
 import com.sparta.goatgam.entity.UserRoleEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,7 +24,7 @@ public class SignupRequestDto {
     @NotBlank
     private String password;
 
-    @NotBlank
+    @NotNull(message = "role is required")
     private UserRoleEnum role;
 
     @NotBlank
