@@ -3,6 +3,7 @@ package com.sparta.goatgam.controller;
 import com.sparta.goatgam.dto.SignupRequestDto;
 import com.sparta.goatgam.dto.UserInfoDto;
 import com.sparta.goatgam.entity.UserRoleEnum;
+import com.sparta.goatgam.security.UserDetailsImpl;
 import com.sparta.goatgam.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,23 +44,14 @@ public class UserController {
     @GetMapping("/users")
     @ResponseBody
     public UserInfoDto getAllUsers (@AuthenticationPrincipal UserDetailsImpl userDetails){
+        Long userId = userDetails.getUser().getUserId();
         String username = userDetails.getUser().getUsername();
+        String email = userDetails.getUser().getEmail();
+        String phoneNumber = userDetails.getUser().getPhoneNumber();
+        String address = userDetails.getUser().getAddress();
         UserRoleEnum role = userDetails.getUser().getRole();
         boolean isAdmin = (role == UserRoleEnum.Master || role == UserRoleEnum.Manager);
 
-        return new UserInfoDto(username, isAdmin);
+        return new UserInfoDto(userId, username, email, phoneNumber, address, true, isAdmin);
     }
 }
-
-//
-//    // 회원 관련 정보 받기
-//    @GetMapping("/user-info")
-//    @ResponseBody
-//    public UserInfoDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        String username = userDetails.getUser().getUsername();
-//        UserRoleEnum role = userDetails.getUser().getRole();
-//        boolean isAdmin = (role == UserRoleEnum.ADMIN);
-//
-//        return new UserInfoDto(username, isAdmin);
-//    }
-//}
