@@ -53,14 +53,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             try {
                 if (jwtUtil.validateToken(tokenValue)) {
                     Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-                    log.error("Token Error");
                     setAuthentication(info.getSubject()); // email이 subject
                 } else {
                     log.warn("Invalid Token");
                 }
             } catch (Exception e) {
                 log.error("JWT processing error: {}",e.getMessage());
-                log.error(e.getMessage());
                 res.sendError(HttpServletResponse.SC_FORBIDDEN, "Authentication Failed");
             }
         }

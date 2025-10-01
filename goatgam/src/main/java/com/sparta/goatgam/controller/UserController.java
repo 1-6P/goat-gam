@@ -63,7 +63,6 @@ public class UserController {
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto requestDto) {
         log.info("로그인 시도: email={}", requestDto.getEmail());
-        System.out.println(new BCryptPasswordEncoder().encode("1234"));
 
         try {
             var auth = authenticationManager.authenticate(
