@@ -1,18 +1,19 @@
 package com.sparta.goatgam.domain.user.dto;
 
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
-public class UserInfoDto {
-    Long userId;
+@Builder
+public class UserInfoUpdateDto {
+
     String username;
     String nickname;
-    String email;
+    String password;
     UserRoleEnum userRole;
     String phoneNumber;
     String address;
-    Boolean status;
 }
