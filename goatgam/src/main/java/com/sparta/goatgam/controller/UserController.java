@@ -1,9 +1,11 @@
 package com.sparta.goatgam.controller;
 
+import com.sparta.goatgam.dto.LoginRequestDto;
 import com.sparta.goatgam.dto.SignupRequestDto;
 import com.sparta.goatgam.dto.UserInfoDto;
 import com.sparta.goatgam.entity.User;
 import com.sparta.goatgam.entity.UserRoleEnum;
+import com.sparta.goatgam.jwt.JwtUtil;
 import com.sparta.goatgam.repository.UserRepository;
 import com.sparta.goatgam.security.UserDetailsImpl;
 import com.sparta.goatgam.service.UserService;
@@ -11,15 +13,19 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -29,8 +35,10 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -44,6 +52,17 @@ public class UserController {
         userService.signup(requestDto);
 
         return "redirect:/api/v1/login-page";
+    }
+
+    @PostMapping("/auth/login")
+    public Map<String, String> login(@RequestBody LoginRequestDto  requestDto) {
+        var auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword())
+        );
+
+        var principal = (UserDetailsImpl) auth.getPrincipal();
+        var token = jwtUtil.createToken(principal.getEmail(), principal.getRole());
+        return Map.of("tokenType", "Bearer", "token", token);
     }
 
     @PreAuthorize("hasAnyAuthority('Master','Manager')")

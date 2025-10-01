@@ -35,18 +35,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(tokenValue)) {
 
-            if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
-                return;
-            }
-
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
             try {
-                setAuthentication(info.getSubject());
+                if (jwtUtil.validateToken(tokenValue)) {
+                    Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+                    log.error("Token Error");
+                    setAuthentication(info.getSubject()); // email이 subject
+                } else {
+                    log.warn("Invalid Token");
+                }
             } catch (Exception e) {
-                log.error(e.getMessage());
-                return;
+                log.error("JWT processing error: {}",e.getMessage());
             }
         }
 
@@ -58,7 +56,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         Authentication authentication = createAuthentication(email);
         context.setAuthentication(authentication);
-
         SecurityContextHolder.setContext(context);
     }
 

@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/v1/login");
+        setFilterProcessesUrl("/api/v1/auth/login");
     }
 
     @Override
@@ -44,12 +44,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain chain, Authentication authResult) {
         String email = ((UserDetailsImpl) authResult.getPrincipal()).getEmail();
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getRole();
 
         String token = jwtUtil.createToken(email, role);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + token);
     }
 
     @Override
