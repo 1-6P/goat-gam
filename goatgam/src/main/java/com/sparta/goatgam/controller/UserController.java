@@ -12,6 +12,7 @@ import com.sparta.goatgam.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,12 +24,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class UserController {
@@ -39,19 +41,21 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/auth/signup")
-    public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseEntity<String> signup(@Valid @RequestBody SignupRequestDto requestDto,
+                                         BindingResult bindingResult) {
         // Validation 예외처리
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        if(fieldErrors.size() > 0) {
-            for (FieldError fieldError : bindingResult.getFieldErrors()) {
-                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-            }
-            return "redirect:/api/v1/signup";
+        if(bindingResult.hasErrors()) {
+            String errorMsg = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .findFirst()
+                    .orElse("Invalid input");
+            return ResponseEntity.badRequest().body(errorMsg);
         }
 
         userService.signup(requestDto);
 
-        return "redirect:/api/v1/login-page";
+        return ResponseEntity.ok().body("회원 가입 성공");
     }
 
     @PostMapping("/auth/login")
@@ -66,7 +70,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
-    @GetMapping("/users")
+    @GetMapping("/user")
     public List<UserInfoDto> getAllUsers (){
         List<User> users = userRepository.findAll();
 
