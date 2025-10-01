@@ -1,6 +1,6 @@
-package com.sparta.goatgam.security;
+package com.sparta.goatgam.global.security.security;
 
-import com.sparta.goatgam.jwt.JwtUtil;
+import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -50,14 +50,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
             try {
-                setAuthentication(info.getSubject());
+                if (jwtUtil.validateToken(tokenValue)) {
+                    Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+                    setAuthentication(info.getSubject()); // email이 subject
+                } else {
+                    log.warn("Invalid Token");
+                }
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("JWT processing error: {}",e.getMessage());
                 res.sendError(HttpServletResponse.SC_FORBIDDEN, "Authentication Failed");
-                return;
             }
         }
 

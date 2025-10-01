@@ -1,8 +1,8 @@
-package com.sparta.goatgam.security;
+package com.sparta.goatgam.global.security.security;
 
 
-import com.sparta.goatgam.entity.User;
-import com.sparta.goatgam.entity.UserRoleEnum;
+import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

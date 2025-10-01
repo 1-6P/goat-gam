@@ -1,6 +1,6 @@
-package com.sparta.goatgam.dto;
+package com.sparta.goatgam.domain.user.dto;
 
-import com.sparta.goatgam.entity.UserRoleEnum;
+import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

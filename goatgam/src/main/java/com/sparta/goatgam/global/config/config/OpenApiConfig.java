@@ -1,4 +1,4 @@
-package com.sparta.goatgam.config;
+package com.sparta.goatgam.global.config.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

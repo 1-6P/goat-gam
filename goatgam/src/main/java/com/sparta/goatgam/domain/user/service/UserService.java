@@ -1,9 +1,9 @@
-package com.sparta.goatgam.service;
+package com.sparta.goatgam.domain.user.service;
 
-import com.sparta.goatgam.dto.SignupRequestDto;
-import com.sparta.goatgam.entity.User;
-import com.sparta.goatgam.entity.UserRoleEnum;
-import com.sparta.goatgam.repository.UserRepository;
+import com.sparta.goatgam.domain.user.dto.SignupRequestDto;
+import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
+import com.sparta.goatgam.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
