@@ -16,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -59,15 +61,24 @@ public class UserController {
     }
 
     @PostMapping("/auth/login")
-    public Map<String, String> login(@RequestBody LoginRequestDto  requestDto) {
-        var auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword())
-        );
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto requestDto) {
+        log.info("로그인 시도: email={}", requestDto.getEmail());
+        System.out.println(new BCryptPasswordEncoder().encode("1234"));
 
-        var principal = (UserDetailsImpl) auth.getPrincipal();
-        var token = jwtUtil.createToken(principal.getEmail(), principal.getRole());
-        return Map.of("tokenType", "Bearer", "token", token);
+        try {
+            var auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword())
+            );
+            var principal = (UserDetailsImpl) auth.getPrincipal();
+            var token = jwtUtil.createToken(principal.getEmail(), principal.getRole());
+            log.info("로그인 성공: email={}, role={}", principal.getEmail(), principal.getRole());
+            return ResponseEntity.ok(Map.of("tokenType", "Bearer", "token", token));
+        } catch (AuthenticationException e) {
+            log.warn("로그인 실패: {}", e.getMessage());
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+        }
     }
+
 
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
     @GetMapping("/user")

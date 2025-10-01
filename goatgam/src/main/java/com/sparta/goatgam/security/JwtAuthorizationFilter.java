@@ -50,8 +50,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
             try {
                 if (jwtUtil.validateToken(tokenValue)) {
                     Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
@@ -64,7 +62,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 log.error("JWT processing error: {}",e.getMessage());
                 log.error(e.getMessage());
                 res.sendError(HttpServletResponse.SC_FORBIDDEN, "Authentication Failed");
-                return;
             }
         }
 
