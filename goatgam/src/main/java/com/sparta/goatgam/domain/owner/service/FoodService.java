@@ -30,7 +30,7 @@ public class FoodService {
                 FoodStatus.valueOf(foodRequestDto.getStatus()),
                 restaurant);
 
-        Long id = foodRepository.save(food).getId();
+        UUID id = foodRepository.save(food).getId();
 
         return new FoodResponseDto("success", id);
     }
