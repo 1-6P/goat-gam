@@ -1,6 +1,8 @@
 package com.sparta.goatgam.domain.user.dto;
 
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -10,10 +12,21 @@ import lombok.*;
 @Builder
 public class UserInfoUpdateDto {
 
-    String username;
-    String nickname;
-    String password;
-    UserRoleEnum userRole;
-    String phoneNumber;
-    String address;
+    @NotBlank
+    private String username;
+
+    @NotBlank
+    private String nickname;
+
+    @NotBlank
+    private String password;
+
+    @NotNull(message = "role is required")
+    private UserRoleEnum userRole;
+
+    @NotBlank
+    private String phoneNumber;
+
+    @NotBlank
+    private String address;
 }
