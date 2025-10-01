@@ -1,8 +1,6 @@
 package com.sparta.goatgam.domain.user.controller;
 
-import com.sparta.goatgam.domain.user.dto.LoginRequestDto;
-import com.sparta.goatgam.domain.user.dto.SignupRequestDto;
-import com.sparta.goatgam.domain.user.dto.UserInfoDto;
+import com.sparta.goatgam.domain.user.dto.*;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
@@ -75,22 +73,18 @@ public class UserController {
         }
     }
 
+    @PutMapping("/user/{userId}")
+    public ResponseEntity<?> userInfoUpdate (@Valid @RequestBody UserInfoUpdateDto requestDto, @PathVariable Long userId) {
+        userService.updateUser(userId, requestDto);
+        return ResponseEntity.ok(new UserUpdateResponseDto("OK", userId));
+    }
+
 
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
     @GetMapping("/user")
-    public List<UserInfoDto> getAllUsers (){
-        List<User> users = userRepository.findAll();
+    public ResponseEntity<List<UserInfoDto>> getAllUsers (){
+        List<UserInfoDto> users = userService.getAllUsers();
 
-        return users.stream()
-                .map(user -> new UserInfoDto(
-                        user.getUserId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getPhoneNumber(),
-                        user.getAddress(),
-                        true, // 활성화 여부 (필요하면 user.isActive() 같은 값으로 교체)
-                        user.getRole() == UserRoleEnum.Master || user.getRole() == UserRoleEnum.Manager
-                ))
-                .toList();
+        return ResponseEntity.ok(users);
     }
 }

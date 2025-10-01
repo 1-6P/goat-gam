@@ -1,13 +1,18 @@
 package com.sparta.goatgam.domain.user.service;
 
 import com.sparta.goatgam.domain.user.dto.SignupRequestDto;
+import com.sparta.goatgam.domain.user.dto.UserInfoDto;
+import com.sparta.goatgam.domain.user.dto.UserInfoUpdateDto;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,7 +48,39 @@ public class UserService {
         }
 
         // 사용자 등록
-        User user = new User(username, nickname, password, email, role, phoneNumber, address);
+        User user = new User(username, nickname, email, password, role, phoneNumber, address);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateUser(Long userId, @Valid UserInfoUpdateDto requestDto) {
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다. id=" + userId));
+        user.setNickname(requestDto.getNickname());
+        user.setUsername(requestDto.getUsername());
+        user.setPassword(requestDto.getPassword());
+        user.setRole(requestDto.getUserRole());
+        user.setPhoneNumber(requestDto.getPhoneNumber());
+        user.setAddress(requestDto.getAddress());
+
+        userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserInfoDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(user -> new UserInfoDto(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getNickname(),
+                        user.getEmail(),
+                        user.getRole(),
+                        user.getPhoneNumber(),
+                        user.getAddress(),
+                        user.getStatus() // 활성화 여부 (필요하면 user.isActive() 같은 값으로 교체)
+                ))
+                .toList();
     }
 }
