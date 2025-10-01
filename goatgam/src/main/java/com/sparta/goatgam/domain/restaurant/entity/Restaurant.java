@@ -30,8 +30,8 @@ public class Restaurant {
 
     //식당 타입 아이디
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "restaurant_type_code", nullable = false)
-    private RestaurantType restaurantTypeCode;
+    @JoinColumn(name = "restaurant_type_id", nullable = false)
+    private RestaurantType restaurantTypeId;
 
     //사장의 유저 이름
     @Column(name = "user_name", nullable = false)
