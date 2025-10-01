@@ -1,8 +1,8 @@
-package com.sparta.goatgam.security;
+package com.sparta.goatgam.global.security.security;
 
 
-import com.sparta.goatgam.entity.User;
-import com.sparta.goatgam.repository.UserRepository;
+import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;

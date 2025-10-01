@@ -1,4 +1,4 @@
-package com.sparta.goatgam.entity;
+package com.sparta.goatgam.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package com.sparta.goatgam.dto;
+package com.sparta.goatgam.domain.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;

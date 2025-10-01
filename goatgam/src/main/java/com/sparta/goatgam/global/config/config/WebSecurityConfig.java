@@ -1,9 +1,9 @@
-package com.sparta.goatgam.config;
+package com.sparta.goatgam.global.config.config;
 
-import com.sparta.goatgam.jwt.JwtUtil;
-import com.sparta.goatgam.security.JwtAuthenticationFilter;
-import com.sparta.goatgam.security.JwtAuthorizationFilter;
-import com.sparta.goatgam.security.UserDetailsServiceImpl;
+import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
+import com.sparta.goatgam.global.security.security.JwtAuthenticationFilter;
+import com.sparta.goatgam.global.security.security.JwtAuthorizationFilter;
+import com.sparta.goatgam.global.security.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함

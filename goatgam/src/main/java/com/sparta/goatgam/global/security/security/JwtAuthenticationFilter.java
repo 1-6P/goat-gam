@@ -1,10 +1,10 @@
-package com.sparta.goatgam.security;
+package com.sparta.goatgam.global.security.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.sparta.goatgam.dto.LoginRequestDto;
-import com.sparta.goatgam.entity.UserRoleEnum;
-import com.sparta.goatgam.jwt.JwtUtil;
+import com.sparta.goatgam.domain.user.dto.LoginRequestDto;
+import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
+import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package com.sparta.goatgam.entity;
+package com.sparta.goatgam.domain.user.entity;
 
 public enum UserRoleEnum {
     Customer(Authority.User), // 소비자

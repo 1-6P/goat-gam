@@ -1,6 +1,6 @@
-package com.sparta.goatgam.security;
+package com.sparta.goatgam.global.security.security;
 
-import com.sparta.goatgam.jwt.JwtUtil;
+import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
