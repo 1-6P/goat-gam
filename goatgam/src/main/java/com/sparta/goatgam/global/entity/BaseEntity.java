@@ -1,4 +1,4 @@
-package com.sparta.goatgam.domain.follow.entity;
+package com.sparta.goatgam.global.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -21,7 +21,7 @@ public class BaseEntity {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
 
     @Column
     private LocalDateTime deletedAt;
@@ -31,7 +31,7 @@ public class BaseEntity {
     private String createdBy;
 
     @LastModifiedDate
-    private String updateBy;
+    private String updatedBy;
 
     @Column
     private String deletedBy;
