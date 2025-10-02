@@ -2,7 +2,6 @@ package com.sparta.goatgam.domain.user.controller;
 
 import com.sparta.goatgam.domain.user.dto.*;
 import com.sparta.goatgam.global.jwt.JwtUtil;
-import com.sparta.goatgam.domain.user.repository.UserRepository;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import com.sparta.goatgam.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -13,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +31,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
@@ -77,7 +76,47 @@ public class UserController {
         return ResponseEntity.ok(new UserUpdateResponseDto("OK", userId));
     }
 
+    // 유저 본인 계정 삭제 (소프트 삭제)
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/user/me")
+    public ResponseEntity<?> deleteMyAccount (@AuthenticationPrincipal UserDetailsImpl principal) {
 
+        var res = userService.softDelete(principal.getUser().getUserId());
+
+        var body = new UserDeleteResponseDto(
+                "Success",
+                res.userId(),
+                res.status() ? 1 : 0,
+                res.deletedAt()
+        );
+
+        return ResponseEntity.ok(body);
+    }
+
+    // 관리자 특정 유저 비활성화
+    @PreAuthorize("hasAnyAuthority('Master','Manager')")
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<?> deleteUser (@PathVariable Long userId) {
+        var res = userService.softDelete(userId);
+
+        var body = new UserDeleteResponseDto(
+                "Success",
+                res.userId(),
+                res.status() ? 1 : 0,
+                res.deletedAt()
+        );
+        return ResponseEntity.ok(body);
+    }
+    // 관리자 특정 유저 복구
+    @PreAuthorize("hasAnyAuthority('Master','Manager')")
+    @DeleteMapping("/user/{userId}/restore")
+    public ResponseEntity<?> restoreUser (@PathVariable Long userId) {
+        userService.restore(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    // 관리자 모든 유저 조회
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
     @GetMapping("/user")
     public ResponseEntity<List<UserInfoDto>> getAllUsers (){
