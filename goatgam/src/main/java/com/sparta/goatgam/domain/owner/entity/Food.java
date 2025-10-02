@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.owner.entity;
 
+import com.sparta.goatgam.domain.owner.dto.FoodRequestDto;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,4 +41,14 @@ public class Food extends BaseEntity {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "restaurant_id", nullable = false)
 //    private Restaurant restaurant;
+
+
+    public void update(FoodRequestDto dto) {
+        this.foodName = dto.getName();
+        this.foodPrice = dto.getPrice();
+        this.foodImage = dto.getImage();
+        this.foodExplain = dto.getExplain();
+        this.foodStatus = FoodStatus.valueOf(dto.getStatus());
+    }
+
 }
