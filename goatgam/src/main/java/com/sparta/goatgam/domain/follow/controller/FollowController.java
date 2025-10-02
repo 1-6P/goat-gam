@@ -33,5 +33,12 @@ public class FollowController {
         return ResponseEntity.ok(followList);
     }
 
+    @PatchMapping("/follow/{followId}")
+    public ResponseEntity<Boolean> unFollow(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID followId){
+        Boolean followStatus = followService.unFollow(userDetails.getUser().getUserId(),followId);
 
+        return ResponseEntity.ok().body(followStatus);
+    }
 }
