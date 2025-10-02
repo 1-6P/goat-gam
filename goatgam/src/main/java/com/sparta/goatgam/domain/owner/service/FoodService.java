@@ -27,6 +27,8 @@ public class FoodService {
                 .foodExplain(foodRequestDto.getExplain())
                 .foodStatus(FoodStatus.valueOf(foodRequestDto.getStatus())).build();
 
+
+
         UUID id = foodRepository.save(food).getId();
 
         return new FoodResponseDto("success", id);
