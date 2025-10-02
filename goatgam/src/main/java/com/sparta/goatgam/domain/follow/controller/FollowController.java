@@ -1,9 +1,8 @@
 package com.sparta.goatgam.domain.follow.controller;
 
 import com.sparta.goatgam.domain.follow.dto.FollowInfoDto;
-import com.sparta.goatgam.domain.follow.entity.Follow;
 import com.sparta.goatgam.domain.follow.service.FollowService;
-import com.sparta.goatgam.global.security.security.UserDetailsImpl;
+import com.sparta.goatgam.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,5 +33,12 @@ public class FollowController {
         return ResponseEntity.ok(followList);
     }
 
+    @PatchMapping("/follow/{followId}")
+    public ResponseEntity<Boolean> unFollow(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID followId){
+        Boolean followStatus = followService.unFollow(userDetails.getUser().getUserId(),followId);
 
+        return ResponseEntity.ok().body(followStatus);
+    }
 }
