@@ -1,8 +1,6 @@
 package com.sparta.goatgam.domain.user.controller;
 
 import com.sparta.goatgam.domain.user.dto.*;
-import com.sparta.goatgam.domain.user.entity.User;
-import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
 import com.sparta.goatgam.global.security.security.UserDetailsImpl;
@@ -34,7 +32,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
