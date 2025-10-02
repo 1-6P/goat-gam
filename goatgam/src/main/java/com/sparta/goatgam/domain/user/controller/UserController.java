@@ -2,7 +2,7 @@ package com.sparta.goatgam.domain.user.controller;
 
 import com.sparta.goatgam.domain.user.dto.*;
 import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
-import com.sparta.goatgam.global.security.security.UserDetailsImpl;
+import com.sparta.goatgam.global.security.UserDetailsImpl;
 import com.sparta.goatgam.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -80,16 +80,32 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/user/me")
     public ResponseEntity<?> deleteMyAccount (@AuthenticationPrincipal UserDetailsImpl principal) {
-        userService.softDelete(principal.getUser().getUserId());
-        return ResponseEntity.noContent().build();
+
+        var res = userService.softDelete(principal.getUser().getUserId());
+
+        var body = new UserDeleteResponseDto(
+                "Success",
+                res.userId(),
+                res.status() ? 1 : 0,
+                res.deletedAt()
+        );
+
+        return ResponseEntity.ok(body);
     }
 
     // 관리자 특정 유저 비활성화
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser (@PathVariable Long userId) {
-        userService.softDelete(userId);
-        return ResponseEntity.noContent().build();
+        var res = userService.softDelete(userId);
+
+        var body = new UserDeleteResponseDto(
+                "Success",
+                res.userId(),
+                res.status() ? 1 : 0,
+                res.deletedAt()
+        );
+        return ResponseEntity.ok(body);
     }
     // 관리자 특정 유저 복구
     @PreAuthorize("hasAnyAuthority('Master','Manager')")

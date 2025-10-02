@@ -20,6 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    public record SoftDeleteResult(Long userId, boolean status, LocalDateTime deletedAt){}
 
     // ADMIN_TOKEN
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
@@ -64,16 +65,18 @@ public class UserService {
     }
 
     @Transactional
-    public void softDelete(Long userId) {
+    public SoftDeleteResult softDelete(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다 id= " + userId));
 
         if (!user.getStatus()){
-            return;
+            return new SoftDeleteResult(user.getUserId(), false, user.getDeletedAt());
         }
 
         user.setStatus(false);
         user.setDeletedAt(LocalDateTime.now());
+
+        return new  SoftDeleteResult(user.getUserId(), true, user.getDeletedAt());
     }
 
     @Transactional

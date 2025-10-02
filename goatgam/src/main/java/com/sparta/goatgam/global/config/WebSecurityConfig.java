@@ -1,9 +1,9 @@
-package com.sparta.goatgam.global.config.config;
+package com.sparta.goatgam.global.config;
 
 import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
-import com.sparta.goatgam.global.security.security.JwtAuthenticationFilter;
-import com.sparta.goatgam.global.security.security.JwtAuthorizationFilter;
-import com.sparta.goatgam.global.security.security.UserDetailsServiceImpl;
+import com.sparta.goatgam.global.security.JwtAuthenticationFilter;
+import com.sparta.goatgam.global.security.JwtAuthorizationFilter;
+import com.sparta.goatgam.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
