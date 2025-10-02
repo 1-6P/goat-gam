@@ -35,7 +35,8 @@ public class Order extends BaseEntity {
     @Column(name = "order_time", nullable = false, updatable = false)
     private LocalDateTime orderTime;
 
-    @Column(name = "status", nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, updatable = false, length = 10)
     private StatusEnum status;
 
     @Column(name = "status_by", nullable = false, updatable = false, length = 50)
