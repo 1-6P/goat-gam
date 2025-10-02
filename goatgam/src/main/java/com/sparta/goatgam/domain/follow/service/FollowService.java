@@ -24,6 +24,7 @@ public class FollowService {
     /**
      * 유저가 식당을 팔로우하는 API
      * **/
+    @Transactional
     public UUID addFollow(Long userId, UUID restaurantId) {
 
         User user = userRepository.findById(userId).orElseThrow(() ->
@@ -31,6 +32,18 @@ public class FollowService {
 
 //        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() ->
 //                new IllegalArgumentException("존재하지 않는 식당입니다."));
+
+//        Follow existFollow = followRepository.findbyUser_userIdAndRestaurantId(userId,restaurantId)
+//                .orElst(null);
+//
+//        if (existFollow != null){
+//            if (Boolean.TRUE.equals(existFollow.getFollowStatus())){
+//                throw new IllegalArgumentException("이미 팔로우 중입니다.");
+//            }
+//            existFollow.reFollow(user.getNickname());
+//            return existFollow.getFollowId();
+//        }
+
 
         Follow follow = Follow.builder()
                 .user(user)
@@ -61,5 +74,23 @@ public class FollowService {
                 ))
                 .collect(Collectors.toList());;
         return followInfoDtoList;
+    }
+
+    /**
+     * 유저가 팔로우한 식당을 언팔로우 하는 API
+     * **/
+    @Transactional
+    public Boolean unFollow(Long userId, UUID followId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        Follow follow = followRepository.findById(followId).orElseThrow(() ->
+                new IllegalArgumentException("현재 팔로우 상태가 아닙니다."));
+
+        if (follow.getFollowStatus()){
+            follow.unFollow(user.getNickname());
+            return true;
+        }
+        return false;
     }
 }

@@ -30,4 +30,16 @@ public class Follow extends BaseEntity {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "restaurant_id")
 //    private Restaurant restaurant;
+
+    public void unFollow(String nickname) {
+        if (this.followStatus){
+            this.followStatus = false;
+            this.deleted(nickname);
+        }
+    }
+
+    public void reFollow(String nickname) {
+        this.followStatus = true;
+        this.restore();
+    }
 }

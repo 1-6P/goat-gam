@@ -17,7 +17,6 @@ public class FoodService {
     private final FoodRepository foodRepository;
 //    private final RestaurantRepository restaurantRepository;
 
-    @Transactional
     public FoodResponseDto addFood(UUID restaurantId, FoodRequestDto foodRequestDto) {
 //        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
 
@@ -32,6 +31,15 @@ public class FoodService {
         UUID id = foodRepository.save(food).getId();
 
         return new FoodResponseDto("success", id);
+    }
+
+    public FoodResponseDto updateFood(UUID restaurantId, UUID menuId, FoodRequestDto foodRequestDto) {
+        Food food = foodRepository.findById(menuId).orElseThrow(() -> new RuntimeException("해당 음식이 없습니다."));
+
+        food.update(foodRequestDto);
+
+        foodRepository.save(food);
+        return new FoodResponseDto("success", food.getId());
     }
 }
 
