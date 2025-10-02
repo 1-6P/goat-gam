@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,7 +80,31 @@ public class UserController {
         return ResponseEntity.ok(new UserUpdateResponseDto("OK", userId));
     }
 
+    // 유저 본인 계정 삭제 (소프트 삭제)
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/user/me")
+    public ResponseEntity<?> deleteMyAccount (@AuthenticationPrincipal UserDetailsImpl principal) {
+        userService.softDelete(principal.getUser().getUserId());
+        return ResponseEntity.noContent().build();
+    }
 
+    // 관리자 특정 유저 비활성화
+    @PreAuthorize("hasAnyAuthority('Master','Manager')")
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<?> deleteUser (@PathVariable Long userId) {
+        userService.softDelete(userId);
+        return ResponseEntity.noContent().build();
+    }
+    // 관리자 특정 유저 복구
+    @PreAuthorize("hasAnyAuthority('Master','Manager')")
+    @DeleteMapping("/user/{userId}/restore")
+    public ResponseEntity<?> restoreUser (@PathVariable Long userId) {
+        userService.restore(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    // 관리자 모든 유저 조회
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
     @GetMapping("/user")
     public ResponseEntity<List<UserInfoDto>> getAllUsers (){

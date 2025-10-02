@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +65,30 @@ public class UserService {
         user.setAddress(requestDto.getAddress());
 
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void softDelete(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다 id= " + userId));
+
+        if (!user.getStatus()){
+            return;
+        }
+
+        user.setStatus(false);
+        user.setDeletedAt(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void restore(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다 id= " + userId));
+        if (user.getStatus()){
+            return;
+        }
+        user.setStatus(true);
+        user.setDeletedAt(null);
     }
 
     @Transactional(readOnly = true)
