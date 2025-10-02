@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.owner.entity;
 
 import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class Food {
+public class Food extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "food_id", nullable = false, updatable = false)
@@ -43,42 +44,4 @@ public class Food {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "restaurant_id", nullable = false)
 //    private Restaurant restaurant;
-
-    // 생성일자
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    // 생성자
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by", updatable = false)
-    private User createdBy;
-
-    // 수정일자
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    // 수정자
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "updated_by")
-    private User updatedBy;
-
-    // 삭제일자
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
-    // 삭제자
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deleted_by")
-    private User deletedBy;
-
-    public Food(String foodName, int foodPrice, String foodImage, String foodExplain, FoodStatus foodStatus/*, Restaurant restaurant*/) {
-        this.foodName = foodName;
-        this.foodPrice = foodPrice;
-        this.foodImage = foodImage;
-        this.foodExplain = foodExplain;
-        this.foodStatus = foodStatus;
-//        this.restaurant = restaurant;
-    }
 }

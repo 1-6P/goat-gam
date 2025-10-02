@@ -21,12 +21,11 @@ public class FoodService {
     public FoodResponseDto addFood(UUID restaurantId, FoodRequestDto foodRequestDto) {
 //        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
 
-        Food food = new Food(foodRequestDto.getName(),
-                foodRequestDto.getPrice(),
-                foodRequestDto.getImage(),
-                foodRequestDto.getExplain(),
-                FoodStatus.valueOf(foodRequestDto.getStatus())/*,
-                restaurant*/);
+        Food food = Food.builder().foodName(foodRequestDto.getName())
+                .foodPrice(foodRequestDto.getPrice())
+                .foodImage(foodRequestDto.getImage())
+                .foodExplain(foodRequestDto.getExplain())
+                .foodStatus(FoodStatus.valueOf(foodRequestDto.getStatus())).build();
 
         UUID id = foodRepository.save(food).getId();
 
