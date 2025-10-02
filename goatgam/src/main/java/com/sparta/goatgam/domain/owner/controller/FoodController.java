@@ -2,6 +2,8 @@ package com.sparta.goatgam.domain.owner.controller;
 
 import com.sparta.goatgam.domain.owner.dto.FoodRequestDto;
 import com.sparta.goatgam.domain.owner.dto.FoodResponseDto;
+import com.sparta.goatgam.domain.owner.entity.Food;
+import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.owner.service.FoodService;
 import com.sparta.goatgam.global.security.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/restaurant/{restaurantId}/menu")
 public class FoodController {
     private final FoodService foodService;
+    private final FoodRepository foodRepository;
 
     @PostMapping
     public FoodResponseDto addFood(
@@ -31,5 +34,23 @@ public class FoodController {
 //        }
 
         return foodService.addFood(restaurantId, foodRequestDto);
+    }
+
+    @PostMapping("/{menuId}")
+    public FoodResponseDto updateFood(@PathVariable UUID restaurantId,
+                                      @PathVariable UUID menuId,
+                                      @RequestBody FoodRequestDto foodRequestDto,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+//                .orElseThrow(() -> new IllegalArgumentException("해당 식당이 없습니다."));
+//
+//        User currentUser = userDetails.getUser();
+//
+//        if (!restaurant.getOwner().getId().equals(currentUser.getId())) {
+//            throw new AccessDeniedException("해당 식당에 대한 권한이 없습니다.");
+//        }
+
+
+        return foodService.updateFood(restaurantId, menuId, foodRequestDto);
     }
 }
