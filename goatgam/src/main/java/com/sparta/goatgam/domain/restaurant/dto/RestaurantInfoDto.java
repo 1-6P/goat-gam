@@ -1,11 +1,12 @@
 package com.sparta.goatgam.domain.restaurant.dto;
 
+import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.UUID;
 
-//조회 혹은 응답용으로 사용
+//얘가 응답 dto 역할을 합니다..!
 
 @Getter
 @AllArgsConstructor
@@ -17,12 +18,24 @@ public class RestaurantInfoDto {
     private String restaurantNumber;
     private boolean status;
     private String restaurantAddress;
+    private String username;         //(받는거니까)
+    private String restaurantTypeName; // (식당 타입 이름)
 
 
-
-    // 유저 dto 오면 merge 해야할거같아요
-    // private UserDto user;;
-    //private String username;
+    //최종으로 받는 값
+    public static RestaurantInfoDto convertDto(Restaurant r){
+        return new RestaurantInfoDto(
+                r.getRestaurantId(),
+                r.getRestaurantName(),
+                r.getRegionCode(),
+                r.getIsPublic(),
+                r.getRestaurantNumber(),
+                r.isStatus(),
+                r.getRestaurantAddress(),
+                r.getUserName(),
+                r.getRestaurantTypeId().getRestaurantTypeName() //fk로 연결되서 두번 꺼내야함;;
+        );
+    }
 
 
 }

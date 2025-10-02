@@ -1,10 +1,13 @@
 package com.sparta.goatgam.domain.restaurant.entity;
 
 
+import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
@@ -13,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "p_restaurant")
-
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Restaurant extends BaseEntity {
     @Id
     @Column(name = "restaurant_id", nullable = false, updatable = false)
@@ -57,6 +60,20 @@ public class Restaurant extends BaseEntity {
     //상태 (삭제x or 삭제)
     @Column (name = "status" , nullable = false)
     private boolean status;
+
+
+    //편의 생성자를 생성함 (등록 시에만 사용함)
+    public Restaurant(User user, RestaurantType type, RestaurantRequestDto restaurantRequestDto) {
+        this.user = user;
+        this.restaurantTypeId = type;
+        this.restaurantName = restaurantRequestDto.getRestaurantName();
+        this.userName = user.getUsername(); // 필요 시 수정
+        this.regionCode = restaurantRequestDto.getRegionCode();
+        this.isPublic = 0; // 새로 생성된 식당은 무조건 오픈을 가짐
+        this.restaurantAddress = restaurantRequestDto.getRestaurantAddress();
+        this.restaurantNumber = restaurantRequestDto.getRestaurantNumber();
+        this.status = true; // 새로 생성된 식당은 true값으로 조회가 가능해야 함.
+    }
 
 
 }

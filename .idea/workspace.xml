@@ -4,35 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2a6d045-5851-4016-b226-94bf513276ee" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/follow/controller/FollowController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/follow/dto/FollowInfoDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/follow/entity/Follow.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/follow/repository/FollowRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/follow/service/FollowService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/controller/FoodController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/dto/FoodRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/dto/FoodResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/entity/Food.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/entity/FoodStatus.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/repository/FoodRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/service/FoodService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/dto/UserDeleteResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/dto/UserInfoUpdateDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/dto/UserUpdateResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/jwt/JwtUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/ISSUE_TEMPLATE/feature.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/ISSUE_TEMPLATE/feature.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
+    <list default="true" id="b2a6d045-5851-4016-b226-94bf513276ee" name="Changes" comment="최신 파일 업데이트">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/GoatgamApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/GoatgamApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/RestaurantType.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/RestaurantType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/dto/UserInfoDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/dto/UserInfoDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/WebSecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthorizationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthorizationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/controller/RestaurantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/controller/RestaurantController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantInfoDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantInfoDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/Restaurant.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/Restaurant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/service/RestaurantService.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/service/RestaurantService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/AuditorAwareImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/AuditorAwareImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/jwt/jwt/JwtUtil.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,6 +67,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Gradle.Build goatgam.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
@@ -97,7 +78,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.GoatgamApplication.executor": "Run",
-    "git-widget-placeholder": "Merging feature/20-restaurant",
+    "git-widget-placeholder": "feature/20-restaurant",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -139,9 +120,22 @@
       <workItem from="1759332310553" duration="301000" />
       <workItem from="1759375311994" duration="7955000" />
     </task>
+    <task id="LOCAL-00001" summary="최신 파일 업데이트">
+      <option name="closed" value="true" />
+      <created>1759412036674</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1759412036674</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="최신 파일 업데이트" />
+    <option name="LAST_COMMIT_MESSAGE" value="최신 파일 업데이트" />
   </component>
 </project>
