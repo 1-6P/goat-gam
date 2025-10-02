@@ -15,7 +15,7 @@ import java.util.UUID;
 public class FoodController {
     private final FoodService foodService;
 
-    @PreAuthorize("Owner")
+//    @PreAuthorize("Owner")
     @PostMapping
     public FoodResponseDto addFood(
             @PathVariable UUID restaurantId,

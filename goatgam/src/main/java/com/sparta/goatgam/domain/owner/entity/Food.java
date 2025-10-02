@@ -40,9 +40,9 @@ public class Food {
     @Column(name = "food_status", nullable = false)
     private FoodStatus foodStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id", nullable = false)
-    private Restaurant restaurant;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "restaurant_id", nullable = false)
+//    private Restaurant restaurant;
 
     // 생성일자
     @CreatedDate
@@ -73,12 +73,12 @@ public class Food {
     @JoinColumn(name = "deleted_by")
     private User deletedBy;
 
-    public Food(String foodName, int foodPrice, String foodImage, String foodExplain, FoodStatus foodStatus, Restaurant restaurant) {
+    public Food(String foodName, int foodPrice, String foodImage, String foodExplain, FoodStatus foodStatus/*, Restaurant restaurant*/) {
         this.foodName = foodName;
         this.foodPrice = foodPrice;
         this.foodImage = foodImage;
         this.foodExplain = foodExplain;
         this.foodStatus = foodStatus;
-        this.restaurant = restaurant;
+//        this.restaurant = restaurant;
     }
 }
