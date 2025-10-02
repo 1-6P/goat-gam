@@ -1,7 +1,7 @@
 package com.sparta.goatgam.domain.user.controller;
 
 import com.sparta.goatgam.domain.user.dto.*;
-import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
+import com.sparta.goatgam.global.jwt.JwtUtil;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import com.sparta.goatgam.domain.user.service.UserService;
 import jakarta.validation.Valid;

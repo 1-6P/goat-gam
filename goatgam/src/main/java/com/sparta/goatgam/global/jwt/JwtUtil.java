@@ -1,4 +1,4 @@
-package com.sparta.goatgam.global.jwt.jwt;
+package com.sparta.goatgam.global.jwt;
 
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import lombok.extern.slf4j.Slf4j;

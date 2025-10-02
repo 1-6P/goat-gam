@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.sparta.goatgam.domain.user.dto.LoginRequestDto;
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
-import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
+import com.sparta.goatgam.global.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
