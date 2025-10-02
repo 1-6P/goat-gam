@@ -2,10 +2,9 @@ package com.sparta.goatgam.domain.owner.controller;
 
 import com.sparta.goatgam.domain.owner.dto.FoodRequestDto;
 import com.sparta.goatgam.domain.owner.dto.FoodResponseDto;
-import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.owner.service.FoodService;
-import com.sparta.goatgam.global.security.security.UserDetailsImpl;
+import com.sparta.goatgam.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
