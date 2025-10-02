@@ -20,15 +20,15 @@ public class UserService {
     // ADMIN_TOKEN
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
-    public void signup(SignupRequestDto signupRequestDto) {
+    public void signup(SignupRequestDto RequestDto) {
 
-        String username = signupRequestDto.getUsername();
-        String nickname = signupRequestDto.getNickname();
-        String email = signupRequestDto.getEmail();
-        String password = signupRequestDto.getPassword();
-        UserRoleEnum  role = signupRequestDto.getRole();
-        String phoneNumber = signupRequestDto.getPhoneNumber();
-        String address = signupRequestDto.getAddress();
+        String username = RequestDto.getUsername();
+        String nickname = RequestDto.getNickname();
+        String email = RequestDto.getEmail();
+        String encodedPassword = passwordEncoder.encode(RequestDto.getPassword());
+        UserRoleEnum  role = RequestDto.getRole();
+        String phoneNumber = RequestDto.getPhoneNumber();
+        String address = RequestDto.getAddress();
 
         // 별명 중복 확인
         Optional<User> checkNickname = userRepository.findByNickname(nickname);
@@ -43,7 +43,7 @@ public class UserService {
         }
 
         // 사용자 등록
-        User user = new User(username, nickname, password, email, role, phoneNumber, address);
+        User user = new User(username, nickname, encodedPassword, email, role, phoneNumber, address);
         userRepository.save(user);
     }
 }

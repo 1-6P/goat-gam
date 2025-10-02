@@ -1,4 +1,4 @@
-package com.sparta.goatgam.global.security.security;
+package com.sparta.goatgam.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

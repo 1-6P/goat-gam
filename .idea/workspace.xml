@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b2a6d045-5851-4016-b226-94bf513276ee" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/goatgam.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/goatgam.main.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/GoatgamApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/GoatgamApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/controller/RestaurantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/controller/RestaurantController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantInfoDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantInfoDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/Restaurant.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/Restaurant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/RestaurantType.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/RestaurantType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/service/RestaurantService.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/service/RestaurantService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/config/OpenApiConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/OpenApiConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/WebSecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/entity/BaseEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/entity/BaseEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/security/JwtAuthorizationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthorizationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/security/UserDetailsImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/UserDetailsImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/security/UserDetailsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/UserDetailsServiceImpl.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/goatgam">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="goatgam" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="33TDk0O0AjcTJd80dd1q0ZvSLUP" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build goatgam.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.GoatgamApplication.executor": "Run",
+    "git-widget-placeholder": "feature/20-restaurant",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="GoatgamApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="goatgam.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sparta.goatgam.GoatgamApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26199.169" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-IU-252.26199.169" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b2a6d045-5851-4016-b226-94bf513276ee" name="Changes" comment="" />
+      <created>1759332308267</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1759332308267</updated>
+      <workItem from="1759332310553" duration="301000" />
+      <workItem from="1759375311994" duration="7955000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

@@ -13,7 +13,6 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="com.sparta.goatgam" options="-parameters" />
       <module name="goatgam" options="-parameters" />
       <module name="goatgam.main" options="-parameters" />
       <module name="goatgam.test" options="-parameters" />

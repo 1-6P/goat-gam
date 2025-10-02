@@ -1,9 +1,13 @@
 package com.sparta.goatgam.domain.restaurant.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.UUID;
 
+//조회 혹은 응답용으로 사용
+
+@Getter
 @AllArgsConstructor
 public class RestaurantInfoDto {
     private UUID restaurantId;

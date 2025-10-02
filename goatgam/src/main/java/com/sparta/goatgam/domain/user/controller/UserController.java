@@ -7,7 +7,7 @@ import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
-import com.sparta.goatgam.global.security.security.UserDetailsImpl;
+import com.sparta.goatgam.global.security.UserDetailsImpl;
 import com.sparta.goatgam.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

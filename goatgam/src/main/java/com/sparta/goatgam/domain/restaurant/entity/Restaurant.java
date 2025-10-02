@@ -2,6 +2,7 @@ package com.sparta.goatgam.domain.restaurant.entity;
 
 
 import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Setter
 @Table(name = "p_restaurant")
 
-public class Restaurant {
+public class Restaurant extends BaseEntity {
     @Id
     @Column(name = "restaurant_id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
