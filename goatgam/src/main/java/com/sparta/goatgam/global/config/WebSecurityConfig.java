@@ -1,6 +1,6 @@
 package com.sparta.goatgam.global.config;
 
-import com.sparta.goatgam.global.jwt.jwt.JwtUtil;
+import com.sparta.goatgam.global.jwt.JwtUtil;
 import com.sparta.goatgam.global.security.JwtAuthenticationFilter;
 import com.sparta.goatgam.global.security.JwtAuthorizationFilter;
 import com.sparta.goatgam.global.security.UserDetailsServiceImpl;

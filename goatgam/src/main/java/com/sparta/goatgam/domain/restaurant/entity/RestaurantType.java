@@ -2,8 +2,7 @@ package com.sparta.goatgam.domain.restaurant.entity;
 
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -11,6 +10,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "p_restaurant_code")
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor // ✅ 기본 생성자 JPA용
 public class RestaurantType extends BaseEntity {
 
     @Id
@@ -23,5 +25,15 @@ public class RestaurantType extends BaseEntity {
 
     @Column(name = "restaurant_type_name")
     private String restaurantTypeName;
+
+     //GPT야 고마워
+    public static RestaurantType create(
+            Integer restaurantTypeCode,
+            String restaurantTypeName
+    ) {
+        return RestaurantType.builder()
+                .restaurantTypeCode(restaurantTypeCode)
+                .restaurantTypeName(restaurantTypeName).build();
+    }
 
 }

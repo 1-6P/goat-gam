@@ -5,30 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2a6d045-5851-4016-b226-94bf513276ee" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/goatgam.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/goatgam.main.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/follow/controller/FollowController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/follow/dto/FollowInfoDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/follow/entity/Follow.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/follow/repository/FollowRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/follow/service/FollowService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/controller/FoodController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/dto/FoodRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/dto/FoodResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/entity/Food.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/entity/FoodStatus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/repository/FoodRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/owner/service/FoodService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/dto/UserDeleteResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/dto/UserInfoUpdateDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/dto/UserUpdateResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/jwt/JwtUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/ISSUE_TEMPLATE/feature.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/ISSUE_TEMPLATE/feature.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/GoatgamApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/GoatgamApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/controller/RestaurantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/controller/RestaurantController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantInfoDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantInfoDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/Restaurant.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/Restaurant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/RestaurantType.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/RestaurantType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/service/RestaurantService.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/service/RestaurantService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/dto/UserInfoDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/dto/UserInfoDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/entity/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/user/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/config/OpenApiConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/OpenApiConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/WebSecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/entity/BaseEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/entity/BaseEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/security/JwtAuthorizationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthorizationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/security/UserDetailsImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/UserDetailsImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/security/UserDetailsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/UserDetailsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/WebSecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthorizationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/security/JwtAuthorizationFilter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +97,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.GoatgamApplication.executor": "Run",
-    "git-widget-placeholder": "feature/20-restaurant",
+    "git-widget-placeholder": "Merging feature/20-restaurant",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
