@@ -19,37 +19,27 @@ public class FoodController {
     private final FoodRepository foodRepository;
 
     @PostMapping
-    public FoodResponseDto addFood(
-            @PathVariable UUID restaurantId,
-            @RequestBody FoodRequestDto foodRequestDto,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public FoodResponseDto addFood(@PathVariable UUID restaurantId,
+                                   @RequestBody FoodRequestDto foodRequestDto,
+                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-//        Restaurant restaurant = restaurantRepository.findById(restaurantId)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 식당이 없습니다."));
-//
-//        User currentUser = userDetails.getUser();
-//
-//        if (!restaurant.getOwner().getId().equals(currentUser.getId())) {
-//            throw new AccessDeniedException("해당 식당에 대한 권한이 없습니다.");
-//        }
-
-        return foodService.addFood(restaurantId, foodRequestDto);
+        return foodService.addFood(restaurantId, foodRequestDto, userDetails.getUser());
     }
 
-    @PostMapping("/{menuId}")
+    @PutMapping("/{menuId}")
     public FoodResponseDto updateFood(@PathVariable UUID restaurantId,
                                       @PathVariable UUID menuId,
                                       @RequestBody FoodRequestDto foodRequestDto,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        Restaurant restaurant = restaurantRepository.findById(restaurantId)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 식당이 없습니다."));
-//
-//        User currentUser = userDetails.getUser();
-//
-//        if (!restaurant.getOwner().getId().equals(currentUser.getId())) {
-//            throw new AccessDeniedException("해당 식당에 대한 권한이 없습니다.");
-//        }
 
+        return foodService.updateFood(restaurantId, menuId, foodRequestDto, userDetails.getUser());
+    }
 
-        return foodService.updateFood(restaurantId, menuId, foodRequestDto);
+    @DeleteMapping("/{menuId}")
+    public FoodResponseDto deleteFood(@PathVariable UUID restaurantId,
+                                      @PathVariable UUID menuId,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return foodService.deleteFood(restaurantId, menuId, userDetails.getUser());
     }
 }
