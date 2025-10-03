@@ -43,4 +43,23 @@ public class RestaurantController {
     public ResponseEntity<RestaurantDetailDto> getDetail(@PathVariable UUID restaurantId) {
         return ResponseEntity.ok(restaurantService.getRestaurant(restaurantId));
     }
+
+    //카테고리별/ 키워드 를 이용해 레스토랑 목록 조회 (리스트로 받야아 할 거 같아요)
+    //api/v1/restauran?restaruant_type_code=&keyword=
+
+
+    //(진현 의견 : 아래 두개의 api는 식당 전체 조회 / 특정 조회처럼 비슷할거같긴해요)
+    //특정 식당의 메뉴 조회 (전체정보)
+    //api/v1/restaurant/{restaurant_id}/menu
+
+    // 특정 식당의 특정 메뉴 조회하기
+    // api/v1/restaurant/{restaurantId}/menu?keyword=
+
+    //특정 식당 메뉴 상세보기
+    // -> 메뉴 상세정보 조회하기
+    //api/v1/restaurant/{restaurant_id}/menu/{menu_id}
+
+    //특정 메뉴의 모든 옵션을 조회하기 ->
+    // api/v1/restaurant/{restaurantId}/menu/{menuId}/option
+
 }
