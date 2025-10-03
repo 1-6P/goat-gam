@@ -7,7 +7,11 @@ import com.sparta.goatgam.domain.owner.entity.FoodOption;
 import com.sparta.goatgam.domain.owner.entity.FoodStatus;
 import com.sparta.goatgam.domain.owner.repository.FoodOptionRepository;
 import com.sparta.goatgam.domain.owner.repository.FoodRepository;
+import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
+import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
+import com.sparta.goatgam.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,27 +22,12 @@ import java.util.UUID;
 public class FoodOptionService {
     private final FoodOptionRepository foodOptionRepository;
     private final FoodRepository foodRepository;
-    private final FoodService foodService;
+    private final RestaurantRepository restaurantRepository;
 
     @Transactional
-    public ResultResponseDto addOption(UUID restaurantId, UUID menuId, FoodOptionRequestDto foodOptionRequestDto) {
-        //        Restaurant restaurant = restaurantRepository.findById(restaurantId)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 식당이 없습니다."));
-//
-//        if (!restaurant.getOwner().getId().equals(currentUser.getId())) {
-//            throw new AccessDeniedException("해당 식당에 대한 권한이 없습니다.");
-//        }
-
-        Food food = foodRepository.findById(menuId)
-                .orElseThrow(() -> new RuntimeException("해당 음식이 없습니다."));
-
-        if(food.getFoodStatus() == FoodStatus.Deleted){
-            throw new RuntimeException("옵션을 추가할 수 있는 상태가 아닙니다.");
-        }
-
-//        if (!food.getRestaurant().getId().equals(restaurantId)) {
-//            throw new RuntimeException("해당 식당의 음식이 아닙니다.");
-//        }
+    public ResultResponseDto addOption(UUID restaurantId, UUID menuId, FoodOptionRequestDto foodOptionRequestDto, User currentUser) {
+        validateRestaurantOwner(restaurantId, currentUser);
+        Food food = validateFoodInRestaurant(menuId, restaurantId);
 
         FoodOption foodOption = FoodOption.builder()
                 .contents(foodOptionRequestDto.getContents())
@@ -49,6 +38,32 @@ public class FoodOptionService {
         foodOptionRepository.save(foodOption);
 
         return new ResultResponseDto("success", foodOption.getId());
+    }
+
+    //음식점 권한 조회
+    private Restaurant validateRestaurantOwner(UUID restaurantId, User currentUser) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 식당이 없습니다."));
+
+        if (!restaurant.getUser().getUserId().equals(currentUser.getUserId())) {
+            throw new AccessDeniedException("해당 식당에 대한 권한이 없습니다.");
+        }
+        return restaurant;
+    }
+
+    //음식이 해당 매장의 음식인지 확인
+    private Food validateFoodInRestaurant(UUID menuId, UUID restaurantId) {
+        Food food = foodRepository.findById(menuId)
+                .orElseThrow(() -> new RuntimeException("해당 음식이 없습니다."));
+
+        if (!food.getRestaurant().getRestaurantId().equals(restaurantId)) {
+            throw new RuntimeException("해당 식당의 음식이 아닙니다.");
+        }
+
+        if(food.getFoodStatus().equals(FoodStatus.Deleted)) {
+            throw new RuntimeException("이미 삭제된 음식입니다.");
+        }
+        return food;
     }
 
 
