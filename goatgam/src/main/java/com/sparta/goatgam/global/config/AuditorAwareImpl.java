@@ -17,9 +17,10 @@ public class AuditorAwareImpl implements AuditorAware<String> {
         if (auth == null || !auth.isAuthenticated()) {
             return Optional.of("SYSTEM");
         }
-
+      
         if (auth.getPrincipal() instanceof UserDetailsImpl userDetails) {
             return Optional.of(userDetails.getUser().getNickname());
+
         }
 
         return Optional.of("SYSTEM");
