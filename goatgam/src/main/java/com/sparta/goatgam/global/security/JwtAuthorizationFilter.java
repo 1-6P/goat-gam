@@ -36,31 +36,35 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String uri = req.getRequestURI();
 
         // 인증 없이 열어둘 경로
-        if (uri.startsWith("/api/v1/auth/")){
+        if (uri.startsWith("/api/v1/auth/") ||
+                uri.startsWith("/v3/api-docs") ||
+                uri.startsWith("/swagger-ui")){
             filterChain.doFilter(req, res);
             return;
         }
         String tokenValue = jwtUtil.getJwtFromHeader(req);
 
-        if (StringUtils.hasText(tokenValue)) {
+        // 토큰이 없으면 익명으로 통과 (인가 어노테이션/설정에서 걸러짐)
+        if (!StringUtils.hasText(tokenValue)) {
+            filterChain.doFilter(req, res);
+            return;
+        }
 
+        try {
+            // 검증 1회만
             if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
-                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid JWT Token"); // 명시적으로 403에러 뜨게
+                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid JWT Token");
                 return;
             }
 
-            try {
-                if (jwtUtil.validateToken(tokenValue)) {
-                    Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-                    setAuthentication(info.getSubject()); // email이 subject
-                } else {
-                    log.warn("Invalid Token");
-                }
-            } catch (Exception e) {
-                log.error("JWT processing error: {}",e.getMessage());
-                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Authentication Failed");
-            }
+            String email = jwtUtil.getUserInfoFromToken(tokenValue).getSubject(); // subject=email
+            setAuthentication(email); // principal = UserDetails 로 세팅
+
+        } catch (Exception e) {
+            log.warn("JWT processing error: {}", e.getMessage());
+            SecurityContextHolder.clearContext();
+            res.sendError(HttpServletResponse.SC_FORBIDDEN, "Authentication Failed");
+            return;
         }
 
         filterChain.doFilter(req, res);
@@ -69,9 +73,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     // 인증 처리
     public void setAuthentication(String email) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(email);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
         context.setAuthentication(authentication);
-
         SecurityContextHolder.setContext(context);
     }
 

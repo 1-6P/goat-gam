@@ -55,7 +55,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
+    protected void unsuccessfulAuthentication(
+            HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException failed) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+
+        int status = HttpServletResponse.SC_UNAUTHORIZED; // 기본 401
+        String message = "잘못된 이메일이나 비밀번호입니다.";
+
+        if(failed instanceof org.springframework.security.authentication.DisabledException){
+            status = HttpServletResponse.SC_FORBIDDEN; // 403
+            message = "삭제된 사용자입니다.";
+        }
+
         response.setStatus(401);
     }
 

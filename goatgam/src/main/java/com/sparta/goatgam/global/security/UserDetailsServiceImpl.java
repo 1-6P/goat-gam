@@ -26,7 +26,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     return new UsernameNotFoundException("Not Found " + email);
                 });
         log.info("DB에서 찾은 사용자 email={}, passwordHash={}", user.getEmail(), user.getPassword());
+        if(!user.getStatus() || user.getDeletedAt() != null){
+            throw new org.springframework.security.authentication.DisabledException("삭제된 유저입니다.");
+        }
         return new UserDetailsImpl(user);
     }
-
 }

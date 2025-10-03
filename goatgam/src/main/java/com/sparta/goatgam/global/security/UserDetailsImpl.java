@@ -29,7 +29,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
     public String getEmail() {
         return user.getEmail();
@@ -37,6 +37,8 @@ public class UserDetailsImpl implements UserDetails {
     public UserRoleEnum getRole() {
         return user.getRole();
     }
+
+    public boolean isStatus(){ return user.getStatus() && user.getDeletedAt() == null; }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
