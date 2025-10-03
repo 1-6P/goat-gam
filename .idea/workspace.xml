@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b2a6d045-5851-4016-b226-94bf513276ee" name="Changes" comment="workspace 충돌 방지">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/controller/RestaurantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/controller/RestaurantController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +112,7 @@
       <updated>1759332308267</updated>
       <workItem from="1759332310553" duration="301000" />
       <workItem from="1759375311994" duration="7955000" />
-      <workItem from="1759490033988" duration="734000" />
+      <workItem from="1759490033988" duration="1131000" />
     </task>
     <task id="LOCAL-00001" summary="최신 파일 업데이트">
       <option name="closed" value="true" />
