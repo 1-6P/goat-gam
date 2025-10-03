@@ -4,15 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2a6d045-5851-4016-b226-94bf513276ee" name="Changes" comment="최신 파일 업데이트">
+    <list default="true" id="b2a6d045-5851-4016-b226-94bf513276ee" name="Changes" comment="레스토랑 등록 및 검색">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/controller/RestaurantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/controller/RestaurantController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantInfoDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantInfoDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/dto/RestaurantRequestDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/Restaurant.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/entity/Restaurant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/service/RestaurantService.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/domain/restaurant/service/RestaurantService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/AuditorAwareImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/config/AuditorAwareImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goatgam/src/main/java/com/sparta/goatgam/global/jwt/jwt/JwtUtil.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
