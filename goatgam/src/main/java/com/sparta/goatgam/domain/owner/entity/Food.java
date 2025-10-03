@@ -51,4 +51,7 @@ public class Food extends BaseEntity {
         this.foodStatus = FoodStatus.valueOf(dto.getStatus());
     }
 
+    public void changeStatus(FoodStatus status) {
+        this.foodStatus = status;
+    }
 }
