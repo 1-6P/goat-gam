@@ -1,7 +1,7 @@
 package com.sparta.goatgam.domain.owner.service;
 
 import com.sparta.goatgam.domain.owner.dto.FoodRequestDto;
-import com.sparta.goatgam.domain.owner.dto.FoodResponseDto;
+import com.sparta.goatgam.domain.owner.dto.ResultResponseDto;
 import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.entity.FoodStatus;
 import com.sparta.goatgam.domain.owner.repository.FoodRepository;
@@ -19,7 +19,7 @@ public class FoodService {
 //    private final RestaurantRepository restaurantRepository;
 
     @Transactional
-    public FoodResponseDto addFood(UUID restaurantId, FoodRequestDto dto, User currentUser) {
+    public ResultResponseDto addFood(UUID restaurantId, FoodRequestDto dto, User currentUser) {
 
 //        Restaurant restaurant = restaurantRepository.findById(restaurantId)
 //                .orElseThrow(() -> new IllegalArgumentException("해당 식당이 없습니다."));
@@ -38,11 +38,11 @@ public class FoodService {
                 .build();
 
         foodRepository.save(food);
-        return new FoodResponseDto("success", food.getId());
+        return new ResultResponseDto("success", food.getId());
     }
 
     @Transactional
-    public FoodResponseDto updateFood(UUID restaurantId, UUID menuId, FoodRequestDto foodRequestDto, User currentUser) {
+    public ResultResponseDto updateFood(UUID restaurantId, UUID menuId, FoodRequestDto foodRequestDto, User currentUser) {
 //        Restaurant restaurant = restaurantRepository.findById(restaurantId)
 //                .orElseThrow(() -> new IllegalArgumentException("해당 식당이 없습니다."));
 //
@@ -58,11 +58,11 @@ public class FoodService {
 //        }
 
         food.update(foodRequestDto);
-        return new FoodResponseDto("success", food.getId());
+        return new ResultResponseDto("success", food.getId());
     }
 
     @Transactional
-    public FoodResponseDto deleteFood(UUID restaurantId, UUID menuId, User currentUser) {
+    public ResultResponseDto deleteFood(UUID restaurantId, UUID menuId, User currentUser) {
 //        Restaurant restaurant = restaurantRepository.findById(restaurantId)
 //                .orElseThrow(() -> new IllegalArgumentException("해당 식당이 없습니다."));
 //
@@ -80,7 +80,7 @@ public class FoodService {
         food.changeStatus(FoodStatus.Deleted);
         food.deleted(currentUser.getNickname());
 
-        return new FoodResponseDto("success", menuId);
+        return new ResultResponseDto("success", menuId);
     }
 }
 

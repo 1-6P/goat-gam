@@ -7,8 +7,8 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public class FoodResponseDto {
+public class ResultResponseDto {
     private String message;
-    private UUID menuId;
+    private UUID id;
 }
 
