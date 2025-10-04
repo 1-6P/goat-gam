@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.restaurant.controller;
 
+import com.sparta.goatgam.domain.owner.dto.FoodListDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantDetailDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantInfoDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
@@ -45,12 +46,26 @@ public class RestaurantController {
     }
 
     //카테고리별/ 키워드 를 이용해 레스토랑 목록 조회 (리스트로 받야아 할 거 같아요)
-    //api/v1/restauran?restaruant_type_code=&keyword=
-
+    // 예) GET /api/v1/restaurant?restaurant_type_code=1&keyword=멘션
+    @Operation(summary = "식당 목록 조회", description = "카테고리 코드/키워드로 필터링. 파라미터 없으면 전체 조회")
+    @GetMapping
+    public List<RestaurantInfoDto> list(
+            @RequestParam(value = "restaurant_type_code", required = false) String typeCodeStr,
+            @RequestParam(value = "keyword", required = false) String keyword
+    ) {
+        return restaurantService.findRestaurants(typeCodeStr, keyword);
+    }
 
     //(진현 의견 : 아래 두개의 api는 식당 전체 조회 / 특정 조회처럼 비슷할거같긴해요)
     //특정 식당의 메뉴 조회 (전체정보)
     //api/v1/restaurant/{restaurant_id}/menu
+    @GetMapping("/{restaurantId}/menu")
+    public List<FoodListDto> getMenu(
+            @PathVariable UUID restaurantId,
+            @RequestParam(defaultValue = "false") boolean includeHidden
+    ) {
+        return restaurantService.getRestaurantMenu(restaurantId, includeHidden);
+    }
 
     // 특정 식당의 특정 메뉴 조회하기
     // api/v1/restaurant/{restaurantId}/menu?keyword=
