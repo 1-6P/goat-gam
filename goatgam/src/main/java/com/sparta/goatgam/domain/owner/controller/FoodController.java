@@ -26,17 +26,17 @@ public class FoodController {
 
     @PutMapping("/{menuId}")
     public ResultResponseDto updateFood(@PathVariable UUID restaurantId,
-                                      @PathVariable UUID menuId,
-                                      @RequestBody FoodRequestDto foodRequestDto,
-                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                        @PathVariable UUID menuId,
+                                        @RequestBody FoodRequestDto foodRequestDto,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return foodService.updateFood(restaurantId, menuId, foodRequestDto, userDetails.getUser());
     }
 
     @DeleteMapping("/{menuId}")
     public ResultResponseDto deleteFood(@PathVariable UUID restaurantId,
-                                      @PathVariable UUID menuId,
-                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                        @PathVariable UUID menuId,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return foodService.deleteFood(restaurantId, menuId, userDetails.getUser());
     }
