@@ -18,10 +18,27 @@ public class FoodOptionController {
     private final FoodOptionService foodOptionService;
 
     @PostMapping
-    public ResultResponseDto create(@PathVariable UUID restaurantId,
-                                    @PathVariable UUID menuId,
-                                    @RequestBody FoodOptionRequestDto foodOptionRequestDto,
-                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResultResponseDto createOption(@PathVariable UUID restaurantId,
+                                          @PathVariable UUID menuId,
+                                          @RequestBody FoodOptionRequestDto foodOptionRequestDto,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return foodOptionService.addOption(restaurantId, menuId, foodOptionRequestDto, userDetails.getUser());
+    }
+
+    @PutMapping("/{optionId}")
+    public ResultResponseDto updateOption(@PathVariable UUID restaurantId,
+                                          @PathVariable UUID menuId,
+                                          @PathVariable UUID optionId,
+                                          @RequestBody FoodOptionRequestDto foodOptionRequestDto,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return foodOptionService.updateOption(restaurantId, menuId, optionId, foodOptionRequestDto, userDetails.getUser());
+    }
+
+    @DeleteMapping("/{optionId}")
+    public ResultResponseDto deleteFood(@PathVariable UUID restaurantId,
+                                        @PathVariable UUID menuId,
+                                        @PathVariable UUID optionId,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return foodOptionService.deleteOption(restaurantId, menuId, optionId, userDetails.getUser());
     }
 }
