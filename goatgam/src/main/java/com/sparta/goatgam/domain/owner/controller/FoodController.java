@@ -1,8 +1,7 @@
 package com.sparta.goatgam.domain.owner.controller;
 
 import com.sparta.goatgam.domain.owner.dto.FoodRequestDto;
-import com.sparta.goatgam.domain.owner.dto.FoodResponseDto;
-import com.sparta.goatgam.domain.owner.repository.FoodRepository;
+import com.sparta.goatgam.domain.owner.dto.ResultResponseDto;
 import com.sparta.goatgam.domain.owner.service.FoodService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +15,17 @@ import java.util.UUID;
 @RequestMapping("/api/v1/restaurant/{restaurantId}/menu")
 public class FoodController {
     private final FoodService foodService;
-    private final FoodRepository foodRepository;
 
     @PostMapping
-    public FoodResponseDto addFood(@PathVariable UUID restaurantId,
-                                   @RequestBody FoodRequestDto foodRequestDto,
-                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResultResponseDto addFood(@PathVariable UUID restaurantId,
+                                     @RequestBody FoodRequestDto foodRequestDto,
+                                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return foodService.addFood(restaurantId, foodRequestDto, userDetails.getUser());
     }
 
     @PutMapping("/{menuId}")
-    public FoodResponseDto updateFood(@PathVariable UUID restaurantId,
+    public ResultResponseDto updateFood(@PathVariable UUID restaurantId,
                                       @PathVariable UUID menuId,
                                       @RequestBody FoodRequestDto foodRequestDto,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -36,7 +34,7 @@ public class FoodController {
     }
 
     @DeleteMapping("/{menuId}")
-    public FoodResponseDto deleteFood(@PathVariable UUID restaurantId,
+    public ResultResponseDto deleteFood(@PathVariable UUID restaurantId,
                                       @PathVariable UUID menuId,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 

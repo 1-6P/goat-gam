@@ -1,9 +1,11 @@
 package com.sparta.goatgam.domain.owner.service;
 
-import com.sparta.goatgam.domain.owner.dto.FoodRequestDto;
+import com.sparta.goatgam.domain.owner.dto.FoodOptionRequestDto;
 import com.sparta.goatgam.domain.owner.dto.ResultResponseDto;
 import com.sparta.goatgam.domain.owner.entity.Food;
+import com.sparta.goatgam.domain.owner.entity.FoodOption;
 import com.sparta.goatgam.domain.owner.entity.FoodStatus;
+import com.sparta.goatgam.domain.owner.repository.FoodOptionRepository;
 import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
@@ -17,45 +19,25 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class FoodService {
+public class FoodOptionService {
+    private final FoodOptionRepository foodOptionRepository;
     private final FoodRepository foodRepository;
     private final RestaurantRepository restaurantRepository;
 
     @Transactional
-    public ResultResponseDto addFood(UUID restaurantId, FoodRequestDto dto, User currentUser) {
-        Restaurant restaurant = validateRestaurantOwner(restaurantId, currentUser);
+    public ResultResponseDto addOption(UUID restaurantId, UUID menuId, FoodOptionRequestDto foodOptionRequestDto, User currentUser) {
+        validateRestaurantOwner(restaurantId, currentUser);
+        Food food = validateFoodInRestaurant(menuId, restaurantId);
 
-        Food food = Food.builder()
-                .foodName(dto.getName())
-                .foodPrice(dto.getPrice())
-                .foodImage(dto.getImage())
-                .foodExplain(dto.getExplain())
-                .foodStatus(FoodStatus.valueOf(dto.getStatus()))
-                .restaurant(restaurant)
+        FoodOption foodOption = FoodOption.builder()
+                .contents(foodOptionRequestDto.getContents())
+                .surcharge(foodOptionRequestDto.getSurcharge())
+                .food(food)
                 .build();
 
-        foodRepository.save(food);
-        return new ResultResponseDto("success", food.getId());
-    }
+        foodOptionRepository.save(foodOption);
 
-    @Transactional
-    public ResultResponseDto updateFood(UUID restaurantId, UUID menuId, FoodRequestDto foodRequestDto, User currentUser) {
-        validateRestaurantOwner(restaurantId, currentUser);
-        Food food = validateFoodInRestaurant(menuId, restaurantId);
-
-        food.update(foodRequestDto);
-        return new ResultResponseDto("success", food.getId());
-    }
-
-    @Transactional
-    public ResultResponseDto deleteFood(UUID restaurantId, UUID menuId, User currentUser) {
-        validateRestaurantOwner(restaurantId, currentUser);
-        Food food = validateFoodInRestaurant(menuId, restaurantId);
-
-        food.changeStatus(FoodStatus.Deleted);
-        food.deleted(currentUser.getNickname());
-
-        return new ResultResponseDto("success", menuId);
+        return new ResultResponseDto("success", foodOption.getId());
     }
 
     //음식점 권한 조회
@@ -83,6 +65,6 @@ public class FoodService {
         }
         return food;
     }
+
+
 }
-
-
