@@ -1,4 +1,4 @@
-package com.sparta.goatgam.domain.follow.entity;
+package com.sparta.goatgam.domain.review.entity;
 
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.user.entity.User;
@@ -15,14 +15,23 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "p_follow")
+@Table(name = "p_review")
 @Builder
-public class Follow extends BaseEntity {
+public class Review extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID followId;
+    private UUID reviewId;
 
-    private Boolean followStatus;
+    @Column(nullable = false)
+    private int rate;
+
+    @Column(nullable = false)
+    private String content;
+
+    private String review_image;
+
+    private Boolean status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -32,15 +41,15 @@ public class Follow extends BaseEntity {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    public void unFollow(String nickname) {
-        if (this.followStatus){
-            this.followStatus = false;
+    public void deleteReview(String nickname) {
+        if (this.status){
+            this.status = false;
             this.deleted(nickname);
         }
     }
 
-    public void reFollow(String nickname) {
-        this.followStatus = true;
+    public void restoreReview(String nickname) {
+        this.status = true;
         this.restore();
     }
 }

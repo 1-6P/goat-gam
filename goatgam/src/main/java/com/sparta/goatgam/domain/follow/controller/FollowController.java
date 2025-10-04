@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.follow.controller;
 
 import com.sparta.goatgam.domain.follow.dto.FollowInfoDto;
+import com.sparta.goatgam.domain.follow.dto.FollowResponseDto;
 import com.sparta.goatgam.domain.follow.service.FollowService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +35,11 @@ public class FollowController {
     }
 
     @PatchMapping("/follow/{followId}")
-    public ResponseEntity<Boolean> unFollow(
+    public ResponseEntity<FollowResponseDto> unFollow(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID followId){
-        Boolean followStatus = followService.unFollow(userDetails.getUser().getUserId(),followId);
+        FollowResponseDto followResponseDto = followService.unFollow(userDetails.getUser().getUserId(),followId);
 
-        return ResponseEntity.ok().body(followStatus);
+        return ResponseEntity.ok().body(followResponseDto);
     }
 }
