@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.follow.entity;
 
+import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -27,9 +28,9 @@ public class Follow extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "restaurant_id")
-//    private Restaurant restaurant;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
 
     public void unFollow(String nickname) {
         if (this.followStatus){

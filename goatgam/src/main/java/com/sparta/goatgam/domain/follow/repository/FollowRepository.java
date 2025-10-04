@@ -10,4 +10,5 @@ public interface FollowRepository extends JpaRepository<Follow, UUID> {
 
     List<Follow> findAllByUser_UserId(Long userId);
 
+    Follow findByUser_UserIdAndRestaurant_RestaurantId(Long userId, UUID restaurantId);
 }

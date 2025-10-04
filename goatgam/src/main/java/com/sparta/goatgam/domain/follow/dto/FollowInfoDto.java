@@ -10,5 +10,5 @@ import java.util.UUID;
 public class FollowInfoDto {
     private UUID followId;
     private Boolean followStatus;
-//    private UUID restaurantId;
+    private UUID restaurantId;
 }

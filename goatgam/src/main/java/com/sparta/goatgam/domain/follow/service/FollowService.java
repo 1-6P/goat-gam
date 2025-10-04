@@ -1,8 +1,11 @@
 package com.sparta.goatgam.domain.follow.service;
 
 import com.sparta.goatgam.domain.follow.dto.FollowInfoDto;
+import com.sparta.goatgam.domain.follow.dto.FollowResponseDto;
 import com.sparta.goatgam.domain.follow.entity.Follow;
 import com.sparta.goatgam.domain.follow.repository.FollowRepository;
+import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
+import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +22,7 @@ public class FollowService {
 
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
-//    private final RestaurantRepository restaurantRepository;
+    private final RestaurantRepository restaurantRepository;
 
     /**
      * 유저가 식당을 팔로우하는 API
@@ -30,24 +33,23 @@ public class FollowService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-//        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() ->
-//                new IllegalArgumentException("존재하지 않는 식당입니다."));
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 식당입니다."));
 
-//        Follow existFollow = followRepository.findbyUser_userIdAndRestaurantId(userId,restaurantId)
-//                .orElst(null);
-//
-//        if (existFollow != null){
-//            if (Boolean.TRUE.equals(existFollow.getFollowStatus())){
-//                throw new IllegalArgumentException("이미 팔로우 중입니다.");
-//            }
-//            existFollow.reFollow(user.getNickname());
-//            return existFollow.getFollowId();
-//        }
+        Follow existFollow = followRepository.findByUser_UserIdAndRestaurant_RestaurantId(userId,restaurantId);
+
+        if (existFollow != null){
+            if (Boolean.TRUE.equals(existFollow.getFollowStatus())){
+                throw new IllegalArgumentException("이미 팔로우 중입니다.");
+            }
+            existFollow.reFollow(user.getNickname());
+            return existFollow.getFollowId();
+        }
 
 
         Follow follow = Follow.builder()
                 .user(user)
-//                .restaurant(restaurant)
+                .restaurant(restaurant)
                 .followStatus(true)
                 .build();
 
@@ -69,8 +71,8 @@ public class FollowService {
         List<FollowInfoDto> followInfoDtoList = followList.stream()
                 .map(f -> new FollowInfoDto(
                         f.getFollowId(),
-                        f.getFollowStatus()
-//                        f.getRestaurant().getRestaurantId()
+                        f.getFollowStatus(),
+                        f.getRestaurant().getRestaurantId()
                 ))
                 .collect(Collectors.toList());;
         return followInfoDtoList;
@@ -78,9 +80,9 @@ public class FollowService {
 
     /**
      * 유저가 팔로우한 식당을 언팔로우 하는 API
-     * **/
+     **/
     @Transactional
-    public Boolean unFollow(Long userId, UUID followId) {
+    public FollowResponseDto unFollow(Long userId, UUID followId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
@@ -89,8 +91,8 @@ public class FollowService {
 
         if (follow.getFollowStatus()){
             follow.unFollow(user.getNickname());
-            return true;
+            return new FollowResponseDto(true, "팔로우가 해제되었습니다.");
         }
-        return false;
+        return new FollowResponseDto(false, "이미 언팔로우 상태입니다.");
     }
 }
