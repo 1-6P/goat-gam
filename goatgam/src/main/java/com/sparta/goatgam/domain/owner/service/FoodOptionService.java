@@ -37,11 +37,26 @@ public class FoodOptionService {
     @Transactional
     public ResultResponseDto updateOption(UUID restaurantId, UUID menuId, UUID optionId, FoodOptionRequestDto foodOptionRequestDto, User user) {
         foodService.validateRestaurantOwner(restaurantId, user);
-        Food food = foodService.validateFoodInRestaurant(menuId, restaurantId);
+        foodService.validateFoodInRestaurant(menuId, restaurantId);
         FoodOption foodOption = foodOptionRepository.findById(optionId).orElseThrow(() -> new RuntimeException("해당 옵션이 없습니다."));
 
         foodOption.update(foodOptionRequestDto);
 
+        return new ResultResponseDto("success", foodOption.getId());
+    }
+
+    @Transactional
+    public ResultResponseDto deleteOption(UUID restaurantId, UUID menuId, UUID optionId, User user) {
+        foodService.validateRestaurantOwner(restaurantId, user);
+        foodService.validateFoodInRestaurant(menuId, restaurantId);
+        FoodOption foodOption = foodOptionRepository.findById(optionId).orElseThrow(() -> new RuntimeException("해당 옵션이 없습니다."));
+
+        if(foodOption.isDeleted()) {
+            throw new RuntimeException("이미 삭제된 옵션입니다.");
+        }
+
+        foodOption.delete();
+        foodOption.deleted(user.getNickname());
         return new ResultResponseDto("success", foodOption.getId());
     }
 }
