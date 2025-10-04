@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.user.entity;
 
+import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class) // Auditing 활성화
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,17 +35,6 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)

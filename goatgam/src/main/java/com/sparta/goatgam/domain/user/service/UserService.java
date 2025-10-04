@@ -74,7 +74,7 @@ public class UserService {
         }
 
         user.setStatus(false);
-        user.setDeletedAt(LocalDateTime.now());
+        user.deleted(userId.toString());
 
         return new  SoftDeleteResult(user.getUserId(), true, user.getDeletedAt());
     }
@@ -87,7 +87,7 @@ public class UserService {
             return;
         }
         user.setStatus(true);
-        user.setDeletedAt(null);
+        user.restore();
     }
 
     @Transactional(readOnly = true)
