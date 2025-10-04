@@ -59,7 +59,7 @@ public class FoodService {
     }
 
     //음식점 권한 조회
-    private Restaurant validateRestaurantOwner(UUID restaurantId, User currentUser) {
+    public Restaurant validateRestaurantOwner(UUID restaurantId, User currentUser) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 식당이 없습니다."));
 
@@ -70,7 +70,7 @@ public class FoodService {
     }
 
     //음식이 해당 매장의 음식인지 확인
-    private Food validateFoodInRestaurant(UUID menuId, UUID restaurantId) {
+    public Food validateFoodInRestaurant(UUID menuId, UUID restaurantId) {
         Food food = foodRepository.findById(menuId)
                 .orElseThrow(() -> new RuntimeException("해당 음식이 없습니다."));
 
