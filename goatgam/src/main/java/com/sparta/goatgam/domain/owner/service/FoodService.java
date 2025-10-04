@@ -78,7 +78,7 @@ public class FoodService {
             throw new RuntimeException("해당 식당의 음식이 아닙니다.");
         }
 
-        if(food.getFoodStatus().equals(FoodStatus.Deleted)) {
+        if (food.getFoodStatus().equals(FoodStatus.Deleted)) {
             throw new RuntimeException("이미 삭제된 음식입니다.");
         }
         return food;

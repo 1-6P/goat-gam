@@ -4,14 +4,9 @@ import com.sparta.goatgam.domain.owner.dto.FoodOptionRequestDto;
 import com.sparta.goatgam.domain.owner.dto.ResultResponseDto;
 import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.entity.FoodOption;
-import com.sparta.goatgam.domain.owner.entity.FoodStatus;
 import com.sparta.goatgam.domain.owner.repository.FoodOptionRepository;
-import com.sparta.goatgam.domain.owner.repository.FoodRepository;
-import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
-import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
