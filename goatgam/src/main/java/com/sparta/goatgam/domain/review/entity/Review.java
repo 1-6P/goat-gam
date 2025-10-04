@@ -29,7 +29,7 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    private String review_image;
+    private String reviewImage;
 
     private Boolean status;
 
@@ -51,5 +51,11 @@ public class Review extends BaseEntity {
     public void restoreReview(String nickname) {
         this.status = true;
         this.restore();
+    }
+
+    public void updateReview(int rate, String content, String reviewImage){
+        this.rate = rate;
+        this.content = content;
+        this.reviewImage = reviewImage;
     }
 }
