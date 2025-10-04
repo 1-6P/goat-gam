@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.owner.entity;
 
+import com.sparta.goatgam.domain.owner.dto.FoodOptionRequestDto;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,4 +34,9 @@ public class FoodOption extends BaseEntity {
 
     @Column(name = "option_deleted",  nullable = false)
     private boolean deleted;
+
+    public void update(FoodOptionRequestDto foodOptionRequestDto) {
+        this.contents = foodOptionRequestDto.getContents();
+        this.surcharge = foodOptionRequestDto.getSurcharge();
+    }
 }
