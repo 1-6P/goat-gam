@@ -22,6 +22,7 @@ public class RestaurantInfoDto {
     private String restaurantTypeName; // (식당 타입 이름)
 
 
+
     //최종으로 받는 값
     public static RestaurantInfoDto convertDto(Restaurant r){
         return new RestaurantInfoDto(

@@ -74,6 +74,7 @@ public class RestaurantService {
     }
 
     //단건 상세 조회
+    //분리해서 DTO 그대로 진행하겠습니다!! Info랑 보여주는게 좀 달라요.
     @Transactional(readOnly = true)
     public RestaurantDetailDto getRestaurant(UUID restaurantId) {
         Restaurant r = restaurantRepository.findById(restaurantId)

@@ -56,10 +56,12 @@ public class RestaurantController {
     // api/v1/restaurant/{restaurantId}/menu?keyword=
 
     //특정 식당 메뉴 상세보기
+    // ~~반점 -> 짬뽕 클릭 ->  짬뽕 상세정보 조회
     // -> 메뉴 상세정보 조회하기
     //api/v1/restaurant/{restaurant_id}/menu/{menu_id}
 
     //특정 메뉴의 모든 옵션을 조회하기 ->
+    //해당 메뉴의 옵션 조회하기
     // api/v1/restaurant/{restaurantId}/menu/{menuId}/option
 
 }
