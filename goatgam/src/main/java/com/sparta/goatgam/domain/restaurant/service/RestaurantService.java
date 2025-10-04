@@ -48,7 +48,7 @@ public class RestaurantService {
         Restaurant res = new Restaurant(user, type, restaurantRequestDto);
 
         //사용자 ROLE 체크함.
-        if(user.getRole() != UserRoleEnum.Owner) {
+        if(user.getRole() != UserRoleEnum.Owner && user.getRole() != UserRoleEnum.Manager && user.getRole() != UserRoleEnum.Master) {
             throw new IllegalArgumentException("해당 유저는 사장님으로 등록되어 있지 않습니다. 확인 후 재시도해주세요");
         }
 
