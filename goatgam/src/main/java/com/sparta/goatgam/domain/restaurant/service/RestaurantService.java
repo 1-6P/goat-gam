@@ -11,10 +11,7 @@ import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.UUID;
@@ -82,6 +79,46 @@ public class RestaurantService {
         return RestaurantDetailDto.from(r);
     }
 
+    //  카테고리/키워드 기반 목록 조회
+    @Transactional(readOnly = true)
+    public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword) {
+        Integer typeCode = parseIntSafely(typeCodeStr); // 잘못된 값/빈문자 → null
+        String kw = normalize(keyword);
 
+        return restaurantRepository.findAll().stream()
+                // 카테고리 필터
+                .filter(r -> typeCode == null || hasTypeCode(r, typeCode))
+                // 키워드 필터 (이름/주소)
+                .filter(r -> kw == null
+                        || containsIgnoreCase(r.getRestaurantName(), kw)
+                        || containsIgnoreCase(r.getRestaurantAddress(), kw))
+                .map(RestaurantInfoDto::convertDto)
+                .toList();
+    }
+
+    /* ---------- helpers ---------- */
+
+    private Integer parseIntSafely(String s) {
+        if (s == null || s.isBlank()) return null;
+        try { return Integer.valueOf(s.trim()); }
+        catch (NumberFormatException e) { return null; }
+    }
+
+    private String normalize(String s) {
+        if (s == null) return null;
+        String t = s.trim();
+        return t.isEmpty() ? null : t.toLowerCase();
+    }
+
+    private boolean containsIgnoreCase(String src, String kwLower) {
+        return src != null && src.toLowerCase().contains(kwLower);
+    }
+
+    private boolean hasTypeCode(Restaurant r, Integer code) {
+        var t = r.getRestaurantTypeId();
+        return t != null
+                && t.getRestaurantTypeCode() != null
+                && t.getRestaurantTypeCode().equals(code);
+    }
 
 }
