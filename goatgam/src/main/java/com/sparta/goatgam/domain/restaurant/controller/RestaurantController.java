@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.restaurant.controller;
 
+import com.sparta.goatgam.domain.owner.dto.FoodListDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantDetailDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantInfoDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
@@ -55,10 +56,16 @@ public class RestaurantController {
         return restaurantService.findRestaurants(typeCodeStr, keyword);
     }
 
-
     //(진현 의견 : 아래 두개의 api는 식당 전체 조회 / 특정 조회처럼 비슷할거같긴해요)
     //특정 식당의 메뉴 조회 (전체정보)
     //api/v1/restaurant/{restaurant_id}/menu
+    @GetMapping("/{restaurantId}/menu")
+    public List<FoodListDto> getMenu(
+            @PathVariable UUID restaurantId,
+            @RequestParam(defaultValue = "false") boolean includeHidden
+    ) {
+        return restaurantService.getRestaurantMenu(restaurantId, includeHidden);
+    }
 
     // 특정 식당의 특정 메뉴 조회하기
     // api/v1/restaurant/{restaurantId}/menu?keyword=

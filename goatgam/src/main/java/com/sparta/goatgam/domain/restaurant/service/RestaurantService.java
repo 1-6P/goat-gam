@@ -1,5 +1,8 @@
 package com.sparta.goatgam.domain.restaurant.service;
 
+import com.sparta.goatgam.domain.owner.dto.FoodListDto;
+import com.sparta.goatgam.domain.owner.entity.FoodStatus;
+import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantDetailDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantInfoDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
@@ -22,14 +25,17 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
     private final RestaurantTypeRepository restaurantTypeRepository;
+    private final FoodRepository foodRepository;
+
     public RestaurantService(
             RestaurantRepository restaurantRepository,
             UserRepository userRepository,
-            RestaurantTypeRepository restaurantTypeRepository)
+            RestaurantTypeRepository restaurantTypeRepository, FoodRepository foodRepository)
     {
         this.restaurantRepository = restaurantRepository;
         this.userRepository = userRepository;
         this.restaurantTypeRepository = restaurantTypeRepository;
+        this.foodRepository = foodRepository;
     }
 
     //등록
@@ -96,7 +102,7 @@ public class RestaurantService {
                 .toList();
     }
 
-    /* ---------- helpers ---------- */
+    /* ---------- helpers ---------- 이실직고합니다. 그녀석의 힘을 빌렸어요.. GPT....*/
 
     private Integer parseIntSafely(String s) {
         if (s == null || s.isBlank()) return null;
@@ -119,6 +125,24 @@ public class RestaurantService {
         return t != null
                 && t.getRestaurantTypeCode() != null
                 && t.getRestaurantTypeCode().equals(code);
+    }
+
+    // 특정 식당의 메뉴 조회 (기본: Hidden/Deleted 제외, includeHidden=true면 전부)
+    @Transactional(readOnly = true)
+    public List<FoodListDto> getRestaurantMenu(UUID restaurantId, boolean includeHidden) {
+        // 식당 존재 여부만 확인 (없으면 404 성격의 예외)
+        if (!restaurantRepository.existsById(restaurantId)) {
+            throw new IllegalArgumentException("식당을 찾을 수 없습니다: " + restaurantId);
+        }
+
+        return foodRepository.findAll().stream()
+                .filter(f -> f.getRestaurant() != null
+                        && restaurantId.equals(f.getRestaurant().getRestaurantId()))
+                .filter(f -> includeHidden
+                        || (f.getFoodStatus() != FoodStatus.Hidden
+                        && f.getFoodStatus() != FoodStatus.Deleted))
+                .map(FoodListDto::from)
+                .toList();
     }
 
 }
