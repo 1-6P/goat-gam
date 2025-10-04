@@ -21,7 +21,6 @@ public class RestaurantInfoDto {
     private String username;         //(받는거니까)
     private String restaurantTypeName; // (식당 타입 이름)
 
-
     //최종으로 받는 값
     public static RestaurantInfoDto convertDto(Restaurant r){
         return new RestaurantInfoDto(
