@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.restaurant.controller;
 
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantDetailDto;
+import com.sparta.goatgam.domain.restaurant.dto.RestaurantFoodDetailDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantInfoDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
 import com.sparta.goatgam.domain.restaurant.service.RestaurantService;
@@ -55,10 +56,13 @@ public class RestaurantController {
     // 특정 식당의 특정 메뉴 조회하기
     // api/v1/restaurant/{restaurantId}/menu?keyword=
 
+
     //특정 식당 메뉴 상세보기
-    // ~~반점 -> 짬뽕 클릭 ->  짬뽕 상세정보 조회
-    // -> 메뉴 상세정보 조회하기
-    //api/v1/restaurant/{restaurant_id}/menu/{menu_id}
+    @Operation(summary = "특정 식당 메뉴 상세보기 ", description = "특정 식당의 메뉴를 상세조회합니다.")
+    @GetMapping("/{restaurantId}/menu/{foodId}")
+    public ResponseEntity<RestaurantFoodDetailDto> getFoodDetail(@PathVariable UUID restaurantId, @PathVariable UUID foodId) {
+        return ResponseEntity.ok(restaurantService.getFoodDetail(restaurantId,foodId));
+    }
 
     //특정 메뉴의 모든 옵션을 조회하기 ->
     //해당 메뉴의 옵션 조회하기

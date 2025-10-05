@@ -25,8 +25,6 @@ public class RestaurantDetailDto {
     private boolean status;
 
     // 엔티티 -> DTO 변환
-    //진현 수정 10/04
-    //Restaurant의 값은 null일 수 없음
     public static RestaurantDetailDto from(Restaurant r) {
         return RestaurantDetailDto.builder()
                 .restaurantId(r.getRestaurantId())
