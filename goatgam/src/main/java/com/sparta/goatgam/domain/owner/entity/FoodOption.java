@@ -22,21 +22,25 @@ public class FoodOption extends BaseEntity {
     @Column(name = "option_id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "option_contents",  nullable = false, length = 50)
+    @Column(name = "option_contents", nullable = false, length = 50)
     private String contents;
 
-    @Column(name = "option_surcharge",  nullable = false)
+    @Column(name = "option_surcharge", nullable = false)
     private int surcharge;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_id", nullable = false, updatable = false)
     private Food food;
 
-    @Column(name = "option_deleted",  nullable = false)
+    @Column(name = "option_deleted", nullable = false)
     private boolean deleted;
 
     public void update(FoodOptionRequestDto foodOptionRequestDto) {
         this.contents = foodOptionRequestDto.getContents();
         this.surcharge = foodOptionRequestDto.getSurcharge();
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }

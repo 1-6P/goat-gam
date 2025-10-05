@@ -33,4 +33,12 @@ public class FoodOptionController {
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return foodOptionService.updateOption(restaurantId, menuId, optionId, foodOptionRequestDto, userDetails.getUser());
     }
+
+    @DeleteMapping("/{optionId}")
+    public ResultResponseDto deleteFood(@PathVariable UUID restaurantId,
+                                        @PathVariable UUID menuId,
+                                        @PathVariable UUID optionId,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return foodOptionService.deleteOption(restaurantId, menuId, optionId, userDetails.getUser());
+    }
 }
