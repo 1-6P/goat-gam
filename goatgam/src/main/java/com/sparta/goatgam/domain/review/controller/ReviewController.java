@@ -1,6 +1,8 @@
 package com.sparta.goatgam.domain.review.controller;
 
 import com.sparta.goatgam.domain.review.dto.ReviewRequestDto;
+import com.sparta.goatgam.domain.review.dto.ReviewResponseDto;
+import com.sparta.goatgam.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.goatgam.domain.review.service.ReviewService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -26,4 +28,13 @@ public class ReviewController {
          return ResponseEntity.ok("리뷰가 성공적으로 등록 되었습니다.");
     }
 
+    @PutMapping("/review/{reviewId}")
+    public ResponseEntity<ReviewResponseDto> updateReview(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID reviewId,
+            @RequestBody UpdateReviewRequestDto requestDto
+    ){
+        ReviewResponseDto responseDto = reviewService.updateReview(userDetails.getUser().getUserId(),reviewId, requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
 }

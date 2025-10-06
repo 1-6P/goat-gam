@@ -1,9 +1,12 @@
 package com.sparta.goatgam.domain.restaurant.service;
 
+
 import com.sparta.goatgam.domain.owner.dto.FoodListDto;
+import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.entity.FoodStatus;
 import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantDetailDto;
+import com.sparta.goatgam.domain.restaurant.dto.RestaurantFoodDetailDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantInfoDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
@@ -62,14 +65,10 @@ public class RestaurantService {
         return RestaurantInfoDto.convertDto(saved); //Response
     }
 
-
-
     //전체 조회
     @Transactional(readOnly = true)
     public List<RestaurantInfoDto> getAllRestaurants() {
         List<Restaurant> restaurants = restaurantRepository.findAll();
-
-
         //엔티티 -> DTO 변환
         return restaurants.stream()
                 .map(RestaurantInfoDto::convertDto) //dto 변환한 객체 넣기
@@ -84,6 +83,7 @@ public class RestaurantService {
                 .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다: " + restaurantId));
         return RestaurantDetailDto.from(r);
     }
+
 
     //  카테고리/키워드 기반 목록 조회
     @Transactional(readOnly = true)
@@ -119,6 +119,22 @@ public class RestaurantService {
     private boolean containsIgnoreCase(String src, String kwLower) {
         return src != null && src.toLowerCase().contains(kwLower);
     }
+
+    //특정 식당 메뉴 상세보기
+    @Transactional(readOnly = true)
+    public RestaurantFoodDetailDto getFoodDetail(UUID restaurantId, UUID foodId) {
+        Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId,restaurantId)
+                .orElseThrow( () -> new IllegalArgumentException("메뉴가 등록되어있지 않거나 정보 입력이 잘못되었습니다. " +
+                          " restaurantId:" + restaurantId + " foodId:" + foodId));
+
+        //판매중인 상품이 아니면 조회가 불가능하다.
+        if(foodDetails.getFoodStatus() != FoodStatus.Ok) {
+            throw new IllegalArgumentException("해당 상품은 현재 판매하지 않는 상품입니다.");
+        }
+        return RestaurantFoodDetailDto.convertDto(foodDetails);
+    }
+
+
 
     private boolean hasTypeCode(Restaurant r, Integer code) {
         var t = r.getRestaurantTypeId();
