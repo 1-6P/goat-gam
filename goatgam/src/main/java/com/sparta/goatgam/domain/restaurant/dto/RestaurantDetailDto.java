@@ -1,7 +1,6 @@
 package com.sparta.goatgam.domain.restaurant.dto;
 import java.util.UUID;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
-import com.sparta.goatgam.domain.restaurant.entity.RestaurantType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,5 @@
 package com.sparta.goatgam.domain.restaurant.entity;
 
-
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
@@ -9,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.UUID;
 
 @Entity

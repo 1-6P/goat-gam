@@ -3,7 +3,6 @@ package com.sparta.goatgam.domain.restaurant.dto;
 import com.sparta.goatgam.domain.owner.entity.FoodOption;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import java.util.List;
 import java.util.UUID;
 
