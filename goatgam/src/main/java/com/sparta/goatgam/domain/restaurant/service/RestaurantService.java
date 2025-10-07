@@ -200,8 +200,6 @@ public class RestaurantService {
         List<FoodOption> foodOption = foodOptionRepository.findByFood_IdAndDeletedFalse(foodId);
         return RestaurantFoodOptionDetailDto.convertList(restaurantId,foodId,foodOption);
     }
-
-
 }
 
 
