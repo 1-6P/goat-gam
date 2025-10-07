@@ -7,12 +7,14 @@ import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.sparta.goatgam.global.util.PageableUtils.makePageable;
+import static com.sparta.goatgam.global.util.PageableUtils.order;
 
 @Service
 @RequiredArgsConstructor
@@ -49,18 +51,5 @@ public class OrderService {
         }
 
         return new PagedModel<>(orderSummaryList);
-    }
-
-
-    private Pageable makePageable(int page, int size, Sort.Order... orders) {
-        if (size != 10 && size != 30 && size != 50) size = 10;
-
-        Sort sort = Sort.by(orders);
-
-        return PageRequest.of(page, size, sort);
-    }
-
-    private Sort.Order order(Sort.Direction direction, String field) {
-        return new Sort.Order(direction, field);
     }
 }
