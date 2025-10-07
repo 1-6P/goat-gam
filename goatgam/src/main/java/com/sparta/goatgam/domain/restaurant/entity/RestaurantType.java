@@ -3,7 +3,6 @@ package com.sparta.goatgam.domain.restaurant.entity;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.UUID;
 
 @Entity

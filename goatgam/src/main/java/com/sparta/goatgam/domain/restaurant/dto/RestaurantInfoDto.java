@@ -3,7 +3,6 @@ package com.sparta.goatgam.domain.restaurant.dto;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import java.util.UUID;
 
 //얘가 응답 dto 역할을 합니다..!

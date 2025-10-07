@@ -1,14 +1,12 @@
 package com.sparta.goatgam.domain.restaurant.service;
 
-
 import com.sparta.goatgam.domain.owner.dto.FoodListDto;
 import com.sparta.goatgam.domain.owner.entity.Food;
+import com.sparta.goatgam.domain.owner.entity.FoodOption;
 import com.sparta.goatgam.domain.owner.entity.FoodStatus;
+import com.sparta.goatgam.domain.owner.repository.FoodOptionRepository;
 import com.sparta.goatgam.domain.owner.repository.FoodRepository;
-import com.sparta.goatgam.domain.restaurant.dto.RestaurantDetailDto;
-import com.sparta.goatgam.domain.restaurant.dto.RestaurantFoodDetailDto;
-import com.sparta.goatgam.domain.restaurant.dto.RestaurantInfoDto;
-import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
+import com.sparta.goatgam.domain.restaurant.dto.*;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.entity.RestaurantType;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
@@ -29,16 +27,18 @@ public class RestaurantService {
     private final UserRepository userRepository;
     private final RestaurantTypeRepository restaurantTypeRepository;
     private final FoodRepository foodRepository;
+    private final FoodOptionRepository foodOptionRepository;
 
     public RestaurantService(
             RestaurantRepository restaurantRepository,
             UserRepository userRepository,
-            RestaurantTypeRepository restaurantTypeRepository, FoodRepository foodRepository)
+            RestaurantTypeRepository restaurantTypeRepository, FoodRepository foodRepository, FoodOptionRepository foodOptionRepository)
     {
         this.restaurantRepository = restaurantRepository;
         this.userRepository = userRepository;
         this.restaurantTypeRepository = restaurantTypeRepository;
         this.foodRepository = foodRepository;
+        this.foodOptionRepository = foodOptionRepository;
     }
 
     //등록
@@ -76,7 +76,6 @@ public class RestaurantService {
     }
 
     //단건 상세 조회
-    //분리해서 DTO 그대로 진행하겠습니다!! Info랑 보여주는게 좀 달라요.
     @Transactional(readOnly = true)
     public RestaurantDetailDto getRestaurant(UUID restaurantId) {
         Restaurant r = restaurantRepository.findById(restaurantId)
@@ -120,22 +119,6 @@ public class RestaurantService {
         return src != null && src.toLowerCase().contains(kwLower);
     }
 
-    //특정 식당 메뉴 상세보기
-    @Transactional(readOnly = true)
-    public RestaurantFoodDetailDto getFoodDetail(UUID restaurantId, UUID foodId) {
-        Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId,restaurantId)
-                .orElseThrow( () -> new IllegalArgumentException("메뉴가 등록되어있지 않거나 정보 입력이 잘못되었습니다. " +
-                          " restaurantId:" + restaurantId + " foodId:" + foodId));
-
-        //판매중인 상품이 아니면 조회가 불가능하다.
-        if(foodDetails.getFoodStatus() != FoodStatus.Ok) {
-            throw new IllegalArgumentException("해당 상품은 현재 판매하지 않는 상품입니다.");
-        }
-        return RestaurantFoodDetailDto.convertDto(foodDetails);
-    }
-
-
-
     private boolean hasTypeCode(Restaurant r, Integer code) {
         var t = r.getRestaurantTypeId();
         return t != null
@@ -161,4 +144,34 @@ public class RestaurantService {
                 .toList();
     }
 
+    //특정 식당 메뉴 상세보기
+    @Transactional(readOnly = true)
+    public RestaurantFoodDetailDto getFoodDetail(UUID restaurantId, UUID foodId) {
+        Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId,restaurantId)
+                .orElseThrow( () -> new IllegalArgumentException("메뉴가 등록되어있지 않거나 정보 입력이 잘못되었습니다. " +
+                        " restaurantId:" + restaurantId + " foodId:" + foodId));
+
+        //판매중인 상품이 아니면 조회가 불가능하다.
+        if(foodDetails.getFoodStatus() != FoodStatus.Ok) {
+            throw new IllegalArgumentException("해당 상품은 현재 판매하지 않는 상품입니다.");
+        }
+        return RestaurantFoodDetailDto.convertDto(foodDetails);
+    }
+
+
+    //특정 메뉴 옵션 전체보기
+    @Transactional(readOnly = true)
+    public List<RestaurantFoodOptionDetailDto> getFoodDetails(UUID restaurantId, UUID foodId) {
+        Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId,restaurantId)
+                .orElseThrow( () -> new IllegalArgumentException("메뉴가 등록되어있지 않거나 정보 입력이 잘못되었습니다. " +
+                        " restaurantId:" + restaurantId + " foodId:" + foodId));
+        //판매중인 상품이 아니면 조회가 불가능하다.
+        if(foodDetails.getFoodStatus() != FoodStatus.Ok) {
+            throw new IllegalArgumentException("해당 상품은 현재 판매하지 않는 상품이라 옵션조회가 불가능합니다.");
+        }
+        List<FoodOption> foodOption = foodOptionRepository.findByFood_IdAndDeletedFalse(foodId);
+        return RestaurantFoodOptionDetailDto.convertList(restaurantId,foodId,foodOption);
+    }
 }
+
+

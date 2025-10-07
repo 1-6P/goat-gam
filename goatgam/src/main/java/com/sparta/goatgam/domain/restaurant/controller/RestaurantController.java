@@ -1,10 +1,7 @@
 package com.sparta.goatgam.domain.restaurant.controller;
 
 import com.sparta.goatgam.domain.owner.dto.FoodListDto;
-import com.sparta.goatgam.domain.restaurant.dto.RestaurantDetailDto;
-import com.sparta.goatgam.domain.restaurant.dto.RestaurantFoodDetailDto;
-import com.sparta.goatgam.domain.restaurant.dto.RestaurantInfoDto;
-import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
+import com.sparta.goatgam.domain.restaurant.dto.*;
 import com.sparta.goatgam.domain.restaurant.service.RestaurantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +22,6 @@ public class RestaurantController {
     private final RestaurantService restaurantService;
 
     //전체 조회
-
     @Operation(summary = "전체 식당 조회", description = "등록된 모든 식당을 조회합니다")
     @GetMapping("/")
     public List<RestaurantInfoDto> getRestaurants() {
@@ -46,7 +41,7 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getRestaurant(restaurantId));
     }
 
-    //카테고리별/ 키워드 를 이용해 레스토랑 목록 조회 (리스트로 받야아 할 거 같아요)
+    //카테고리별/ 키워드 를 이용해 레스토랑 목록 조회
     // 예) GET /api/v1/restaurant?restaurant_type_code=1&keyword=멘션
     @Operation(summary = "식당 목록 조회", description = "카테고리 코드/키워드로 필터링. 파라미터 없으면 전체 조회")
     @GetMapping
@@ -57,9 +52,9 @@ public class RestaurantController {
         return restaurantService.findRestaurants(typeCodeStr, keyword);
     }
 
-    //(진현 의견 : 아래 두개의 api는 식당 전체 조회 / 특정 조회처럼 비슷할거같긴해요)
     //특정 식당의 메뉴 조회 (전체정보)
     //api/v1/restaurant/{restaurant_id}/menu
+    @Operation(summary = "특정 식당의 메뉴 조회", description = "특정 식당의 메뉴 전체정보를 조회합니다.")
     @GetMapping("/{restaurantId}/menu")
     public List<FoodListDto> getMenu(
             @PathVariable UUID restaurantId,
@@ -67,10 +62,6 @@ public class RestaurantController {
     ) {
         return restaurantService.getRestaurantMenu(restaurantId, includeHidden);
     }
-
-    // 특정 식당의 특정 메뉴 조회하기
-    // api/v1/restaurant/{restaurantId}/menu?keyword=
-
 
     //특정 식당 메뉴 상세보기
     @Operation(summary = "특정 식당 메뉴 상세보기 ", description = "특정 식당의 메뉴를 상세조회합니다.")
@@ -80,7 +71,11 @@ public class RestaurantController {
     }
 
     //특정 메뉴의 모든 옵션을 조회하기 ->
-    //해당 메뉴의 옵션 조회하기
-    // api/v1/restaurant/{restaurantId}/menu/{menuId}/option
-
+    @Operation(summary = "특정 메뉴의 모든 옵션을 조회 ", description = "특정 메뉴의 모든 옵션을 조회합니다.")
+    @GetMapping("/{restaurantId}/menu/{foodId}/option")
+    public List<RestaurantFoodOptionDetailDto> getFoodOptionDetail (@PathVariable UUID restaurantId, @PathVariable UUID foodId) {
+        return restaurantService.getFoodDetails(restaurantId,foodId);
+    }
 }
+
+
