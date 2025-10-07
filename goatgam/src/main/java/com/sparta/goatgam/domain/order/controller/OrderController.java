@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.order.controller;
 
+import com.sparta.goatgam.domain.order.dto.AdminOrderSummaryResponseDto;
 import com.sparta.goatgam.domain.order.dto.OrderSummaryResponseDto;
 import com.sparta.goatgam.domain.order.service.OrderService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
@@ -42,7 +43,7 @@ public class OrderController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<PagedModel<OrderSummaryResponseDto>> getUserOrderSummary(
+    public ResponseEntity<PagedModel<AdminOrderSummaryResponseDto>> getUserOrderSummary(
             @Parameter(description = "조회할 userId. nullable", schema = @Schema(nullable = true))
             @RequestParam(required = false) Long userId,
 
