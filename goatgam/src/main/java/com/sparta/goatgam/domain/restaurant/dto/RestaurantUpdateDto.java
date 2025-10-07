@@ -13,8 +13,6 @@ public class RestaurantUpdateDto {
     private String restaurantName;
     private String restaurantAddress;
     private String restaurantNumber;
-    private Integer regionCode; //null 허용
-    private Integer isPublic; //null 허용
-
-
+    private int regionCode; //null 허용
+    private int isPublic; //null 허용
 }

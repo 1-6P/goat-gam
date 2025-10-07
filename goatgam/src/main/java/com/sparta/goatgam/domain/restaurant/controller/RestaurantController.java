@@ -50,8 +50,7 @@ public class RestaurantController {
             @RequestBody RestaurantUpdateDto dto) {
         return ResponseEntity.ok(restaurantService.updateRestaurant(restaurantId, dto));
     }
-
-
+    
     //카테고리별/ 키워드 를 이용해 레스토랑 목록 조회
     // 예) GET /api/v1/restaurant?restaurant_type_code=1&keyword=멘션
     @Operation(summary = "식당 목록 조회", description = "카테고리 코드/키워드로 필터링. 파라미터 없으면 전체 조회")
