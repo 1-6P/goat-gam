@@ -13,7 +13,7 @@ public class RestaurantInfoDto {
     private UUID restaurantId;
     private String restaurantName;
     private int regionCode;
-    private int isPublic;
+    private Integer isPublic;
     private String restaurantNumber;
     private boolean status;
     private String restaurantAddress;
