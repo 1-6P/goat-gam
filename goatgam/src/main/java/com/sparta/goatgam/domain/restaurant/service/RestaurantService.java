@@ -85,23 +85,14 @@ public class RestaurantService {
 
     //레스토랑 정보 수정
     @Transactional
-    public RestaurantInfoDto updateRestaurant(UUID restaurantId,  RestaurantUpdateDto restaurantUpdateDto) {
+    public RestaurantInfoDto updateRestaurant(UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
-
-        if(restaurantUpdateDto.getRestaurantName() != null) {
-            restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
-        }
-        if(restaurantUpdateDto.getRestaurantAddress() != null) {
-            restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
-        }
-        if(restaurantUpdateDto.getRestaurantNumber() != null) {
-            restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
-        }
-        if(restaurantUpdateDto.getIsPublic() != null) {
-            restaurant.setIsPublic(restaurantUpdateDto.getIsPublic());
-        }
-        if(restaurantUpdateDto.getRegionCode() != null  && restaurantUpdateDto.getRegionCode() != 0) {
+        restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
+        restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
+        restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
+        restaurant.setIsPublic(restaurantUpdateDto.getIsPublic());
+        if(restaurantUpdateDto.getRegionCode() != 0) {
             restaurant.setRegionCode(restaurantUpdateDto.getRegionCode());
         }
         return RestaurantInfoDto.convertDto(restaurant);
