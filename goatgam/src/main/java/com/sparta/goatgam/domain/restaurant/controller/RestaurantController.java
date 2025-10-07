@@ -36,10 +36,21 @@ public class RestaurantController {
     }
 
     //단건 조회
+    @Operation(summary = "특정 식당 조회." , description = "특정 식당의 정보를 상세조회합니다.")
     @GetMapping("/{restaurantId}")
     public ResponseEntity<RestaurantDetailDto> getDetail(@PathVariable UUID restaurantId) {
         return ResponseEntity.ok(restaurantService.getRestaurant(restaurantId));
     }
+
+    //식당 등록정보 수정
+    @Operation(summary ="식당 등록정보 수정", description = "식당의 정보를 수정합니다.")
+    @PutMapping("/{restaurantId}")
+    public ResponseEntity<RestaurantInfoDto> updateRestaurant(
+            @PathVariable UUID restaurantId,
+            @RequestBody RestaurantUpdateDto dto) {
+        return ResponseEntity.ok(restaurantService.updateRestaurant(restaurantId, dto));
+    }
+
 
     //카테고리별/ 키워드 를 이용해 레스토랑 목록 조회
     // 예) GET /api/v1/restaurant?restaurant_type_code=1&keyword=멘션

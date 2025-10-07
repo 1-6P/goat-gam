@@ -83,6 +83,30 @@ public class RestaurantService {
         return RestaurantDetailDto.from(r);
     }
 
+    //레스토랑 정보 수정
+    @Transactional
+    public RestaurantInfoDto updateRestaurant(UUID restaurantId,  RestaurantUpdateDto restaurantUpdateDto) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+
+        if(restaurantUpdateDto.getRestaurantName() != null) {
+            restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
+        }
+        if(restaurantUpdateDto.getRestaurantAddress() != null) {
+            restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
+        }
+        if(restaurantUpdateDto.getRestaurantNumber() != null) {
+            restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
+        }
+        if(restaurantUpdateDto.getIsPublic() != null) {
+            restaurant.setIsPublic(restaurantUpdateDto.getIsPublic());
+        }
+        if(restaurantUpdateDto.getRegionCode() != null) {
+            restaurant.setRegionCode(restaurantUpdateDto.getRegionCode());
+        }
+        return RestaurantInfoDto.convertDto(restaurant);
+    }
+
 
     //  카테고리/키워드 기반 목록 조회
     @Transactional(readOnly = true)
