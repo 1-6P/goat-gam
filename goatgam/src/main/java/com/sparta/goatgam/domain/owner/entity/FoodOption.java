@@ -40,7 +40,7 @@ public class FoodOption extends BaseEntity {
         this.surcharge = foodOptionRequestDto.getSurcharge();
     }
 
-    public void delete() {
-        this.deleted = true;
+    public void changeStatus(boolean status) {
+        this.deleted = status;
     }
 }

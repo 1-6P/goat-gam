@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,6 +24,20 @@ public class FoodOptionService {
         foodService.validateRestaurantOwner(restaurantId, currentUser);
         Food food = foodService.validateFoodInRestaurant(menuId, restaurantId);
 
+        Optional<FoodOption> existingOptionOpt = foodOptionRepository.findByFoodAndContents(food, foodOptionRequestDto.getContents());
+
+        if (existingOptionOpt.isPresent()) {
+            FoodOption existingOption = existingOptionOpt.get();
+
+            if (!existingOption.isDeleted()) {
+                throw new RuntimeException("이미 존재하는 옵션 이름입니다.");
+            }else{
+                existingOption.changeStatus(false);
+                existingOption.update(foodOptionRequestDto);
+                return new ResultResponseDto("restored success", existingOption.getId());
+            }
+        }
+
         FoodOption foodOption = FoodOption.builder()
                 .contents(foodOptionRequestDto.getContents())
                 .surcharge(foodOptionRequestDto.getSurcharge())
@@ -31,7 +46,7 @@ public class FoodOptionService {
 
         foodOptionRepository.save(foodOption);
 
-        return new ResultResponseDto("success", foodOption.getId());
+        return new ResultResponseDto("create success", foodOption.getId());
     }
 
     @Transactional
@@ -42,7 +57,7 @@ public class FoodOptionService {
 
         foodOption.update(foodOptionRequestDto);
 
-        return new ResultResponseDto("success", foodOption.getId());
+        return new ResultResponseDto("update success", foodOption.getId());
     }
 
     @Transactional
@@ -55,8 +70,8 @@ public class FoodOptionService {
             throw new RuntimeException("이미 삭제된 옵션입니다.");
         }
 
-        foodOption.delete();
+        foodOption.changeStatus(true);
         foodOption.deleted(user.getNickname());
-        return new ResultResponseDto("success", foodOption.getId());
+        return new ResultResponseDto("delete success", foodOption.getId());
     }
 }
