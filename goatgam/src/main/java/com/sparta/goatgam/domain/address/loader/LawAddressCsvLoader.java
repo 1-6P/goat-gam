@@ -78,6 +78,7 @@ public class LawAddressCsvLoader implements CommandLineRunner {
     }
 
 
+    // 고마워 지피티니야
     @Override
     @Transactional
     public void run(String... args) throws Exception {
