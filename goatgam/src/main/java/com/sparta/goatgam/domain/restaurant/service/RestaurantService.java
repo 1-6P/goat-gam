@@ -85,27 +85,33 @@ public class RestaurantService {
 
     //레스토랑 정보 수정
     @Transactional
-    public RestaurantInfoDto updateRestaurant(UUID restaurantId,  RestaurantUpdateDto restaurantUpdateDto) {
+    public RestaurantInfoDto updateRestaurant(UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
-
-        if(restaurantUpdateDto.getRestaurantName() != null) {
-            restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
-        }
-        if(restaurantUpdateDto.getRestaurantAddress() != null) {
-            restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
-        }
-        if(restaurantUpdateDto.getRestaurantNumber() != null) {
-            restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
-        }
-        if(restaurantUpdateDto.getIsPublic() != null) {
-            restaurant.setIsPublic(restaurantUpdateDto.getIsPublic());
-        }
-        if(restaurantUpdateDto.getRegionCode() != null  && restaurantUpdateDto.getRegionCode() != 0) {
+        restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
+        restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
+        restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
+        restaurant.setIsPublic(restaurantUpdateDto.getIsPublic());
+        if(restaurantUpdateDto.getRegionCode() != 0) {
             restaurant.setRegionCode(restaurantUpdateDto.getRegionCode());
         }
         return RestaurantInfoDto.convertDto(restaurant);
     }
+    //레스토랑 정보 삭제
+    @Transactional
+    public RestaurantInfoDto deleteRestaurant(UUID restaurantId, RestaurantDeleteDto restaurantDeleteDto) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+
+        if (restaurantDeleteDto.getStatus() == null || restaurantDeleteDto.getStatus()) {
+            throw new IllegalArgumentException("요청값은 무조건 false여야 합니다.");
+        }
+
+        restaurant.setStatus(false);
+        return RestaurantInfoDto.convertDto(restaurant);
+    }
+
+
     //  카테고리/키워드 기반 목록 조회
     @Transactional(readOnly = true)
     public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword) {
@@ -194,6 +200,8 @@ public class RestaurantService {
         List<FoodOption> foodOption = foodOptionRepository.findByFood_IdAndDeletedFalse(foodId);
         return RestaurantFoodOptionDetailDto.convertList(restaurantId,foodId,foodOption);
     }
+
+
 }
 
 
