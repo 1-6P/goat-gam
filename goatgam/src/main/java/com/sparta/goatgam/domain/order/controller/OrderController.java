@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.order.controller;
 
+import com.sparta.goatgam.domain.order.dto.OrderDetailResponseDto;
 import com.sparta.goatgam.domain.order.dto.OrderSummaryResponseDto;
 import com.sparta.goatgam.domain.order.service.OrderService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
@@ -9,11 +10,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -25,9 +26,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @Operation(summary = "내 주문 내역 목록 조회", description = "내 주문 내역 전체 목록을 조회합니다.")
-
     @GetMapping("")
-    public PagedModel<OrderSummaryResponseDto> getMyOrderSummary(
+    public ResponseEntity<PagedModel<OrderSummaryResponseDto>> getMyOrderSummary(
             @Parameter(description = "페이지 번호, 0부터 시작", example = "0")
             @RequestParam int page,
 
@@ -36,6 +36,16 @@ public class OrderController {
 
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return orderService.getMyOrderSummary(page, size, userDetails.getUser());
+        return ResponseEntity.ok(orderService.getMyOrderSummary(page, size, userDetails.getUser()));
+    }
+
+    @Operation(summary = "주문 내역 상세 조회", description = "주문 내역 단건의 상세 정보를 조회합니다.")
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDetailResponseDto> getMyOrderDetail(
+            @Parameter(description = "주문 내역 ID")
+            @PathVariable UUID orderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return ResponseEntity.ok(orderService.getMyOrderDetail(orderId, userDetails.getUser()));
     }
 }
