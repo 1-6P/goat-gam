@@ -43,9 +43,8 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDetailResponseDto> getMyOrderDetail(
             @Parameter(description = "주문 내역 ID")
-            @PathVariable UUID orderId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            @PathVariable UUID orderId) {
 
-        return ResponseEntity.ok(orderService.getMyOrderDetail(orderId, userDetails.getUser()));
+        return ResponseEntity.ok(orderService.getMyOrderDetail(orderId));
     }
 }

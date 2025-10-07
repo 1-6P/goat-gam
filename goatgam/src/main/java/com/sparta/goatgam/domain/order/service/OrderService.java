@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedModel;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,14 +37,9 @@ public class OrderService {
         return new PagedModel<>(orderSummaryList);
     }
 
-    public OrderDetailResponseDto getMyOrderDetail(UUID orderId, User user) {
+    public OrderDetailResponseDto getMyOrderDetail(UUID orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() ->
                 new IllegalArgumentException("존재하지 않는 주문 내역입니다."));
-
-        if (user.getRole().getAuthority().equals("User")
-                && !order.getUser().getUserId().equals(user.getUserId())) {
-            throw new AccessDeniedException("해당 주문 내역 접근 권한이 없습니다.");
-        }
 
         return new OrderDetailResponseDto(order);
     }
