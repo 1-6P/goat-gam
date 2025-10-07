@@ -101,7 +101,7 @@ public class RestaurantService {
         if(restaurantUpdateDto.getIsPublic() != null) {
             restaurant.setIsPublic(restaurantUpdateDto.getIsPublic());
         }
-        if(restaurantUpdateDto.getRegionCode() != null) {
+        if(restaurantUpdateDto.getRegionCode() != null  && restaurantUpdateDto.getRegionCode() != 0) {
             restaurant.setRegionCode(restaurantUpdateDto.getRegionCode());
         }
         return RestaurantInfoDto.convertDto(restaurant);

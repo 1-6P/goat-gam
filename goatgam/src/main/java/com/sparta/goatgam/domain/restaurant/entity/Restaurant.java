@@ -41,7 +41,7 @@ public class Restaurant extends BaseEntity {
 
     //지역코드
     @Column(name = "region_code", nullable = false)
-    private int regionCode;
+    private Integer regionCode;
 
     //활성화 상태 0 : 운영중: 1: 휴무 2: 폐업 등.. 현재는 휴무까지만 적용
     @Column(name ="is_public", nullable = false)

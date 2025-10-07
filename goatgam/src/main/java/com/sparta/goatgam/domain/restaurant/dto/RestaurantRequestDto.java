@@ -20,7 +20,7 @@ public class RestaurantRequestDto {
     private UUID restaurantTypeId;//restaurant fk
     //username은 get으로 받아오기때문에 필요없음\
     @Schema(description = "지역 코드", example = "11001111")
-    private int regionCode;
+    private Integer regionCode;
 
 
     @Schema(description = "식당 이름", example = "진현분식")
