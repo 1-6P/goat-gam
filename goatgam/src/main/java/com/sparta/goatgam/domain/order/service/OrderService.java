@@ -1,7 +1,9 @@
 package com.sparta.goatgam.domain.order.service;
 
 import com.sparta.goatgam.domain.order.dto.AdminOrderSummaryResponseDto;
+import com.sparta.goatgam.domain.order.dto.OrderDetailResponseDto;
 import com.sparta.goatgam.domain.order.dto.OrderSummaryResponseDto;
+import com.sparta.goatgam.domain.order.entity.Order;
 import com.sparta.goatgam.domain.order.repository.OrderRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
@@ -12,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 import static com.sparta.goatgam.global.util.PageableUtils.makePageable;
 import static com.sparta.goatgam.global.util.PageableUtils.order;
@@ -51,5 +55,12 @@ public class OrderService {
         }
 
         return new PagedModel<>(orderSummaryList);
+    }
+
+    public OrderDetailResponseDto getOrderDetail(UUID orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 주문 내역입니다."));
+
+        return new OrderDetailResponseDto(order);
     }
 }

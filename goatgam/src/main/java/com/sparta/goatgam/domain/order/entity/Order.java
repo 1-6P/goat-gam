@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -16,7 +17,6 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Order extends BaseEntity {
 
     @Id
@@ -37,10 +37,10 @@ public class Order extends BaseEntity {
     private LocalDateTime orderTime;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, updatable = false, length = 10)
+    @Column(name = "status", nullable = false, length = 10)
     private StatusEnum status;
 
-    @Column(name = "status_by", nullable = false, updatable = false, length = 50)
+    @Column(name = "status_by", nullable = false, length = 50)
     private String statusBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,4 +50,7 @@ public class Order extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderFood> orderFoods;
 }
