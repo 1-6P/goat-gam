@@ -23,10 +23,13 @@ public class AI extends BaseEntity {
     @Column(name = "ai_request_id", nullable = false, updatable = false)
     private UUID id;
 
+    @Column(name = "prompt",  nullable = false, updatable = false)
     private String input;
 
+    @Column(name = "answer", nullable = false, updatable = false)
     private String answer;
 
+    @Column(name = "status", nullable = false)
     private boolean status;
 
     @ManyToOne(fetch = FetchType.LAZY)
