@@ -97,6 +97,16 @@ public class RestaurantService {
         }
         return RestaurantInfoDto.convertDto(restaurant);
     }
+    //레스토랑 정보 삭제
+    @Transactional
+    public RestaurantInfoDto deleteRestaurant(UUID restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+        restaurant.setStatus(false);
+        return RestaurantInfoDto.convertDto(restaurant);
+    }
+
+
     //  카테고리/키워드 기반 목록 조회
     @Transactional(readOnly = true)
     public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword) {
