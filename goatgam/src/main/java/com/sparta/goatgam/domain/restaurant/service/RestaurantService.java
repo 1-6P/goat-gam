@@ -53,25 +53,20 @@ public class RestaurantService {
         User currentUser = userDetails.getUser();
         //요청하는  userId
         Long requesterId = user.getUserId();
-
-        if (!currentUser.getUserId().equals(requesterId)) {
+        //본인 체크 로직
+        if (!currentUser.getUserId().equals(requesterId) && (user.getRole() == UserRoleEnum.Owner || user.getRole() == UserRoleEnum.Customer)) {
             throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
         }
-
         RestaurantType type = restaurantTypeRepository.findById(restaurantRequestDto.getRestaurantTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("RestaurantType not found")); //타입값 체크
-
         // Restaurant entity를 생성한다 (편의 생성자 이용)
         Restaurant res = new Restaurant(user, type, restaurantRequestDto);
-
-        //사용자 ROLE 체크함.
+        //사용자 ROLE 체크함. 권한 체크
         if(user.getRole() != UserRoleEnum.Owner && user.getRole() != UserRoleEnum.Manager && user.getRole() != UserRoleEnum.Master) {
             throw new IllegalArgumentException("해당 유저는 사장님으로 등록되어 있지 않습니다. 확인 후 재시도해주세요");
         }
-
         //생성된 엔티티를 DB에 저장해 Insert query 작동시킴
         Restaurant saved = restaurantRepository.save(res);
-
         //저장된 엔티티를 클라이언트에게 DTO를 이용해 변환한 후 반환해준다.
         return RestaurantInfoDto.convertDto(saved); //Response
     }
@@ -103,7 +98,8 @@ public class RestaurantService {
         User currentUser = userDetails.getUser();
         //요청하는 userId
         Long requesterId = restaurant.getUser().getUserId();
-        if (!currentUser.getUserId().equals(requesterId)) {
+        //본인 체크 로직
+        if (!currentUser.getUserId().equals(requesterId) && (restaurant.getUser().getRole() == UserRoleEnum.Owner || restaurant.getUser().getRole() == UserRoleEnum.Customer)) {
             throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
         }
         restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
@@ -122,16 +118,16 @@ public class RestaurantService {
                 .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
         //현재 사용자 id 가져오기
         User currentUser = userDetails.getUser();
-        //요청하는 userId
-        Long requesterId = restaurant.getUser().getUserId();
-        if (!currentUser.getUserId().equals(requesterId)) {
+        //요청하는 user
+        User requester = restaurant.getUser();
+        //Duplicated Fragment 경고로 인해 방식 수정
+        //본인 체크 로직
+        if (!currentUser.getUserId().equals(requester.getUserId()) && (restaurant.getUser().getRole() == UserRoleEnum.Owner || restaurant.getUser().getRole() == UserRoleEnum.Customer)) {
             throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
         }
         restaurant.setStatus(false);
         return RestaurantInfoDto.convertDto(restaurant);
     }
-
-
     //  카테고리/키워드 기반 목록 조회
     @Transactional(readOnly = true)
     public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword) {
