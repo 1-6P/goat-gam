@@ -12,12 +12,12 @@ public class OrderFoodItemDto {
     private String foodName;
     private List<String> options;
     private int price;
-    private int count;
+    private int quantity;
 
     public OrderFoodItemDto(OrderFood orderFood) {
         this.foodName = orderFood.getFoodName();
         this.options = orderFood.getOptionList();
         this.price = orderFood.getPrice();
-        this.count = orderFood.getCount();
+        this.quantity = orderFood.getQuantity();
     }
 }

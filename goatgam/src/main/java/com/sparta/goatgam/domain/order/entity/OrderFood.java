@@ -30,8 +30,8 @@ public class OrderFood extends BaseEntity {
     @Column(name = "option_list", columnDefinition = "jsonb", updatable = false)
     private List<String> optionList;
 
-    @Column(name = "count", nullable = false, updatable = false)
-    private int count;
+    @Column(name = "quantity", nullable = false, updatable = false)
+    private int quantity;
 
     @Column(name = "price", nullable = false, updatable = false)
     private int price;
