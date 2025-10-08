@@ -14,6 +14,8 @@ import com.sparta.goatgam.domain.restaurant.repository.RestaurantTypeRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
+import com.sparta.goatgam.global.security.UserDetailsImpl;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -43,9 +45,18 @@ public class RestaurantService {
 
     //등록
     @Transactional
-    public RestaurantInfoDto createRestaurant(RestaurantRequestDto restaurantRequestDto) {
+    public RestaurantInfoDto createRestaurant(RestaurantRequestDto restaurantRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userRepository.findById(restaurantRequestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found")); //userID 체크
+
+        //현재 사용자 id 가져오기
+        User currentUser = userDetails.getUser();
+        //요청하는  userId
+        Long requesterId = user.getUserId();
+
+        if (!currentUser.getUserId().equals(requesterId)) {
+            throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
+        }
 
         RestaurantType type = restaurantTypeRepository.findById(restaurantRequestDto.getRestaurantTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("RestaurantType not found")); //타입값 체크
@@ -85,9 +96,16 @@ public class RestaurantService {
 
     //레스토랑 정보 수정
     @Transactional
-    public RestaurantInfoDto updateRestaurant(UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto) {
+    public RestaurantInfoDto updateRestaurant(UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+        //현재 사용자 id 가져오기
+        User currentUser = userDetails.getUser();
+        //요청하는  userId
+        Long requesterId = restaurant.getUser().getUserId();
+        if (!currentUser.getUserId().equals(requesterId)) {
+            throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
+        }
         restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
         restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
         restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
@@ -99,9 +117,16 @@ public class RestaurantService {
     }
     //레스토랑 정보 삭제
     @Transactional
-    public RestaurantInfoDto deleteRestaurant(UUID restaurantId) {
+    public RestaurantInfoDto deleteRestaurant(UUID restaurantId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+        //현재 사용자 id 가져오기
+        User currentUser = userDetails.getUser();
+        //요청하는  userId
+        Long requesterId = restaurant.getUser().getUserId();
+        if (!currentUser.getUserId().equals(requesterId)) {
+            throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
+        }
         restaurant.setStatus(false);
         return RestaurantInfoDto.convertDto(restaurant);
     }
