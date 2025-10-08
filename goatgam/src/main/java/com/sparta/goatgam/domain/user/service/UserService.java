@@ -76,7 +76,7 @@ public class UserService {
         user.setStatus(false);
         user.deleted(userId.toString());
 
-        return new  SoftDeleteResult(user.getUserId(), true, user.getDeletedAt());
+        return new  SoftDeleteResult(user.getUserId(), false, user.getDeletedAt());
     }
 
     @Transactional
