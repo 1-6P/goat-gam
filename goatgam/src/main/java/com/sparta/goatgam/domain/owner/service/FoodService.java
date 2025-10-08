@@ -13,6 +13,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,6 +26,21 @@ public class FoodService {
     public ResultResponseDto addFood(UUID restaurantId, FoodRequestDto dto, User currentUser) {
         Restaurant restaurant = validateRestaurantOwner(restaurantId, currentUser);
 
+        Optional<Food> existingFoodOpt = foodRepository.findByRestaurantAndFoodName(restaurant, dto.getName());
+
+        if (existingFoodOpt.isPresent()) {
+            Food existingFood = existingFoodOpt.get();
+
+            if (existingFood.getFoodStatus() == FoodStatus.Ok || existingFood.getFoodStatus() == FoodStatus.Hidden) {
+                throw new RuntimeException("이미 존재하는 메뉴 이름입니다.");
+            }
+
+            if (existingFood.getFoodStatus() == FoodStatus.Deleted) {
+                existingFood.update(dto);
+                return new ResultResponseDto("restored success", existingFood.getId());
+            }
+        }
+
         Food food = Food.builder()
                 .foodName(dto.getName())
                 .foodPrice(dto.getPrice())
@@ -35,7 +51,7 @@ public class FoodService {
                 .build();
 
         foodRepository.save(food);
-        return new ResultResponseDto("success", food.getId());
+        return new ResultResponseDto("create success", food.getId());
     }
 
     @Transactional
@@ -44,7 +60,7 @@ public class FoodService {
         Food food = validateFoodInRestaurant(menuId, restaurantId);
 
         food.update(foodRequestDto);
-        return new ResultResponseDto("success", food.getId());
+        return new ResultResponseDto("update success", food.getId());
     }
 
     @Transactional
@@ -55,7 +71,7 @@ public class FoodService {
         food.changeStatus(FoodStatus.Deleted);
         food.deleted(currentUser.getNickname());
 
-        return new ResultResponseDto("success", menuId);
+        return new ResultResponseDto("delete success", menuId);
     }
 
     //음식점 권한 조회

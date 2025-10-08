@@ -1,11 +1,13 @@
 package com.sparta.goatgam.domain.order.controller;
 
+import com.sparta.goatgam.domain.order.dto.AdminOrderSummaryResponseDto;
 import com.sparta.goatgam.domain.order.dto.OrderDetailResponseDto;
 import com.sparta.goatgam.domain.order.dto.OrderSummaryResponseDto;
 import com.sparta.goatgam.domain.order.service.OrderService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.PagedModel;
@@ -37,12 +39,26 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getMyOrderSummary(page, size, userDetails.getUser()));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<PagedModel<AdminOrderSummaryResponseDto>> getUserOrderSummary(
+            @Parameter(description = "조회할 userId. nullable", schema = @Schema(nullable = true))
+            @RequestParam(required = false) Long userId,
+
+            @Parameter(description = "페이지 번호, 0부터 시작", example = "0")
+            @RequestParam int page,
+
+            @Parameter(description = "한 페이지 내 아이템 개수, 10/30/50 이외의 값은 10으로 고정", example = "10")
+            @RequestParam int size) {
+
+        return ResponseEntity.ok(orderService.getUserOrderSummary(userId, page, size));
+    }
+
     @Operation(summary = "주문 내역 상세 조회", description = "주문 내역 단건의 상세 정보를 조회합니다.")
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDetailResponseDto> getMyOrderDetail(
+    public ResponseEntity<OrderDetailResponseDto> getOrderDetail(
             @Parameter(description = "주문 내역 ID")
             @PathVariable UUID orderId) {
 
-        return ResponseEntity.ok(orderService.getMyOrderDetail(orderId));
+        return ResponseEntity.ok(orderService.getOrderDetail(orderId));
     }
 }
