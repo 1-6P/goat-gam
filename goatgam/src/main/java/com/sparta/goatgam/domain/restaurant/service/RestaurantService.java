@@ -101,7 +101,7 @@ public class RestaurantService {
                 .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
         //현재 사용자 id 가져오기
         User currentUser = userDetails.getUser();
-        //요청하는  userId
+        //요청하는 userId
         Long requesterId = restaurant.getUser().getUserId();
         if (!currentUser.getUserId().equals(requesterId)) {
             throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
@@ -122,7 +122,7 @@ public class RestaurantService {
                 .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
         //현재 사용자 id 가져오기
         User currentUser = userDetails.getUser();
-        //요청하는  userId
+        //요청하는 userId
         Long requesterId = restaurant.getUser().getUserId();
         if (!currentUser.getUserId().equals(requesterId)) {
             throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
