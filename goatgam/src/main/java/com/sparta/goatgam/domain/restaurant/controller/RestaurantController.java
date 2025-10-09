@@ -3,11 +3,13 @@ package com.sparta.goatgam.domain.restaurant.controller;
 import com.sparta.goatgam.domain.owner.dto.FoodListDto;
 import com.sparta.goatgam.domain.restaurant.dto.*;
 import com.sparta.goatgam.domain.restaurant.service.RestaurantService;
+import com.sparta.goatgam.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
@@ -31,8 +33,8 @@ public class RestaurantController {
     //등록
     @Operation(summary = "식당 등록", description = "새로운 식당 등록하기")
     @PostMapping
-    public RestaurantInfoDto createRestaurant(@RequestBody RestaurantRequestDto restaurantRequestDto) {
-        return restaurantService.createRestaurant(restaurantRequestDto);
+    public RestaurantInfoDto createRestaurant(@RequestBody RestaurantRequestDto restaurantRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return restaurantService.createRestaurant(restaurantRequestDto,userDetails.getUser());
     }
 
     //단건 조회
@@ -47,15 +49,16 @@ public class RestaurantController {
     @PutMapping("/{restaurantId}")
     public ResponseEntity<RestaurantInfoDto> updateRestaurant(
             @PathVariable UUID restaurantId,
-            @RequestBody RestaurantUpdateDto restaurantUpdateDto) {
-        return ResponseEntity.ok(restaurantService.updateRestaurant(restaurantId, restaurantUpdateDto));
+            @RequestBody RestaurantUpdateDto restaurantUpdateDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(restaurantService.updateRestaurant(restaurantId, restaurantUpdateDto,userDetails.getUser()));
     }
 
     //식당 등록정보 삭제
     @Operation(summary = "식당 등록정보 삭제", description = "식당의 정보를 삭제합니다.")
     @PatchMapping("/{restaurantId}")
-    public ResponseEntity<RestaurantInfoDto> deleteRestaurant(@PathVariable UUID restaurantId) {
-        return ResponseEntity.ok(restaurantService.deleteRestaurant(restaurantId));
+    public ResponseEntity<RestaurantInfoDto> deleteRestaurant(@PathVariable UUID restaurantId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(restaurantService.deleteRestaurant(restaurantId, userDetails.getUser()));
     }
 
 
