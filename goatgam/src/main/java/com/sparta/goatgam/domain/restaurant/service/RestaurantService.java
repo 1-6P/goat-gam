@@ -14,8 +14,6 @@ import com.sparta.goatgam.domain.restaurant.repository.RestaurantTypeRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
-import com.sparta.goatgam.global.security.UserDetailsImpl;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -45,26 +43,24 @@ public class RestaurantService {
 
     //등록
     @Transactional
-    public RestaurantInfoDto createRestaurant(RestaurantRequestDto restaurantRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public RestaurantInfoDto createRestaurant(RestaurantRequestDto restaurantRequestDto, User userInfo) {
         User user = userRepository.findById(restaurantRequestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found")); //userID 체크
 
-        //현재 사용자 id 가져오기
-        User currentUser = userDetails.getUser();
-        //요청하는  userId
-        Long requesterId = user.getUserId();
-        //본인 체크 로직
-        if (!currentUser.getUserId().equals(requesterId) && (user.getRole() == UserRoleEnum.Owner || user.getRole() == UserRoleEnum.Customer)) {
-            throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
-        }
         RestaurantType type = restaurantTypeRepository.findById(restaurantRequestDto.getRestaurantTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("RestaurantType not found")); //타입값 체크
-        // Restaurant entity를 생성한다 (편의 생성자 이용)
-        Restaurant res = new Restaurant(user, type, restaurantRequestDto);
+
+        //1010 update, 권한 생성 후, 유저Id 체크
+        checkUser(new Restaurant(user, type, restaurantRequestDto), userInfo);
+
         //사용자 ROLE 체크함. 권한 체크
         if(user.getRole() != UserRoleEnum.Owner && user.getRole() != UserRoleEnum.Manager && user.getRole() != UserRoleEnum.Master) {
             throw new IllegalArgumentException("해당 유저는 사장님으로 등록되어 있지 않습니다. 확인 후 재시도해주세요");
         }
+
+        // Restaurant entity를 생성한다 (편의 생성자 이용)
+        Restaurant res = new Restaurant(user, type, restaurantRequestDto);
+
         //생성된 엔티티를 DB에 저장해 Insert query 작동시킴
         Restaurant saved = restaurantRepository.save(res);
         //저장된 엔티티를 클라이언트에게 DTO를 이용해 변환한 후 반환해준다.
@@ -91,17 +87,11 @@ public class RestaurantService {
 
     //레스토랑 정보 수정
     @Transactional
-    public RestaurantInfoDto updateRestaurant(UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public RestaurantInfoDto updateRestaurant(UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto, User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
-        //현재 사용자 id 가져오기
-        User currentUser = userDetails.getUser();
-        //요청하는 userId
-        Long requesterId = restaurant.getUser().getUserId();
-        //본인 체크 로직
-        if (!currentUser.getUserId().equals(requesterId) && (restaurant.getUser().getRole() == UserRoleEnum.Owner || restaurant.getUser().getRole() == UserRoleEnum.Customer)) {
-            throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
-        }
+        //체크로직 적용
+        checkUser(restaurant, userInfo);
         restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
         restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
         restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
@@ -113,18 +103,10 @@ public class RestaurantService {
     }
     //레스토랑 정보 삭제
     @Transactional
-    public RestaurantInfoDto deleteRestaurant(UUID restaurantId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public RestaurantInfoDto deleteRestaurant(UUID restaurantId,User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
-        //현재 사용자 id 가져오기
-        User currentUser = userDetails.getUser();
-        //요청하는 user
-        User requester = restaurant.getUser();
-        //Duplicated Fragment 경고로 인해 방식 수정
-        //본인 체크 로직
-        if (!currentUser.getUserId().equals(requester.getUserId()) && (restaurant.getUser().getRole() == UserRoleEnum.Owner || restaurant.getUser().getRole() == UserRoleEnum.Customer)) {
-            throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
-        }
+        checkUser(restaurant, userInfo);
         restaurant.setStatus(false);
         return RestaurantInfoDto.convertDto(restaurant);
     }
@@ -215,6 +197,17 @@ public class RestaurantService {
         }
         List<FoodOption> foodOption = foodOptionRepository.findByFood_IdAndDeletedFalse(foodId);
         return RestaurantFoodOptionDetailDto.convertList(restaurantId,foodId,foodOption);
+    }
+
+    //본인 체크하기
+    private void checkUser(Restaurant restaurant, User userInfo) {
+        //요청하는 user
+        User requester = restaurant.getUser();
+        //Duplicated Fragment 경고로 인해 방식 수정
+        //본인 체크 로직
+        if (!userInfo.getUserId().equals(requester.getUserId()) && (restaurant.getUser().getRole() == UserRoleEnum.Owner || restaurant.getUser().getRole() == UserRoleEnum.Customer)) {
+            throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
+        }
     }
 }
 

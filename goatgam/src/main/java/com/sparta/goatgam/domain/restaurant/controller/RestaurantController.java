@@ -34,7 +34,7 @@ public class RestaurantController {
     @Operation(summary = "식당 등록", description = "새로운 식당 등록하기")
     @PostMapping
     public RestaurantInfoDto createRestaurant(@RequestBody RestaurantRequestDto restaurantRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return restaurantService.createRestaurant(restaurantRequestDto,userDetails);
+        return restaurantService.createRestaurant(restaurantRequestDto,userDetails.getUser());
     }
 
     //단건 조회
@@ -51,14 +51,14 @@ public class RestaurantController {
             @PathVariable UUID restaurantId,
             @RequestBody RestaurantUpdateDto restaurantUpdateDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(restaurantService.updateRestaurant(restaurantId, restaurantUpdateDto,userDetails));
+        return ResponseEntity.ok(restaurantService.updateRestaurant(restaurantId, restaurantUpdateDto,userDetails.getUser()));
     }
 
     //식당 등록정보 삭제
     @Operation(summary = "식당 등록정보 삭제", description = "식당의 정보를 삭제합니다.")
     @PatchMapping("/{restaurantId}")
     public ResponseEntity<RestaurantInfoDto> deleteRestaurant(@PathVariable UUID restaurantId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(restaurantService.deleteRestaurant(restaurantId,userDetails));
+        return ResponseEntity.ok(restaurantService.deleteRestaurant(restaurantId, userDetails.getUser()));
     }
 
 
