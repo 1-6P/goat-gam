@@ -41,6 +41,6 @@ public class AIService {
 
         aiRepository.save(ai);
 
-        return new ResultResponseDto("success", food.getId());
+        return new ResultResponseDto(ai.getAnswer(), food.getId());
     }
 }
