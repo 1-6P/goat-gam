@@ -1,7 +1,7 @@
 package com.sparta.goatgam.domain.review.controller;
 
 import com.sparta.goatgam.domain.review.dto.ReviewRequestDto;
-import com.sparta.goatgam.domain.review.dto.ReviewResponseDto;
+import com.sparta.goatgam.domain.review.dto.ReviewUpdateResponseDto;
 import com.sparta.goatgam.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.goatgam.domain.review.service.ReviewService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
@@ -29,12 +29,21 @@ public class ReviewController {
     }
 
     @PutMapping("/review/{reviewId}")
-    public ResponseEntity<ReviewResponseDto> updateReview(
+    public ResponseEntity<ReviewUpdateResponseDto> updateReview(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID reviewId,
             @RequestBody UpdateReviewRequestDto requestDto
     ){
-        ReviewResponseDto responseDto = reviewService.updateReview(userDetails.getUser().getUserId(),reviewId, requestDto);
+        ReviewUpdateResponseDto responseDto = reviewService.updateReview(userDetails.getUser().getUserId(),reviewId, requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PatchMapping("/review/{reviewId}")
+    public ResponseEntity<ReviewUpdateResponseDto> deleteReview(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID reviewId
+    ){
+        ReviewUpdateResponseDto responseDto = reviewService.deleteReview(userDetails.getUser().getUserId(),reviewId);
         return ResponseEntity.ok(responseDto);
     }
 }
