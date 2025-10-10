@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.cart.entity;
 
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
+import com.sparta.goatgam.domain.restaurant.entity.RestaurantEnum;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -51,7 +52,7 @@ public class Cart extends BaseEntity {
         if (!restaurant.isStatus()) {
             throw new IllegalArgumentException("삭제된 식당 음식을 담을 수 없습니다.");
         }
-        if (restaurant.getIsPublic() != 0) {
+        if (restaurant.getIsPublic() != RestaurantEnum.Open) {
             throw new IllegalArgumentException("운영중인 식당 음식만 담을 수 있습니다.");
         }
 
