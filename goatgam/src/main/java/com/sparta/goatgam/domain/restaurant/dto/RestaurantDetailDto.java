@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.restaurant.dto;
 import java.util.UUID;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
+import com.sparta.goatgam.domain.restaurant.entity.RestaurantEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class RestaurantDetailDto {
     private Long userId; //저희 userId는 현재 Long 타입입니다! String으로 꼭 남겨야하는게 아니라면, Long을 그대로 사용해야해요
     private String userName;
     private int regionCode;
-    private int isPublic;
+    private RestaurantEnum isPublic;
     private String restaurantAddress;
     private String restaurantNumber;
     private boolean status;

@@ -43,9 +43,10 @@ public class Restaurant extends BaseEntity {
     @Column(name = "region_code", nullable = false)
     private Integer regionCode;
 
-    //활성화 상태 0 : 운영중: 1: 휴무 2: 폐업 등.. 현재는 휴무까지만 적용
+    //활성화 상태 Open : 운영 중 , Closed: 휴무
+    @Enumerated(EnumType.STRING)
     @Column(name ="is_public", nullable = false)
-    private int isPublic;
+    private RestaurantEnum isPublic;
 
     //식당 주소
     @Column (name = "restaurant_address" , nullable = false)
@@ -67,7 +68,7 @@ public class Restaurant extends BaseEntity {
         this.restaurantName = restaurantRequestDto.getRestaurantName();
         this.userName = user.getUsername(); // 필요 시 수정
         this.regionCode = restaurantRequestDto.getRegionCode();
-        this.isPublic = 0; // 새로 생성된 식당은 무조건 오픈을 가짐
+        this.isPublic = RestaurantEnum.Open; // 새로 생성된 식당은 무조건 오픈을 가짐
         this.restaurantAddress = restaurantRequestDto.getRestaurantAddress();
         this.restaurantNumber = restaurantRequestDto.getRestaurantNumber();
         this.status = true; // 새로 생성된 식당은 true값으로 조회가 가능해야 함.

@@ -24,10 +24,13 @@ public class RestaurantController {
     private final RestaurantService restaurantService;
 
     //전체 조회
-    @Operation(summary = "전체 식당 조회", description = "등록된 모든 식당을 조회합니다")
+    @Operation(summary = "관리자용 식당 목록 조회", description = "카테고리 코드/키워드로 필터링. 파라미터 없으면 전체 조회,stauts=false인 값도 조회")
     @GetMapping("/")
-    public List<RestaurantInfoDto> getRestaurants() {
-        return restaurantService.getAllRestaurants();
+    public List<RestaurantInfoDto> getAllRestaurantsList(
+            @RequestParam(value = "restaurant_type_code", required = false) String typeCodeStr,
+            @RequestParam(value = "keyword", required = false) String keyword
+    ) {
+        return restaurantService.getAllRestaurants(typeCodeStr, keyword);
     }
 
     //등록
@@ -59,6 +62,13 @@ public class RestaurantController {
     @PatchMapping("/{restaurantId}")
     public ResponseEntity<RestaurantInfoDto> deleteRestaurant(@PathVariable UUID restaurantId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(restaurantService.deleteRestaurant(restaurantId, userDetails.getUser()));
+    }
+
+    //삭제된 등록정보 되돌리기
+    @Operation(summary = "삭제된 식당정보 롤백", description = "삭제된 식당의 status를 되돌립니다.")
+    @PatchMapping("/rollback/{restaurantId}")
+    public ResponseEntity<RestaurantInfoDto> ReturnDeleteRestaurant(@PathVariable UUID restaurantId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(restaurantService.RollbackDeletedRestaurant(restaurantId, userDetails.getUser()));
     }
 
 

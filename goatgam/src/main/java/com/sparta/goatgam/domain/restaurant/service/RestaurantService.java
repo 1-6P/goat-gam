@@ -16,6 +16,7 @@ import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 import java.util.UUID;
@@ -67,13 +68,20 @@ public class RestaurantService {
         return RestaurantInfoDto.convertDto(saved); //Response
     }
 
-    //전체 조회
+    //전체 조회(관리자용), 값이 false 인것 까지 볼 수 있음
     @Transactional(readOnly = true)
-    public List<RestaurantInfoDto> getAllRestaurants() {
-        List<Restaurant> restaurants = restaurantRepository.findAll();
-        //엔티티 -> DTO 변환
-        return restaurants.stream()
-                .map(RestaurantInfoDto::convertDto) //dto 변환한 객체 넣기
+    public List<RestaurantInfoDto> getAllRestaurants(String typeCodeStr, String keyword) {
+        Integer typeCode = parseIntSafely(typeCodeStr); // 잘못된 값/빈문자 → null
+        String kw = normalize(keyword);
+
+        return restaurantRepository.findAll().stream()
+                // 카테고리 필터
+                .filter(r -> typeCode == null || hasTypeCode(r, typeCode))
+                // 키워드 필터 (이름/주소)
+                .filter(r -> kw == null
+                        || containsIgnoreCase(r.getRestaurantName(), kw)
+                        || containsIgnoreCase(r.getRestaurantAddress(), kw))
+                .map(RestaurantInfoDto::convertDto)
                 .toList();
     }
 
@@ -110,13 +118,25 @@ public class RestaurantService {
         restaurant.setStatus(false);
         return RestaurantInfoDto.convertDto(restaurant);
     }
-    //  카테고리/키워드 기반 목록 조회
+    //삭제된 레스토랑 롤백
+    //식당 status 체크하는 로직을 따로 도입해야 할까요?
+    @Transactional
+    public RestaurantInfoDto RollbackDeletedRestaurant(UUID restaurantId,User userInfo) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+        checkUser(restaurant, userInfo);
+        restaurant.setStatus(true);
+        return RestaurantInfoDto.convertDto(restaurant);
+    }
+    //  카테고리/키워드 기반 목록 조회 (for users)
     @Transactional(readOnly = true)
     public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword) {
         Integer typeCode = parseIntSafely(typeCodeStr); // 잘못된 값/빈문자 → null
         String kw = normalize(keyword);
 
         return restaurantRepository.findAll().stream()
+                //값이 true인것만 출력됨
+                .filter(Restaurant::isStatus)
                 // 카테고리 필터
                 .filter(r -> typeCode == null || hasTypeCode(r, typeCode))
                 // 키워드 필터 (이름/주소)
