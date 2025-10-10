@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +25,6 @@ public class CartController {
 
     @Operation(summary = "장바구니에 음식 추가", description = "장바구니에 음식을 추가합니다. 하나의 가게의 음식만 담을 수 있고 " +
             "새로운 가게의 음식을 담으면 이전 장바구니는 삭제되고 새로운 장바구니가 생성됩니다.")
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("")
     public ResponseEntity<MessageAndIdResponseDto> addCartFood(
             @Valid @RequestBody CartFoodRequestDto cartFoodRequestDto,
