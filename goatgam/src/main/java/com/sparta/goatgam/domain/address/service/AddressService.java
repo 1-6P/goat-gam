@@ -43,7 +43,7 @@ public class AddressService {
                 .userId(userId)
                 .dong(beopjeongdong).sigungu(sigungu).sido(sido)
                 .roadAddress(requestDto.getRoadAddress()).detail(requestDto.getDetail())
-                .isDefault(requestDto.isDefaultAddress()).build();
+                .isDefault(requestDto.isDefaultAddress()).status(true).build();
 
         if(requestDto.isDefaultAddress()){
             addressRepository.findByUserIdAndIsDefaultTrue(userId)
@@ -58,9 +58,6 @@ public class AddressService {
     // 유저 주소 조회
     public List<AddressResponseDto> getUserAddress(Long userId){
         List<Address> a = addressRepository.findByUserId(userId);
-        if(a.isEmpty()){
-            throw new IllegalArgumentException("해당유저의 주소가 존재하지 않습니다.");
-        }
         List<AddressResponseDto> response = new ArrayList<>();
         for (Address b : a){
             if(!b.isStatus()) continue;

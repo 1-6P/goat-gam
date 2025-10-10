@@ -4,6 +4,7 @@ import com.sparta.goatgam.domain.address.dto.AddressCreateRequestDto;
 import com.sparta.goatgam.domain.address.dto.AddressResponseDto;
 import com.sparta.goatgam.domain.address.service.AddressService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -30,21 +31,28 @@ public class AddressController {
     }
 
     // 유저 주소 조회
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<AddressResponseDto>> getAddress(@PathVariable Long userId){
-        return ResponseEntity.ok(addressService.getUserAddress(userId));
+    @Operation(
+            summary = "유저 본인 주소 조회",
+            description = "유저는 본인 주소 리스트를 조회할 수 있습니다."
+    )
+    @GetMapping("/my")
+    public ResponseEntity<List<AddressResponseDto>> getAddress(@AuthenticationPrincipal UserDetailsImpl principal){
+        return ResponseEntity.ok(addressService.getUserAddress(principal.getUser().getUserId()));
     }
 
     // 유저 주소 삭제
-    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{addressId}")
     public ResponseEntity<?> deleteUserAddress(@AuthenticationPrincipal UserDetailsImpl principal, @PathVariable UUID addressId){
         return ResponseEntity.ok(addressService.delete(principal.getUser().getUserId(), addressId));
     }
 
     // 전체 주소 조회
+    @Operation(
+            summary = "전체 주소 조회",
+            description = "Master, Manager가 전체 주소를 조회할 수 있다."
+    )
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<AddressResponseDto>> getAllAddresses(){
         return ResponseEntity.ok(addressService.getAllAddress());
     }
