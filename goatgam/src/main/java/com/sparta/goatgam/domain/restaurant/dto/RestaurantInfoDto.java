@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.restaurant.dto;
 
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
+import com.sparta.goatgam.domain.restaurant.entity.RestaurantEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public class RestaurantInfoDto {
     private UUID restaurantId;
     private String restaurantName;
     private int regionCode;
-    private Integer isPublic;
+    private RestaurantEnum isPublic;
     private String restaurantNumber;
     private boolean status;
     private String restaurantAddress;
