@@ -24,7 +24,7 @@ public class AddressController {
     private final AddressService addressService;
 
     // 주소 등록
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<AddressResponseDto> createAddress (@AuthenticationPrincipal UserDetailsImpl principal, @RequestBody AddressCreateRequestDto requestDto){
         Long userId = principal.getUser().getUserId();
         return ResponseEntity.ok(addressService.addAddress(userId, requestDto));

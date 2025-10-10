@@ -73,22 +73,27 @@ public class AddressService {
         Address a = addressRepository.findByUserIdAndId(userId, addressId)
                 .orElseThrow(() -> new IllegalArgumentException("유저에게 해당 주소가 존재하지 않습니다."));
         if(!a.isStatus()){
-            return new AddressDeleteResponseDto(a.getUserId(), a.getId(), false, a.getDeletedAt());
+            return new AddressDeleteResponseDto(
+                    a.getUserId(),
+                    a.getId(),
+                    false,
+                    "이미 삭제된 주소입니다.");
         }
         a.setStatus(false);
         a.deleted(userId.toString());
-        return new  AddressDeleteResponseDto(a.getUserId(), a.getId(), false, a.getDeletedAt());
+        return new  AddressDeleteResponseDto(
+                a.getUserId(),
+                a.getId(),
+                false,
+                "주소가 성공적으로 삭제되었습니다.");
     }
 
 
     // 모든 주소 조회
     public List<AddressResponseDto> getAllAddress(){
         List<Address> a = addressRepository.findAll();
-        List<AddressResponseDto> response = new ArrayList<>();
-        for (Address b : a){
-            response.add(toResponse(b));
-        }
-        return response;
+
+        return a.stream().map(this::toResponse).toList();
     }
 
     private String normalizeCode10(String beopjeongDong) {
@@ -102,14 +107,6 @@ public class AddressService {
     }
 
     private AddressResponseDto toResponse(Address a) {
-        AddressResponseDto res = new AddressResponseDto();
-        res.setAddressId(a.getId());
-        res.setUserId(a.getUserId());
-        res.setSidoCode(a.getSido().getSidoCode());
-        res.setSigunguCode(a.getSigungu().getSigunguCode());
-        res.setDongCode(a.getDong().getDongCode());
-        res.setRoadAddress(a.getRoadAddress());
-        res.setDetail(a.getDetail());
-        return res;
+        return AddressResponseDto.from(a);
     }
 }

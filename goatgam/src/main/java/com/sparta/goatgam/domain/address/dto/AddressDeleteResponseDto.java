@@ -10,12 +10,12 @@ public class AddressDeleteResponseDto {
     private Long userId;
     private UUID id;
     private boolean status;
-    private LocalDateTime deletedAt;
+    private String message;
 
-    public AddressDeleteResponseDto(Long userId, UUID id, boolean b, LocalDateTime deletedAt) {
+    public AddressDeleteResponseDto(Long userId, UUID id, boolean status, String message) {
         this.userId = userId;
         this.id = id;
-        this.status = b;
-        this.deletedAt = deletedAt;
+        this.status = status;
+        this.message = message;
     }
 }
