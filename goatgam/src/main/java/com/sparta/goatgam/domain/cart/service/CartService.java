@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.cart.service;
 
 import com.sparta.goatgam.domain.cart.dto.CartFoodRequestDto;
+import com.sparta.goatgam.domain.cart.dto.CartResponseDto;
 import com.sparta.goatgam.domain.cart.entity.Cart;
 import com.sparta.goatgam.domain.cart.entity.CartFood;
 import com.sparta.goatgam.domain.cart.entity.CartFoodOption;
@@ -103,5 +104,12 @@ public class CartService {
         Set<UUID> optionIdSetB = new HashSet<>(Optional.ofNullable(optionIdListB).orElse(List.of()));
 
         return optionIdSetA.equals(optionIdSetB);
+    }
+
+    public CartResponseDto getCartInfo(User user) {
+        Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseThrow(() ->
+                new IllegalArgumentException("생성된 장바구니가 없습니다."));
+
+        return new CartResponseDto(cart);
     }
 }
