@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.ai.service;
 
 import com.sparta.goatgam.domain.ai.dto.AIRequestDto;
+import com.sparta.goatgam.domain.ai.dto.AiResponseDto;
 import com.sparta.goatgam.domain.ai.entity.AI;
 import com.sparta.goatgam.domain.ai.repository.AIRepository;
 import com.sparta.goatgam.domain.owner.dto.ResultResponseDto;
@@ -8,7 +9,11 @@ import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.entity.FoodStatus;
 import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.global.util.PageableUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,5 +47,20 @@ public class AIService {
         aiRepository.save(ai);
 
         return new ResultResponseDto(ai.getAnswer(), food.getId());
+    }
+
+    public Page<AiResponseDto> getAiRequest(int page, int size, Sort.Direction direction) {
+        Pageable pageable = PageableUtils.makePageable(page, size,
+                PageableUtils.order(direction, "createdAt"));
+
+        Page<AI> logs = aiRepository.findAll(pageable);
+
+        return logs.map(AiResponseDto::new);
+    }
+
+    public AiResponseDto getAiRequestById(UUID id) {
+        AI ai = aiRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 AI 로그를 찾을 수 없습니다."));
+        return new AiResponseDto(ai);
     }
 }
