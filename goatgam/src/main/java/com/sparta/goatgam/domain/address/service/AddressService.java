@@ -76,7 +76,6 @@ public class AddressService {
             return new AddressDeleteResponseDto(
                     a.getUserId(),
                     a.getId(),
-                    false,
                     "이미 삭제된 주소입니다.");
         }
         a.setStatus(false);
@@ -84,7 +83,6 @@ public class AddressService {
         return new  AddressDeleteResponseDto(
                 a.getUserId(),
                 a.getId(),
-                false,
                 "주소가 성공적으로 삭제되었습니다.");
     }
 

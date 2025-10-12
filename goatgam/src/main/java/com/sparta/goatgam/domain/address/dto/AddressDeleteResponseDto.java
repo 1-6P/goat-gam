@@ -9,13 +9,11 @@ import java.util.UUID;
 public class AddressDeleteResponseDto {
     private Long userId;
     private UUID id;
-    private boolean status;
     private String message;
 
-    public AddressDeleteResponseDto(Long userId, UUID id, boolean status, String message) {
+    public AddressDeleteResponseDto(Long userId, UUID id, String message) {
         this.userId = userId;
         this.id = id;
-        this.status = status;
         this.message = message;
     }
 }
