@@ -24,6 +24,10 @@ public class AddressController {
     private final AddressService addressService;
 
     // 주소 등록
+    @Operation(
+            summary = "주소 추가",
+            description = "유저는 본인 주소를 추가할 수 있다."
+    )
     @PostMapping("")
     public ResponseEntity<AddressResponseDto> createAddress (@AuthenticationPrincipal UserDetailsImpl principal, @RequestBody AddressCreateRequestDto requestDto){
         Long userId = principal.getUser().getUserId();
@@ -41,6 +45,10 @@ public class AddressController {
     }
 
     // 유저 주소 삭제
+    @Operation(
+            summary = "주소 삭제",
+            description = "주소 아이디로 주소를 삭제할 수 있다."
+    )
     @DeleteMapping("/{addressId}")
     public ResponseEntity<?> deleteUserAddress(@AuthenticationPrincipal UserDetailsImpl principal, @PathVariable UUID addressId){
         return ResponseEntity.ok(addressService.delete(principal.getUser().getUserId(), addressId));
