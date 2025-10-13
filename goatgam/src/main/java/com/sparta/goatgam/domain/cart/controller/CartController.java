@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/cart")
@@ -36,5 +38,14 @@ public class CartController {
     public ResponseEntity<CartResponseDto> getCartInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return ResponseEntity.ok(cartService.getCartInfo(userDetails.getUser()));
+    }
+
+    @Operation(summary = "장바구니에서 음식 삭제", description = "장바구니에서 음식을 삭제합니다.")
+    @PatchMapping("{cartFoodId}")
+    public ResponseEntity<MessageAndIdResponseDto> deleteCartFood(
+            @PathVariable UUID cartFoodId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(cartService.deleteCartFood(cartFoodId, userDetails.getUser()));
     }
 }

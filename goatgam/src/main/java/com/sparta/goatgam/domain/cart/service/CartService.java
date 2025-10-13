@@ -98,6 +98,19 @@ public class CartService {
         return new MessageAndIdResponseDto("장바구니에 음식을 성공적으로 담았습니다.", cart.getCartId());
     }
 
+    @Transactional
+    public MessageAndIdResponseDto deleteCartFood(UUID cartFoodId, User user) {
+        CartFood cartFood = cartFoodRepository.findById(cartFoodId).orElseThrow(() ->
+                new IllegalArgumentException("장바구니내 음식 정보를 찾을 수 없습니다."));
+
+        if (cartFood.getIsDeleted())
+            throw new IllegalArgumentException("이미 삭제된 음식입니다.");
+
+        cartFood.delete(user);
+
+        return new MessageAndIdResponseDto("성공적으로 삭제되었습니다.", cartFood.getCart().getCartId());
+    }
+
     private boolean optionEquals(CartFood cartFoodA, List<UUID> optionIdListB) {
         Set<UUID> optionIdSetA = cartFoodA.getCartFoodOptions().stream().map(o -> o.getFoodOption().getId())
                 .collect(Collectors.toSet());
