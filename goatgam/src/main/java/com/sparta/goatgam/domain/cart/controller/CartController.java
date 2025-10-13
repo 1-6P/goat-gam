@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.cart.controller;
 
 import com.sparta.goatgam.domain.cart.dto.CartFoodRequestDto;
+import com.sparta.goatgam.domain.cart.dto.CartFoodUpdateRequestDto;
 import com.sparta.goatgam.domain.cart.dto.CartResponseDto;
 import com.sparta.goatgam.domain.cart.service.CartService;
 import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
@@ -36,5 +37,14 @@ public class CartController {
     public ResponseEntity<CartResponseDto> getCartInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return ResponseEntity.ok(cartService.getCartInfo(userDetails.getUser()));
+    }
+
+    @Operation(summary = "장바구니에서 옵션 변경", description = "장바구니에 든 음식의 옵션을 변경합니다.")
+    @PatchMapping("")
+    public ResponseEntity<MessageAndIdResponseDto> updateCartFoodOption(
+            @RequestBody CartFoodUpdateRequestDto cartFoodUpdateRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(cartService.updateCartFoodOption(cartFoodUpdateRequestDto, userDetails.getUser()));
     }
 }
