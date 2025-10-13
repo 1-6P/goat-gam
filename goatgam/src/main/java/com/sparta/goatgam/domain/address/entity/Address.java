@@ -40,6 +40,10 @@ public class Address extends BaseEntity {
     @Column(name = "detail", columnDefinition = "TEXT")
     private String detail;
 
+    @Column(name = "is_default", nullable = false)
+    private boolean isDefault;
+
     @Column(name = "status",  nullable = false)
     private boolean status;
+
 }
