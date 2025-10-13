@@ -40,7 +40,7 @@ public class AIService {
             throw new RuntimeException("삭제된 메뉴입니다.");
         }
 
-        String answer = geminiService.generateMenuDescription(dto.getPrompt());
+        String answer = geminiService.generateMenuDescription(food, dto.getPrompt());
 
         AI ai = AI.builder().input(dto.getPrompt()).user(currentUser).answer(answer).status(true).food(food).build();
 

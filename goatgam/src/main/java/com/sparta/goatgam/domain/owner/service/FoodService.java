@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.owner.service;
 
-import com.sparta.goatgam.domain.ai.service.GeminiService;
+import com.sparta.goatgam.domain.ai.dto.AIRequestDto;
+import com.sparta.goatgam.domain.ai.service.AIService;
 import com.sparta.goatgam.domain.owner.dto.FoodRequestDto;
 import com.sparta.goatgam.domain.owner.dto.ResultResponseDto;
 import com.sparta.goatgam.domain.owner.entity.Food;
@@ -22,7 +23,7 @@ import java.util.UUID;
 public class FoodService {
     private final FoodRepository foodRepository;
     private final RestaurantRepository restaurantRepository;
-    private final GeminiService geminiService;
+    private final AIService aiService;
 
     @Transactional
     public ResultResponseDto addFood(UUID restaurantId, FoodRequestDto dto, boolean ai, User currentUser) {
@@ -42,20 +43,22 @@ public class FoodService {
                 return new ResultResponseDto("restored success", existingFood.getId());
             }
         }
-        String explain = dto.getExplain();
-        if(ai){
-            explain = geminiService.generateMenuDescription(dto.getExplain());
-        }
+
         Food food = Food.builder()
                 .foodName(dto.getName())
                 .foodPrice(dto.getPrice())
                 .foodImage(dto.getImage())
-                .foodExplain(explain)
+                .foodExplain(dto.getExplain())
                 .foodStatus(FoodStatus.valueOf(dto.getStatus()))
                 .restaurant(restaurant)
                 .build();
 
         foodRepository.save(food);
+
+        if (ai) {
+            AIRequestDto aiRequestDto = new AIRequestDto(dto.getExplain());
+            food.updateExplain(aiService.createAiRequest(food.getId(), currentUser, aiRequestDto).getMessage());
+        }
 
         return new ResultResponseDto("create success", food.getId());
     }
