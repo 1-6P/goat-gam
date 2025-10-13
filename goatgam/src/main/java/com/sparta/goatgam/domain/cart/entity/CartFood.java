@@ -7,6 +7,7 @@ import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class CartFood extends BaseEntity {
     private Cart cart;
 
     @OneToMany(mappedBy = "cartFood", cascade = CascadeType.ALL, orphanRemoval = true)
+    @SQLRestriction("is_deleted = false")
     private List<CartFoodOption> cartFoodOptions;
 
     @Column(name = "is_deleted", nullable = false)
