@@ -23,7 +23,7 @@ public class FoodController {
     @PostMapping
     public ResultResponseDto addFood(@PathVariable UUID restaurantId,
                                      @RequestBody FoodRequestDto foodRequestDto,
-                                     @RequestParam boolean ai,
+                                     @RequestParam(defaultValue = "false") boolean ai,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return foodService.addFood(restaurantId, foodRequestDto, ai, userDetails.getUser());
