@@ -1,5 +1,8 @@
 package com.sparta.goatgam.domain.review.service;
 
+import com.sparta.goatgam.domain.order.entity.Order;
+import com.sparta.goatgam.domain.order.entity.StatusEnum;
+import com.sparta.goatgam.domain.order.repository.OrderRepository;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.review.dto.ReviewInfoListDto;
@@ -24,14 +27,35 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
+    private final OrderRepository orderRepository;
 
     @Transactional
-    public void createReview(Long userId, ReviewRequestDto requestDto) {
-        Restaurant restaurant =restaurantRepository.findById(requestDto.getRestaurantId())
+    public void createReview(Long userId,UUID restaurantId , UUID orderId ,ReviewRequestDto requestDto) {
+        Restaurant restaurant =restaurantRepository.findById(restaurantId)
                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 식당입니다."));
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을수 없습니다."));
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+
+        if (!order.getUser().getUserId().equals(userId)){
+            throw new IllegalArgumentException("본인 주문이 아닌경우 리뷰를 작성할 수 없습니다.");
+        }
+
+        if (!order.getStatus().equals(StatusEnum.Completed)){
+            throw new IllegalArgumentException("배송 완료된 주문만 리뷰를 작성할 수 있습ㄴ이다.");
+        }
+
+        if (reviewRepository.existsByOrderAndStatus(order, true)){
+            throw new IllegalArgumentException("해당 주문에 대한 리뷰가 이미 작성되었습니다.");
+        }
+
+        if (requestDto.getRate() < 0 || requestDto.getRate() > 6){
+            throw new IllegalArgumentException("평점은 1점 이상 5점 이하만 가능합니다.");
+        }
+
 
         Review review = Review.builder()
                 .rate(requestDto.getRate())
@@ -40,6 +64,7 @@ public class ReviewService {
                 .status(true)
                 .user(user)
                 .restaurant(restaurant)
+                .order(order)
                 .build();
 
         reviewRepository.save(review);

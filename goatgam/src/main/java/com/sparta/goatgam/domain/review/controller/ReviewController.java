@@ -6,6 +6,7 @@ import com.sparta.goatgam.domain.review.dto.ReviewUpdateResponseDto;
 import com.sparta.goatgam.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.goatgam.domain.review.service.ReviewService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,12 +22,14 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/review")
+    @PostMapping("/review/{restaurantId}/{orderId}")
     public ResponseEntity<String> createReview(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody ReviewRequestDto requestDto
+            @PathVariable UUID restaurantId,
+            @PathVariable UUID orderId,
+            @Valid @RequestBody ReviewRequestDto requestDto
             ){
-         reviewService.createReview(userDetails.getUser().getUserId(),requestDto);
+         reviewService.createReview(userDetails.getUser().getUserId(), restaurantId, orderId, requestDto);
          return ResponseEntity.ok("리뷰가 성공적으로 등록 되었습니다.");
     }
 
@@ -34,7 +37,7 @@ public class ReviewController {
     public ResponseEntity<ReviewUpdateResponseDto> updateReview(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID reviewId,
-            @RequestBody UpdateReviewRequestDto requestDto
+            @Valid @RequestBody UpdateReviewRequestDto requestDto
     ){
         ReviewUpdateResponseDto responseDto = reviewService.updateReview(userDetails.getUser().getUserId(),reviewId, requestDto);
         return ResponseEntity.ok(responseDto);
