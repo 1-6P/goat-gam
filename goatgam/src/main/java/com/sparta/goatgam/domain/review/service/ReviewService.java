@@ -45,7 +45,7 @@ public class ReviewService {
         }
 
         if (!order.getStatus().equals(StatusEnum.Completed)){
-            throw new IllegalArgumentException("배송 완료된 주문만 리뷰를 작성할 수 있습ㄴ이다.");
+            throw new IllegalArgumentException("배송 완료된 주문만 리뷰를 작성할 수 있습니다.");
         }
 
         if (reviewRepository.existsByOrderAndStatus(order, true)){
