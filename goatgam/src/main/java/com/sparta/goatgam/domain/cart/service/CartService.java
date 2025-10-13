@@ -63,12 +63,6 @@ public class CartService {
                 ) {
                     cartFood.setQuantity(cartFood.getQuantity() + cartFoodRequestDto.quantity());
 
-                    // 가격 업데이트
-                    for (CartFoodOption cartFoodOption : cartFood.getCartFoodOptions()) {
-                        cartFoodOption.setPrice(cartFoodOption.getFoodOption().getSurcharge());
-                    }
-                    cartFood.setPrice(cartFood.getFood().getFoodPrice());
-
                     return new MessageAndIdResponseDto("장바구니에 음식을 성공적으로 담았습니다.", cart.getCartId());
                 }
             }
