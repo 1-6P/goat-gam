@@ -2,6 +2,7 @@ package com.sparta.goatgam.domain.review.service;
 
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
+import com.sparta.goatgam.domain.review.dto.ReviewInfoListDto;
 import com.sparta.goatgam.domain.review.dto.ReviewRequestDto;
 import com.sparta.goatgam.domain.review.dto.ReviewUpdateResponseDto;
 import com.sparta.goatgam.domain.review.dto.UpdateReviewRequestDto;
@@ -13,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,5 +75,30 @@ public class ReviewService {
 
         review.deleteReview(user.getNickname());
         return new ReviewUpdateResponseDto(reviewId, "리뷰가 삭제되었습니다.");
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReviewInfoListDto> reviewAll(UUID restaurantId) {
+
+        List<Review> reviewList = reviewRepository.findAllByRestaurant_RestaurantId(restaurantId)
+                .stream()
+                .filter(f -> Boolean.TRUE.equals(f.getStatus()))
+                .collect(Collectors.toList());
+
+        List<ReviewInfoListDto> reviewInfoListDto = reviewList.stream()
+                .map(f -> {
+                    ReviewInfoListDto dto = new ReviewInfoListDto();
+                    dto.setReviewId(f.getReviewId());
+                    dto.setRestaurantId(f.getRestaurant().getRestaurantId());
+                    dto.setNickname(f.getUser().getNickname());
+                    dto.setContent(f.getContent());
+                    dto.setReviewImage(f.getReviewImage());
+                    dto.setRate(f.getRate());
+                    dto.setCreatedAt(f.getCreatedAt());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return reviewInfoListDto;
     }
 }

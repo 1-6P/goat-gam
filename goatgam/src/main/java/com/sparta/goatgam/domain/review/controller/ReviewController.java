@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.review.controller;
 
+import com.sparta.goatgam.domain.review.dto.ReviewInfoListDto;
 import com.sparta.goatgam.domain.review.dto.ReviewRequestDto;
 import com.sparta.goatgam.domain.review.dto.ReviewUpdateResponseDto;
 import com.sparta.goatgam.domain.review.dto.UpdateReviewRequestDto;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -45,5 +47,13 @@ public class ReviewController {
     ){
         ReviewUpdateResponseDto responseDto = reviewService.deleteReview(userDetails.getUser().getUserId(),reviewId);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/review/{restaurantId}")
+    public ResponseEntity<List<ReviewInfoListDto>> reviewAll(
+            @PathVariable UUID restaurantId
+    ){
+        List<ReviewInfoListDto> reviewInfoList = reviewService.reviewAll(restaurantId);
+        return ResponseEntity.ok(reviewInfoList);
     }
 }
