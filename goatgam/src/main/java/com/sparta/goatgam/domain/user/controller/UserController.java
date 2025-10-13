@@ -134,7 +134,7 @@ public class UserController {
             description = "관리자나 유저의 아이디로 유저 복구"
     )
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
-    @DeleteMapping("/user/{userId}/restore")
+    @PutMapping("/user/{userId}/restore")
     public ResponseEntity<?> restoreUser (@PathVariable Long userId) {
         userService.restore(userId);
         return ResponseEntity.noContent().build();
