@@ -19,9 +19,10 @@ public class FoodController {
     @PostMapping
     public ResultResponseDto addFood(@PathVariable UUID restaurantId,
                                      @RequestBody FoodRequestDto foodRequestDto,
+                                     @RequestParam boolean ai,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return foodService.addFood(restaurantId, foodRequestDto, userDetails.getUser());
+        return foodService.addFood(restaurantId, foodRequestDto, ai, userDetails.getUser());
     }
 
     @PutMapping("/{menuId}")
