@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.cart.controller;
 
 import com.sparta.goatgam.domain.cart.dto.CartFoodRequestDto;
+import com.sparta.goatgam.domain.cart.dto.CartResponseDto;
 import com.sparta.goatgam.domain.cart.service.CartService;
 import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
@@ -10,10 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,5 +29,12 @@ public class CartController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return ResponseEntity.ok(cartService.addCartFood(cartFoodRequestDto, userDetails.getUser()));
+    }
+
+    @Operation(summary = "장바구니 조회", description = "장바구니 정보를 조회합니다.")
+    @GetMapping("")
+    public ResponseEntity<CartResponseDto> getCartInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return ResponseEntity.ok(cartService.getCartInfo(userDetails.getUser()));
     }
 }
