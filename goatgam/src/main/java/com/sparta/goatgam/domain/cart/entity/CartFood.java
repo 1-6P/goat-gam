@@ -1,13 +1,14 @@
 package com.sparta.goatgam.domain.cart.entity;
 
 import com.sparta.goatgam.domain.owner.entity.Food;
+import com.sparta.goatgam.domain.owner.entity.FoodStatus;
+import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,8 +16,9 @@ import java.util.UUID;
 @Table(name = "p_cart_food")
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@ToString
 public class CartFood extends BaseEntity {
 
     @Id
@@ -40,4 +42,43 @@ public class CartFood extends BaseEntity {
 
     @OneToMany(mappedBy = "cartFood", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartFoodOption> cartFoodOptions;
+
+    @Column(name = "is_deleted", nullable = false)
+    @ColumnDefault("false")
+    private boolean isDeleted;
+
+    public static CartFood create(Food food, int quantity) {
+        // 음식 검증
+        if (food.getFoodStatus() != FoodStatus.Ok) {
+            throw new IllegalArgumentException("판매중인 음식이 아닙니다.");
+        }
+
+        CartFood cartFood = new CartFood();
+
+        cartFood.quantity = quantity;
+        cartFood.price = food.getFoodPrice();
+        cartFood.food = food;
+        cartFood.cartFoodOptions = new ArrayList<>();
+
+        return cartFood;
+    }
+
+    public void addCartFoodOption(CartFoodOption cartFoodOption) {
+        cartFoodOptions.add(cartFoodOption);
+        cartFoodOption.setCartFood(this);
+    }
+
+    // 명시적 접근자: 파생 쿼리에서 isDeleted 프로퍼티 인식용
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void delete(User user) {
+        isDeleted = true;
+        deleted(user.getNickname());
+
+        for (CartFoodOption cartFoodOption : cartFoodOptions) {
+            cartFoodOption.delete(user);
+        }
+    }
 }
