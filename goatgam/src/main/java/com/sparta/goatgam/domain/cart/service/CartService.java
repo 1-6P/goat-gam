@@ -45,7 +45,11 @@ public class CartService {
         ).orElseThrow(() -> new IllegalArgumentException("음식을 찾을 수 없습니다."));
         // 1. 해당 유저가 소유하고 있는 활성화 카드 정보 가져오기.
         // 2. 없으면 새로 생성
-        Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseGet(() -> Cart.create(user, restaurant));
+        Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseGet(() -> {
+            Cart newCart = Cart.create(user, restaurant);
+            cartRepository.save(newCart);
+            return newCart;
+        });
 
         // 3. 있으면 requestDto에서 restaurantId 가져와서 cart의 restaurantId와 비교
         // 4. 있는데 같으면 카트 유지
@@ -71,6 +75,7 @@ public class CartService {
             // 5. 있는데 다르면 카트 삭제 후 새 카트 생성
             cart.delete(user);
             cart = Cart.create(user, restaurant);
+            cartRepository.save(cart);
         }
 
         // 6. 카트에 음식 담기   -> message와 카트 ID return
@@ -92,8 +97,6 @@ public class CartService {
             }
 
         cart.addCartFood(cartFood);
-
-        cartRepository.save(cart);
 
         return new MessageAndIdResponseDto("장바구니에 음식을 성공적으로 담았습니다.", cart.getCartId());
     }
