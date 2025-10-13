@@ -8,11 +8,12 @@ import com.sparta.goatgam.domain.review.service.ReviewService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -53,10 +54,14 @@ public class ReviewController {
     }
 
     @GetMapping("/review/{restaurantId}")
-    public ResponseEntity<List<ReviewInfoListDto>> reviewAll(
-            @PathVariable UUID restaurantId
+    public ResponseEntity<PagedModel<ReviewInfoListDto>> reviewAll(
+            @PathVariable UUID restaurantId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "desc") String sort
     ){
-        List<ReviewInfoListDto> reviewInfoList = reviewService.reviewAll(restaurantId);
+        Sort.Direction direction = sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        PagedModel<ReviewInfoListDto> reviewInfoList = reviewService.reviewAll(restaurantId,page,size,direction);
         return ResponseEntity.ok(reviewInfoList);
     }
 }

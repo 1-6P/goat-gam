@@ -13,13 +13,16 @@ import com.sparta.goatgam.domain.review.entity.Review;
 import com.sparta.goatgam.domain.review.repository.ReviewRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
+import com.sparta.goatgam.global.util.PageableUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -103,27 +106,22 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewInfoListDto> reviewAll(UUID restaurantId) {
+    public PagedModel<ReviewInfoListDto> reviewAll(UUID restaurantId, int page, int size, Sort.Direction direction) {
 
-        List<Review> reviewList = reviewRepository.findAllByRestaurant_RestaurantId(restaurantId)
-                .stream()
-                .filter(f -> Boolean.TRUE.equals(f.getStatus()))
-                .collect(Collectors.toList());
+        Pageable pageable = PageableUtils.makePageable(page,size, PageableUtils.order(direction, "createdAt"));
 
-        List<ReviewInfoListDto> reviewInfoListDto = reviewList.stream()
-                .map(f -> {
-                    ReviewInfoListDto dto = new ReviewInfoListDto();
-                    dto.setReviewId(f.getReviewId());
-                    dto.setRestaurantId(f.getRestaurant().getRestaurantId());
-                    dto.setNickname(f.getUser().getNickname());
-                    dto.setContent(f.getContent());
-                    dto.setReviewImage(f.getReviewImage());
-                    dto.setRate(f.getRate());
-                    dto.setCreatedAt(f.getCreatedAt());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        Page<Review> reviewPage = reviewRepository.findByRestaurant_RestaurantIdAndStatusTrue(restaurantId, pageable);
 
-        return reviewInfoListDto;
+        return new PagedModel<>( reviewPage.map(f -> {
+            ReviewInfoListDto dto = new ReviewInfoListDto();
+            dto.setReviewId(f.getReviewId());
+            dto.setRestaurantId(f.getRestaurant().getRestaurantId());
+            dto.setNickname(f.getUser().getNickname());
+            dto.setContent(f.getContent());
+            dto.setReviewImage(f.getReviewImage());
+            dto.setRate(f.getRate());
+            dto.setCreatedAt(f.getCreatedAt());
+            return dto;
+        }));
     }
 }
