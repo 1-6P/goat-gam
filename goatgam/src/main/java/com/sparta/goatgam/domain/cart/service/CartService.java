@@ -110,6 +110,7 @@ public class CartService {
         Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseThrow(() ->
                 new IllegalArgumentException("생성된 장바구니가 없습니다."));
 
+        // @SQLRestriction 어노테이션으로 인해 삭제된 CartFood와 CartFoodOption은 자동으로 제외됨
         return new CartResponseDto(cart);
     }
 }

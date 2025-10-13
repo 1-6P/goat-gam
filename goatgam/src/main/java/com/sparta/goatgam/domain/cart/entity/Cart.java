@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class Cart extends BaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @SQLRestriction("is_deleted = false")
     private List<CartFood> cartFoods;
 
     @Column(name = "is_deleted", nullable = false)
