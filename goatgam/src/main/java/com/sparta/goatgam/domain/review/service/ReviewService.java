@@ -3,7 +3,7 @@ package com.sparta.goatgam.domain.review.service;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.review.dto.ReviewRequestDto;
-import com.sparta.goatgam.domain.review.dto.ReviewResponseDto;
+import com.sparta.goatgam.domain.review.dto.ReviewUpdateResponseDto;
 import com.sparta.goatgam.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.goatgam.domain.review.entity.Review;
 import com.sparta.goatgam.domain.review.repository.ReviewRepository;
@@ -43,7 +43,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewResponseDto updateReview(Long userId, UUID reviewId, UpdateReviewRequestDto requestDto) {
+    public ReviewUpdateResponseDto updateReview(Long userId, UUID reviewId, UpdateReviewRequestDto requestDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
@@ -59,6 +59,18 @@ public class ReviewService {
                 requestDto.getContent(),
                 requestDto.getReview_image()
         );
-        return new ReviewResponseDto(reviewId ,"리뷰가 성공적으로 수정 되었습니다.");
+        return new ReviewUpdateResponseDto(reviewId ,"리뷰가 성공적으로 수정 되었습니다.");
+    }
+
+    @Transactional
+    public ReviewUpdateResponseDto deleteReview(Long userId, UUID reviewId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 후기입니다."));
+
+        review.deleteReview(user.getNickname());
+        return new ReviewUpdateResponseDto(reviewId, "리뷰가 삭제되었습니다.");
     }
 }

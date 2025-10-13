@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-public class ReviewResponseDto {
+public class ReviewUpdateResponseDto {
     private UUID reviewId;
     private String message;
 }
