@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.order.entity;
 
+import com.sparta.goatgam.domain.cart.entity.CartFood;
 import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Table(name = "p_order_food")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderFood extends BaseEntity {
@@ -33,9 +35,6 @@ public class OrderFood extends BaseEntity {
     @Column(name = "quantity", nullable = false, updatable = false)
     private int quantity;
 
-    @Column(name = "price", nullable = false, updatable = false)
-    private int price;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
@@ -43,4 +42,17 @@ public class OrderFood extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_id")
     private Food food;
+
+    public static OrderFood fromCartFood(CartFood cartFood) {
+        List<String> options = cartFood.getCartFoodOptions()
+                .stream()
+                .map(opt -> opt.getFoodOption().getContents())
+                .toList();
+
+        return OrderFood.builder()
+                .foodName(cartFood.getFood().getFoodName())
+                .optionList(options)
+                .quantity(cartFood.getQuantity())
+                .food(cartFood.getFood()).build();
+    }
 }

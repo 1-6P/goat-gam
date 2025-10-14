@@ -17,7 +17,7 @@ public class OrderFoodItemDto {
     public OrderFoodItemDto(OrderFood orderFood) {
         this.foodName = orderFood.getFoodName();
         this.options = orderFood.getOptionList();
-        this.price = orderFood.getPrice();
+        this.price = orderFood.getFood().getFoodPrice();
         this.quantity = orderFood.getQuantity();
     }
 }
