@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.ai.service;
 
+import com.sparta.goatgam.domain.owner.entity.Food;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -21,10 +22,10 @@ public class GeminiService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public String generateMenuDescription(String prompt) {
+    public String generateMenuDescription(Food food, String prompt) {
         String url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent?key=" + apiKey;
 
-        Map<String, Object> body = Map.of("contents", List.of(Map.of("parts", List.of(Map.of("text", "50글자 내로 간략하게 " + prompt)))));
+        Map<String, Object> body = Map.of("contents", List.of(Map.of("parts", List.of(Map.of("text", food.getFoodName()+"의 메뉴 설명을 작성할거야. 50글자 내로 간략하게 " + prompt)))));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
