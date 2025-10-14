@@ -72,15 +72,19 @@ public enum ExceptionCode {
 
     //주문내역 (ORDER)
     ORDER_NOT_FOUND("ORDER01", "존재하지 않는 주문내역입니다." ,HttpStatus.NOT_FOUND),
+    FORBIDDEN_ORDER("ORDER02", "주문에 대한 권한이 없습니다. ", HttpStatus.FORBIDDEN),
 
     //리뷰 (RV)
     REVIEW_NOT_FOUND("RV01", "해당 리뷰를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     FORBIDDEN_CREATE_REVIEW_( "RV02", "본인 주문이 아닌경우 리뷰를 작성할 수 없습니다.",HttpStatus.FORBIDDEN),
     FORBIDDEN_ORDER_REVIEW("RV03", "배송 완료된 주문만 리뷰를 작성할 수 있습니다.",HttpStatus.FORBIDDEN),
     REVIEW_ORDER_NOT_ALLOWED("RV04", "해당 주문에 대한 리뷰가 이미 작성되었습니다.",HttpStatus.BAD_REQUEST),
-    REVIEW_RATE_ERROR("RV05", "평점은 1점 이상 5점 이하만 가능합니다.", HttpStatus.BAD_REQUEST)
-    //
+    REVIEW_RATE_ERROR("RV05", "평점은 1점 이상 5점 이하만 가능합니다.", HttpStatus.BAD_REQUEST),
 
+
+    //결제처리 (PG)
+    PG_NOT_FOUND("PG01","결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    PG_TIMEOUT("PG02", "결제 처리 시간이 지났습니다.",HttpStatus.CONFLICT),
     ;
 
 
