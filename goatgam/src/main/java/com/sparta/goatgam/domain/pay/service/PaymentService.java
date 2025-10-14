@@ -20,6 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
@@ -86,7 +87,7 @@ public class PaymentService {
         Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new RuntimeException("해당 주문의 결제가 존재하지 않습니다."));
 
         if(!order.getRestaurant().getUser().getUserId().equals(user.getUserId())) {
-            throw new RuntimeException(order.getRestaurant().getUser().getUsername() + "권한이 없습니다.");
+            throw new RuntimeException("해당 주문의 환불 권한이 없습니다.");
         }
 
         if(payment.getPaymentStatus() != paymentStatusEnum.Done){
