@@ -8,12 +8,13 @@ import com.sparta.goatgam.domain.pay.entity.Payment;
 import com.sparta.goatgam.domain.pay.entity.PaymentMethodEnum;
 import com.sparta.goatgam.domain.pay.entity.paymentStatusEnum;
 import com.sparta.goatgam.domain.pay.repository.PaymentRepository;
+import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -22,7 +23,6 @@ import java.util.UUID;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
-    private final RestTemplate restTemplate = new RestTemplate();
 
     public MessageAndIdResponseDto varifyAmount(PaymentVerifyRequestDto paymentVerifyRequestDto) {
         Order order = orderRepository.findById(paymentVerifyRequestDto.getOrderId()).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
@@ -60,5 +60,23 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         return new MessageAndIdResponseDto("mock payment success", payment.getPaymentId());
+    }
+
+    public MessageAndIdResponseDto cancelPayment(UUID orderId, User user) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
+        Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new RuntimeException("해당 주문의 결제가 존재하지 않습니다."));
+
+        if(!order.getUser().equals(user)){
+            throw new RuntimeException("해당 주문에 대한 권한이 없습니다.");
+        }
+
+        if(Duration.between(payment.getApprovedAt(), LocalDateTime.now()).toMinutes() > 5){
+            throw new RuntimeException("취소 가능 시간이 지났습니다.");
+        }
+
+        payment.updateStatus(paymentStatusEnum.Canceled);
+        paymentRepository.save(payment);
+
+        return new MessageAndIdResponseDto("payment cancel success", orderId);
     }
 }

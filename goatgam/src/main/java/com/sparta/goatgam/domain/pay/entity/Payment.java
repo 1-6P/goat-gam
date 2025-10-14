@@ -26,11 +26,11 @@ public class Payment {
     private String paymentKey;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "method", nullable = false, length = 10)
+    @Column(name = "method", nullable = false, updatable = false, length = 10)
     private PaymentMethodEnum method;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_status", nullable = false, updatable = false, length = 10)
+    @Column(name = "payment_status", nullable = false,  length = 10)
     private paymentStatusEnum paymentStatus;
 
     @Column(name = "amount", nullable = false, updatable = false)
@@ -60,4 +60,8 @@ public class Payment {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
+
+    public void updateStatus(paymentStatusEnum paymentStatusEnum) {
+        this.paymentStatus = paymentStatusEnum;
+    }
 }

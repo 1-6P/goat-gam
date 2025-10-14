@@ -4,11 +4,12 @@ import com.sparta.goatgam.domain.pay.dto.PaymentConfirmRequestDto;
 import com.sparta.goatgam.domain.pay.dto.PaymentVerifyRequestDto;
 import com.sparta.goatgam.domain.pay.service.PaymentService;
 import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
+import com.sparta.goatgam.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +25,10 @@ public class PaymentController {
     @PostMapping("/confirm")
     public MessageAndIdResponseDto confirmPayment(@RequestBody PaymentConfirmRequestDto paymentConfirmRequestDto){
         return paymentService.confirmPayment(paymentConfirmRequestDto);
+    }
+
+    @PostMapping("/cancel")
+    public MessageAndIdResponseDto cancelPayment(@RequestParam UUID orderId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return paymentService.cancelPayment(orderId, userDetails.getUser());
     }
 }
