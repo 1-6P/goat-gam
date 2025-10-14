@@ -37,10 +37,10 @@ public class AIController {
     public Page<AiResponseDto> getAllAiRequest(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "desc") String sort
+            @RequestParam(defaultValue = "DESC") Sort.Direction sort
     ) {
-        Sort.Direction direction = sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        return aiService.getAiRequest(page, size, direction);
+
+        return aiService.getAiRequest(page, size, sort);
     }
 
     @Operation(summary = "AI 요청 단건 조회", description = "하나의 AI요청에 대한 정보를 조회")
