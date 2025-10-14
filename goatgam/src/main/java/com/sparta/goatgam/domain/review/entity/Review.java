@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.review.entity;
 
+import com.sparta.goatgam.domain.order.entity.Order;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
@@ -41,16 +42,15 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     public void deleteReview(String nickname) {
         if (this.status){
             this.status = false;
             this.deleted(nickname);
         }
-    }
-
-    public void restoreReview(String nickname) {
-        this.status = true;
-        this.restore();
     }
 
     public void updateReview(int rate, String content, String reviewImage){
