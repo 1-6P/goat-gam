@@ -5,6 +5,8 @@ import com.sparta.goatgam.domain.ai.dto.AiResponseDto;
 import com.sparta.goatgam.domain.ai.service.AIService;
 import com.sparta.goatgam.domain.owner.dto.ResultResponseDto;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -17,9 +19,11 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/ai")
+@Tag(name = "AI API", description = "AI 관련 기능 API입니다.")
 public class AIController {
     private final AIService aiService;
 
+    @Operation(summary = "AI 음식 설명 생성", description = "AI를 통해 음식의 설명을 사용자의 요청에 맞게 생성")
     @PostMapping("/{menuId}")
     public ResultResponseDto createAiRequest(@PathVariable("menuId") UUID menuId,
                                              @RequestBody AIRequestDto aiRequestDto,
@@ -27,6 +31,7 @@ public class AIController {
         return aiService.createAiRequest(menuId, userDetails.getUser(), aiRequestDto);
     }
 
+    @Operation(summary = "관리자용 AI요청 전체 조회", description = "모든 AI 요청을 조회 (관리자만 가능)")
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
     @GetMapping
     public Page<AiResponseDto> getAllAiRequest(
@@ -38,6 +43,7 @@ public class AIController {
         return aiService.getAiRequest(page, size, direction);
     }
 
+    @Operation(summary = "AI 요청 단건 조회", description = "하나의 AI요청에 대한 정보를 조회")
     @GetMapping("/{aiId}")
     public AiResponseDto getAiRequest(@PathVariable UUID aiId) {
         return aiService.getAiRequestById(aiId);

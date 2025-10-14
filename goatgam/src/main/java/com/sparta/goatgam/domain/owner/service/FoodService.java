@@ -1,5 +1,7 @@
 package com.sparta.goatgam.domain.owner.service;
 
+import com.sparta.goatgam.domain.ai.dto.AIRequestDto;
+import com.sparta.goatgam.domain.ai.service.AIService;
 import com.sparta.goatgam.domain.owner.dto.FoodRequestDto;
 import com.sparta.goatgam.domain.owner.dto.ResultResponseDto;
 import com.sparta.goatgam.domain.owner.entity.Food;
@@ -21,9 +23,10 @@ import java.util.UUID;
 public class FoodService {
     private final FoodRepository foodRepository;
     private final RestaurantRepository restaurantRepository;
+    private final AIService aiService;
 
     @Transactional
-    public ResultResponseDto addFood(UUID restaurantId, FoodRequestDto dto, User currentUser) {
+    public ResultResponseDto addFood(UUID restaurantId, FoodRequestDto dto, boolean ai, User currentUser) {
         Restaurant restaurant = validateRestaurantOwner(restaurantId, currentUser);
 
         Optional<Food> existingFoodOpt = foodRepository.findByRestaurantAndFoodName(restaurant, dto.getName());
@@ -51,6 +54,12 @@ public class FoodService {
                 .build();
 
         foodRepository.save(food);
+
+        if (ai) {
+            AIRequestDto aiRequestDto = new AIRequestDto(dto.getExplain());
+            food.updateExplain(aiService.createAiRequest(food.getId(), currentUser, aiRequestDto).getMessage());
+        }
+
         return new ResultResponseDto("create success", food.getId());
     }
 
