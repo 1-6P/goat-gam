@@ -1,7 +1,11 @@
 package com.sparta.goatgam.domain.review.service;
 
+import com.sparta.goatgam.domain.order.entity.Order;
+import com.sparta.goatgam.domain.order.entity.StatusEnum;
+import com.sparta.goatgam.domain.order.repository.OrderRepository;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
+import com.sparta.goatgam.domain.review.dto.ReviewInfoListDto;
 import com.sparta.goatgam.domain.review.dto.ReviewRequestDto;
 import com.sparta.goatgam.domain.review.dto.ReviewUpdateResponseDto;
 import com.sparta.goatgam.domain.review.dto.UpdateReviewRequestDto;
@@ -9,7 +13,12 @@ import com.sparta.goatgam.domain.review.entity.Review;
 import com.sparta.goatgam.domain.review.repository.ReviewRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
+import com.sparta.goatgam.global.util.PageableUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +30,35 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
+    private final OrderRepository orderRepository;
 
     @Transactional
-    public void createReview(Long userId, ReviewRequestDto requestDto) {
-        Restaurant restaurant =restaurantRepository.findById(requestDto.getRestaurantId())
+    public void createReview(Long userId,UUID restaurantId , UUID orderId ,ReviewRequestDto requestDto) {
+        Restaurant restaurant =restaurantRepository.findById(restaurantId)
                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 식당입니다."));
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을수 없습니다."));
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+
+        if (!order.getUser().getUserId().equals(userId)){
+            throw new IllegalArgumentException("본인 주문이 아닌경우 리뷰를 작성할 수 없습니다.");
+        }
+
+        if (!order.getStatus().equals(StatusEnum.Completed)){
+            throw new IllegalArgumentException("배송 완료된 주문만 리뷰를 작성할 수 있습니다.");
+        }
+
+        if (reviewRepository.existsByOrderAndStatus(order, true)){
+            throw new IllegalArgumentException("해당 주문에 대한 리뷰가 이미 작성되었습니다.");
+        }
+
+        if (requestDto.getRate() < 0 || requestDto.getRate() > 6){
+            throw new IllegalArgumentException("평점은 1점 이상 5점 이하만 가능합니다.");
+        }
+
 
         Review review = Review.builder()
                 .rate(requestDto.getRate())
@@ -37,6 +67,7 @@ public class ReviewService {
                 .status(true)
                 .user(user)
                 .restaurant(restaurant)
+                .order(order)
                 .build();
 
         reviewRepository.save(review);
@@ -72,5 +103,25 @@ public class ReviewService {
 
         review.deleteReview(user.getNickname());
         return new ReviewUpdateResponseDto(reviewId, "리뷰가 삭제되었습니다.");
+    }
+
+    @Transactional(readOnly = true)
+    public PagedModel<ReviewInfoListDto> reviewAll(UUID restaurantId, int page, int size, Sort.Direction direction) {
+
+        Pageable pageable = PageableUtils.makePageable(page,size, PageableUtils.order(direction, "createdAt"));
+
+        Page<Review> reviewPage = reviewRepository.findByRestaurant_RestaurantIdAndStatusTrue(restaurantId, pageable);
+
+        return new PagedModel<>( reviewPage.map(f -> {
+            ReviewInfoListDto dto = new ReviewInfoListDto();
+            dto.setReviewId(f.getReviewId());
+            dto.setRestaurantId(f.getRestaurant().getRestaurantId());
+            dto.setNickname(f.getUser().getNickname());
+            dto.setContent(f.getContent());
+            dto.setReviewImage(f.getReviewImage());
+            dto.setRate(f.getRate());
+            dto.setCreatedAt(f.getCreatedAt());
+            return dto;
+        }));
     }
 }
