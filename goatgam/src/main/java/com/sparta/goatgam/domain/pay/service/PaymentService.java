@@ -25,8 +25,12 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
-    public MessageAndIdResponseDto varifyAmount(PaymentVerifyRequestDto paymentVerifyRequestDto) {
+    public MessageAndIdResponseDto varifyAmount(PaymentVerifyRequestDto paymentVerifyRequestDto, User user) {
         Order order = orderRepository.findById(paymentVerifyRequestDto.getOrderId()).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
+
+        if(!order.getUser().getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("회원정보가 일치하지 않습니다.");
+        }
 
         if(order.getTotalPrice() != paymentVerifyRequestDto.getAmount()){
             throw new RuntimeException("금액이 일치하지 않습니다.");
@@ -35,10 +39,14 @@ public class PaymentService {
     }
 
     @Transactional
-    public MessageAndIdResponseDto confirmPayment(PaymentConfirmRequestDto dto) {
+    public MessageAndIdResponseDto confirmPayment(PaymentConfirmRequestDto dto, User user) {
 
         Order order = orderRepository.findById(dto.getOrderId())
                 .orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
+
+        if(!order.getUser().getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("회원정보가 일치하지 않습니다.");
+        }
 
         if (order.getTotalPrice() != dto.getAmount()) {
             throw new RuntimeException("금액이 일치하지 않습니다.");

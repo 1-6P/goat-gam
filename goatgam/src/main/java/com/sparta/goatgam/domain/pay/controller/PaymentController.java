@@ -22,14 +22,14 @@ public class PaymentController {
 
     @Operation(summary = "결제 검증", description = "주문금액과 결제 금액이 같은지 확인")
     @PostMapping("/verify-amount")
-    public MessageAndIdResponseDto verifyAmount(@RequestBody PaymentVerifyRequestDto paymentVerifyRequestDto){
-        return paymentService.varifyAmount(paymentVerifyRequestDto);
+    public MessageAndIdResponseDto verifyAmount(@RequestBody PaymentVerifyRequestDto paymentVerifyRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return paymentService.varifyAmount(paymentVerifyRequestDto, userDetails.getUser());
     }
 
     @Operation(summary = "결제 승인", description = "결제를 승인")
     @PostMapping("/confirm")
-    public MessageAndIdResponseDto confirmPayment(@RequestBody PaymentConfirmRequestDto paymentConfirmRequestDto){
-        return paymentService.confirmPayment(paymentConfirmRequestDto);
+    public MessageAndIdResponseDto confirmPayment(@RequestBody PaymentConfirmRequestDto paymentConfirmRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return paymentService.confirmPayment(paymentConfirmRequestDto, userDetails.getUser());
     }
 
     @Operation(summary = "결제 취소", description = "결제 후 5분 내로 취소 가능(주문자와 동일한 경우)")
