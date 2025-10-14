@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class BusinessException extends RuntimeException {
 
-    private final ErrorCode errorCode;
+    private final ExceptionCode exceptionCode;
 
-    public BusinessException(ErrorCode errorCode) {
-        this.errorCode = errorCode;
+    public BusinessException(ExceptionCode exceptionCode) {
+        this.exceptionCode = exceptionCode;
     }
 }
