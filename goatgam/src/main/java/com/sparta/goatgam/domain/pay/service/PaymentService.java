@@ -20,12 +20,17 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
-    public MessageAndIdResponseDto varifyAmount(PaymentVerifyRequestDto paymentVerifyRequestDto) {
+    public MessageAndIdResponseDto varifyAmount(PaymentVerifyRequestDto paymentVerifyRequestDto, User user) {
         Order order = orderRepository.findById(paymentVerifyRequestDto.getOrderId()).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
+
+        if(!order.getUser().getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("회원정보가 일치하지 않습니다.");
+        }
 
         if(order.getTotalPrice() != paymentVerifyRequestDto.getAmount()){
             throw new RuntimeException("금액이 일치하지 않습니다.");
@@ -34,10 +39,14 @@ public class PaymentService {
     }
 
     @Transactional
-    public MessageAndIdResponseDto confirmPayment(PaymentConfirmRequestDto dto) {
+    public MessageAndIdResponseDto confirmPayment(PaymentConfirmRequestDto dto, User user) {
 
         Order order = orderRepository.findById(dto.getOrderId())
                 .orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
+
+        if(!order.getUser().getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("회원정보가 일치하지 않습니다.");
+        }
 
         if (order.getTotalPrice() != dto.getAmount()) {
             throw new RuntimeException("금액이 일치하지 않습니다.");
@@ -62,6 +71,7 @@ public class PaymentService {
         return new MessageAndIdResponseDto("mock payment success", payment.getPaymentId());
     }
 
+    @Transactional
     public MessageAndIdResponseDto cancelPayment(UUID orderId, User user) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
         Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new RuntimeException("해당 주문의 결제가 존재하지 않습니다."));
@@ -75,8 +85,29 @@ public class PaymentService {
         }
 
         payment.updateStatus(paymentStatusEnum.Canceled);
-        paymentRepository.save(payment);
 
         return new MessageAndIdResponseDto("payment cancel success", orderId);
+    }
+
+    @Transactional
+    public MessageAndIdResponseDto refundPayment(PaymentVerifyRequestDto dto, User user) {
+        Order order = orderRepository.findById(dto.getOrderId()).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
+        Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new RuntimeException("해당 주문의 결제가 존재하지 않습니다."));
+
+        if(!order.getRestaurant().getUser().getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("해당 주문의 환불 권한이 없습니다.");
+        }
+
+        if(payment.getPaymentStatus() != paymentStatusEnum.Done){
+            throw new RuntimeException("환불이 가능한 상태가 아닙니다.");
+        }
+
+        if(dto.getAmount() > payment.getAmount()){
+            throw new RuntimeException("주문금액 이상은 환불할 수 없습니다.");
+        }
+
+        payment.updateStatus(paymentStatusEnum.Refunded);
+
+        return new MessageAndIdResponseDto("refund success", dto.getOrderId());
     }
 }
