@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/cart")
@@ -21,6 +23,13 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
 
     private final CartService cartService;
+
+    @Operation(summary = "장바구니 조회", description = "장바구니 정보를 조회합니다.")
+    @GetMapping("")
+    public ResponseEntity<CartResponseDto> getCartInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return ResponseEntity.ok(cartService.getCartInfo(userDetails.getUser()));
+    }
 
     @Operation(summary = "장바구니에 음식 추가", description = "장바구니에 음식을 추가합니다. 하나의 가게의 음식만 담을 수 있고 " +
             "새로운 가게의 음식을 담으면 이전 장바구니는 삭제되고 새로운 장바구니가 생성됩니다.")
@@ -32,13 +41,6 @@ public class CartController {
         return ResponseEntity.ok(cartService.addCartFood(cartFoodRequestDto, userDetails.getUser()));
     }
 
-    @Operation(summary = "장바구니 조회", description = "장바구니 정보를 조회합니다.")
-    @GetMapping("")
-    public ResponseEntity<CartResponseDto> getCartInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        return ResponseEntity.ok(cartService.getCartInfo(userDetails.getUser()));
-    }
-
     @Operation(summary = "장바구니에서 옵션 변경", description = "장바구니에 든 음식의 옵션을 변경합니다.")
     @PatchMapping("")
     public ResponseEntity<MessageAndIdResponseDto> updateCartFoodOption(
@@ -46,5 +48,14 @@ public class CartController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.ok(cartService.updateCartFoodOption(cartFoodUpdateRequestDto, userDetails.getUser()));
+    }
+
+    @Operation(summary = "장바구니에서 음식 삭제", description = "장바구니에서 음식을 삭제합니다.")
+    @PatchMapping("{cartFoodId}")
+    public ResponseEntity<MessageAndIdResponseDto> deleteCartFood(
+            @PathVariable UUID cartFoodId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(cartService.deleteCartFood(cartFoodId, userDetails.getUser()));
     }
 }
