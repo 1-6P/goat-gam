@@ -31,4 +31,9 @@ public class PaymentController {
     public MessageAndIdResponseDto cancelPayment(@RequestParam UUID orderId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return paymentService.cancelPayment(orderId, userDetails.getUser());
     }
+
+    @PostMapping("/refund")
+    public MessageAndIdResponseDto refundPayment(@RequestBody PaymentVerifyRequestDto dto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return paymentService.refundPayment(dto, userDetails.getUser());
+    }
 }
