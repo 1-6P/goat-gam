@@ -22,9 +22,6 @@ public class CartFoodOption extends BaseEntity {
     @Column(name = "cart_food_option_id", nullable = false, updatable = false)
     private UUID cartFoodOptionId;
 
-    @Column(name = "price", nullable = false)
-    private int price;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_option_id")
     private FoodOption foodOption;
@@ -44,7 +41,6 @@ public class CartFoodOption extends BaseEntity {
 
         CartFoodOption cartFoodOption = new CartFoodOption();
 
-        cartFoodOption.price = foodOption.getSurcharge();
         cartFoodOption.foodOption = foodOption;
 
         return cartFoodOption;
