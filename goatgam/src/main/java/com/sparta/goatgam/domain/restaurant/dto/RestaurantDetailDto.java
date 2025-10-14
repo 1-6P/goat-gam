@@ -15,7 +15,6 @@ public class RestaurantDetailDto {
     private Integer restaurantTypeCode;
     private String restaurantTypeName;
     private String restaurantName;
-    //private String userId;
     private Long userId; //저희 userId는 현재 Long 타입입니다! String으로 꼭 남겨야하는게 아니라면, Long을 그대로 사용해야해요
     private String userName;
     private int regionCode;
