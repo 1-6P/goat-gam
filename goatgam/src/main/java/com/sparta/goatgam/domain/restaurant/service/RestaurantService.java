@@ -124,7 +124,7 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto RollbackDeletedRestaurant(UUID restaurantId,User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
         checkUser(restaurant, userInfo);
         restaurant.setStatus(true);
         return RestaurantInfoDto.convertDto(restaurant);
@@ -179,9 +179,8 @@ public class RestaurantService {
     // 특정 식당의 메뉴 조회 (기본: Hidden/Deleted 제외, includeHidden=true면 전부)
     @Transactional(readOnly = true)
     public List<FoodListDto> getRestaurantMenu(UUID restaurantId, boolean includeHidden) {
-        // 식당 존재 여부만 확인 (없으면 404 성격의 예외)
         if (!restaurantRepository.existsById(restaurantId)) {
-            throw new IllegalArgumentException("식당을 찾을 수 없습니다: " + restaurantId);
+            throw new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND);
         }
 
         return foodRepository.findAll().stream()
@@ -198,12 +197,11 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public RestaurantFoodDetailDto getFoodDetail(UUID restaurantId, UUID foodId) {
         Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId,restaurantId)
-                .orElseThrow( () -> new IllegalArgumentException("메뉴가 등록되어있지 않거나 정보 입력이 잘못되었습니다. " +
-                        " restaurantId:" + restaurantId + " foodId:" + foodId));
+                .orElseThrow( () -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
 
         //판매중인 상품이 아니면 조회가 불가능하다.
         if(foodDetails.getFoodStatus() != FoodStatus.Ok) {
-            throw new IllegalArgumentException("해당 상품은 현재 판매하지 않는 상품입니다.");
+            throw new BusinessException(ExceptionCode.FOOD_NOT_SELL);
         }
         return RestaurantFoodDetailDto.convertDto(foodDetails);
     }
@@ -213,13 +211,16 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public List<RestaurantFoodOptionDetailDto> getFoodDetails(UUID restaurantId, UUID foodId) {
         Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId,restaurantId)
-                .orElseThrow( () -> new IllegalArgumentException("메뉴가 등록되어있지 않거나 정보 입력이 잘못되었습니다. " +
-                        " restaurantId:" + restaurantId + " foodId:" + foodId));
+                .orElseThrow( () -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
+
         //판매중인 상품이 아니면 조회가 불가능하다.
         if(foodDetails.getFoodStatus() != FoodStatus.Ok) {
-            throw new IllegalArgumentException("해당 상품은 현재 판매하지 않는 상품이라 옵션조회가 불가능합니다.");
+            throw new BusinessException(ExceptionCode.FOOD_NOT_SELL);
         }
         List<FoodOption> foodOption = foodOptionRepository.findByFood_IdAndDeletedFalse(foodId);
+        if (foodOption.isEmpty()) {
+            throw new BusinessException(ExceptionCode.OPTION_NOT_FOUND);
+        }
         return RestaurantFoodOptionDetailDto.convertList(restaurantId,foodId,foodOption);
     }
 
@@ -230,7 +231,7 @@ public class RestaurantService {
         //Duplicated Fragment 경고로 인해 방식 수정
         //본인 체크 로직
         if (!userInfo.getUserId().equals(requester.getUserId()) && (restaurant.getUser().getRole() == UserRoleEnum.Owner || restaurant.getUser().getRole() == UserRoleEnum.Customer)) {
-            throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
+            throw new BusinessException(ExceptionCode.INVALID_USER);
         }
     }
 }
