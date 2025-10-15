@@ -53,4 +53,8 @@ public class Order extends BaseEntity {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderFood> orderFoods;
+
+    public void changeStatus(StatusEnum status){
+        this.status = status;
+    }
 }
