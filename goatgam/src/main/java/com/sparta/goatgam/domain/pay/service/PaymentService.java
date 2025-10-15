@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.pay.service;
 
 import com.sparta.goatgam.domain.order.entity.Order;
+import com.sparta.goatgam.domain.order.entity.StatusEnum;
 import com.sparta.goatgam.domain.order.repository.OrderRepository;
 import com.sparta.goatgam.domain.pay.dto.PaymentConfirmRequestDto;
 import com.sparta.goatgam.domain.pay.dto.PaymentVerifyRequestDto;
@@ -85,6 +86,7 @@ public class PaymentService {
         }
 
         payment.updateStatus(paymentStatusEnum.Canceled);
+        order.changeStatus(StatusEnum.Cancel);
 
         return new MessageAndIdResponseDto("payment cancel success", orderId);
     }
@@ -107,6 +109,7 @@ public class PaymentService {
         }
 
         payment.updateStatus(paymentStatusEnum.Refunded);
+        order.changeStatus(StatusEnum.Refund);
 
         return new MessageAndIdResponseDto("refund success", dto.getOrderId());
     }

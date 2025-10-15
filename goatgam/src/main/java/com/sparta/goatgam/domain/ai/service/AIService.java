@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,13 +50,13 @@ public class AIService {
         return new ResultResponseDto(ai.getAnswer(), food.getId());
     }
 
-    public Page<AiResponseDto> getAiRequest(int page, int size, Sort.Direction direction) {
+    public PagedModel<AiResponseDto> getAiRequest(int page, int size, Sort.Direction direction) {
         Pageable pageable = PageableUtils.makePageable(page, size,
                 PageableUtils.order(direction, "createdAt"));
 
         Page<AI> logs = aiRepository.findAll(pageable);
 
-        return logs.map(AiResponseDto::new);
+        return new PagedModel<>(logs.map(AiResponseDto::new));
     }
 
     public AiResponseDto getAiRequestById(UUID id) {
