@@ -11,6 +11,8 @@ import com.sparta.goatgam.domain.pay.entity.paymentStatusEnum;
 import com.sparta.goatgam.domain.pay.repository.PaymentRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +29,14 @@ public class PaymentService {
     private final OrderRepository orderRepository;
 
     public MessageAndIdResponseDto varifyAmount(PaymentVerifyRequestDto paymentVerifyRequestDto, User user) {
-        Order order = orderRepository.findById(paymentVerifyRequestDto.getOrderId()).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
+        Order order = orderRepository.findById(paymentVerifyRequestDto.getOrderId()).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
 
         if(!order.getUser().getUserId().equals(user.getUserId())) {
-            throw new RuntimeException("회원정보가 일치하지 않습니다.");
+            throw new BusinessException(ExceptionCode.INVALID_USER);
         }
 
         if(order.getTotalPrice() != paymentVerifyRequestDto.getAmount()){
-            throw new RuntimeException("금액이 일치하지 않습니다.");
+            throw new BusinessException(ExceptionCode.PG_AMOUNT_INCORRECT);
         }
         return new MessageAndIdResponseDto("varify success", null);
     }
@@ -43,14 +45,14 @@ public class PaymentService {
     public MessageAndIdResponseDto confirmPayment(PaymentConfirmRequestDto dto, User user) {
 
         Order order = orderRepository.findById(dto.getOrderId())
-                .orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
 
         if(!order.getUser().getUserId().equals(user.getUserId())) {
-            throw new RuntimeException("회원정보가 일치하지 않습니다.");
+            throw new BusinessException(ExceptionCode.INVALID_USER);
         }
 
         if (order.getTotalPrice() != dto.getAmount()) {
-            throw new RuntimeException("금액이 일치하지 않습니다.");
+            throw new BusinessException(ExceptionCode.PG_AMOUNT_INCORRECT);
         }
 
         Payment payment = Payment.builder()
@@ -74,15 +76,15 @@ public class PaymentService {
 
     @Transactional
     public MessageAndIdResponseDto cancelPayment(UUID orderId, User user) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
-        Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new RuntimeException("해당 주문의 결제가 존재하지 않습니다."));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
+        Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new BusinessException(ExceptionCode.PG_NOT_FOUND));
 
         if(!order.getUser().equals(user)){
-            throw new RuntimeException("해당 주문에 대한 권한이 없습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_ORDER);
         }
 
         if(Duration.between(payment.getApprovedAt(), LocalDateTime.now()).toMinutes() > 5){
-            throw new RuntimeException("취소 가능 시간이 지났습니다.");
+            throw new BusinessException(ExceptionCode.PG_CANCEL_TIMEOUT);
         }
 
         payment.updateStatus(paymentStatusEnum.Canceled);
@@ -93,19 +95,19 @@ public class PaymentService {
 
     @Transactional
     public MessageAndIdResponseDto refundPayment(PaymentVerifyRequestDto dto, User user) {
-        Order order = orderRepository.findById(dto.getOrderId()).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
-        Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new RuntimeException("해당 주문의 결제가 존재하지 않습니다."));
+        Order order = orderRepository.findById(dto.getOrderId()).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
+        Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new BusinessException(ExceptionCode.PG_NOT_FOUND));
 
         if(!order.getRestaurant().getUser().getUserId().equals(user.getUserId())) {
-            throw new RuntimeException("해당 주문의 환불 권한이 없습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_ORDER_REFUND);
         }
 
         if(payment.getPaymentStatus() != paymentStatusEnum.Done){
-            throw new RuntimeException("환불이 가능한 상태가 아닙니다.");
+            throw new BusinessException(ExceptionCode.PG_CANT_REFUND);
         }
 
         if(dto.getAmount() > payment.getAmount()){
-            throw new RuntimeException("주문금액 이상은 환불할 수 없습니다.");
+            throw new BusinessException(ExceptionCode.PG_REFUND_AMOUNT_INCORRECT);
         }
 
         payment.updateStatus(paymentStatusEnum.Refunded);

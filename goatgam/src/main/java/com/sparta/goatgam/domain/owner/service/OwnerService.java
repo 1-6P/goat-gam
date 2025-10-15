@@ -9,6 +9,8 @@ import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import com.sparta.goatgam.global.util.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,9 +30,9 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public PagedModel<OrderSummaryResponseDto> getOrder(UUID restaurantId, User user, int page, int size, Sort.Direction direction, StatusEnum status) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new RuntimeException("식당을 찾을 수 없습니다."));
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
         if (!restaurant.getUser().getUserId().equals(user.getUserId())) {
-            throw new RuntimeException("해당 식당의 권한이 없습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_RESTAURANT);
         }
 
         Pageable pageable = PageableUtils.makePageable(page, size,
@@ -48,15 +50,15 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public OrderDetailResponseDto getOrderDetail(UUID restaurantId,UUID orderId, User user) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new RuntimeException("식당을 찾을 수 없습니다."));
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
 
         if(restaurant.getRestaurantId() != order.getRestaurant().getRestaurantId()){
-            throw new RuntimeException("해당 식당의 주문이 아닙니다.");
+            throw new BusinessException(ExceptionCode.FOOD_INPUT_ERROR);
         }
 
         if (!restaurant.getUser().getUserId().equals(user.getUserId())) {
-            throw new RuntimeException("해당 식당의 권한이 없습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_RESTAURANT);
         }
 
         return  new OrderDetailResponseDto(order);
@@ -64,34 +66,34 @@ public class OwnerService {
 
     @Transactional
     public MessageAndIdResponseDto ChangeOrderStatus(UUID restaurantId, UUID orderId, User user, StatusEnum status) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new RuntimeException("식당을 찾을 수 없습니다."));
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
 
         if (!restaurant.getUser().getUserId().equals(user.getUserId())) {
-            throw new RuntimeException("해당 식당의 권한이 없습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_RESTAURANT);
         }
 
         if (status == StatusEnum.Accept || status == StatusEnum.Reject) {
             if (!order.getStatus().equals(StatusEnum.Request)) {
-                throw new RuntimeException("이미 처리된 주문입니다.");
+                throw new BusinessException(ExceptionCode.ORDER_ALREADY_PROCESSED);
             }
         }
 
         if (status == StatusEnum.Prepared) {
             if (!order.getStatus().equals(StatusEnum.Accept)) {
-                throw new RuntimeException("먼저 주문을 수락해야합니다.");
+                throw new BusinessException(ExceptionCode.ORDER_ACCEPT_REQUIRED);
             }
         }
 
         if (status == StatusEnum.OnDelivery) {
             if (!order.getStatus().equals(StatusEnum.Prepared)) {
-                throw new RuntimeException("먼저 주문이 준비되어야합니다.");
+                throw new BusinessException(ExceptionCode.ORDER_PREPARED_REQUIRED);
             }
         }
 
         if (status == StatusEnum.Completed) {
             if (!order.getStatus().equals(StatusEnum.OnDelivery)) {
-                throw new RuntimeException("아직 배송이 출발하지 않았습니다.");
+                throw new BusinessException(ExceptionCode.ORDER_DELIVERY_REQUIRED);
             }
         }
 
