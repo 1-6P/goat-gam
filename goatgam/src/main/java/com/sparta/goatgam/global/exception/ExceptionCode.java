@@ -30,7 +30,7 @@ public enum ExceptionCode {
 
     //식당(R)
     RESTAURANT_NOT_FOUND("R01", "식당을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    FORBIDDEN_CREATE_RESTAURANT_("R02", "식당 생성 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    FORBIDDEN_CREATE_RESTAURANT("R02", "식당 생성 권한이 없습니다..", HttpStatus.FORBIDDEN),
     FORBIDDEN_UPDATE_RESTAURANT("R03", "식당 정보를 수정할 권한이 없습니다.", HttpStatus.FORBIDDEN),
     //FORBIDDEN_DELETE_RESTAURANT("R04", "식당 정보를 삭제할 권한이 없습니다.", HttpStatus.FORBIDDEN),
     FORBIDDEN_ROLLBACK_RESTAURANT("R05", "식당 삭제를 롤백할 권한이 없습니다.", HttpStatus.FORBIDDEN),
@@ -92,7 +92,6 @@ public enum ExceptionCode {
     REVIEW_ORDER_NOT_ALLOWED("RV04", "해당 주문에 대한 리뷰가 이미 작성되었습니다.", HttpStatus.BAD_REQUEST),
     REVIEW_RATE_ERROR("RV05", "평점은 1점 이상 5점 이하만 가능합니다.", HttpStatus.BAD_REQUEST),
 
-
     //결제처리 (PG)
     PG_NOT_FOUND("PG01", "결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     PG_TIMEOUT("PG02", "결제 처리 시간이 지났습니다.", HttpStatus.CONFLICT),
@@ -101,14 +100,12 @@ public enum ExceptionCode {
     PG_CANT_REFUND("PG06", "환불이 불가한 상태입니다.", HttpStatus.CONFLICT),
     PG_REFUND_AMOUNT_INCORRECT("PG07", "주문금액 이상은 환불할 수 없습니다.", HttpStatus.BAD_REQUEST),
 
-
     //주문처리 (OP)
     ORDER_ALREADY_PROCESSED("OP01", "주문이 이미 처리되었습니다.", HttpStatus.CONFLICT),
     ORDER_ACCEPT_REQUIRED("OP02", "먼저 주문을 수락해야 합니다.", HttpStatus.BAD_REQUEST),
     ORDER_PREPARED_REQUIRED("OP03", "먼저 주문이 준비되어야 합니다.", HttpStatus.BAD_REQUEST),
     ORDER_DELIVERY_REQUIRED("OP04", "아직 배송이 출발하지 않았습니다.", HttpStatus.BAD_REQUEST),
     ;
-
 
     private final String code;
     private final String message;

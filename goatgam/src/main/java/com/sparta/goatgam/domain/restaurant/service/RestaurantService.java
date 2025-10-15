@@ -14,10 +14,10 @@ import com.sparta.goatgam.domain.restaurant.repository.RestaurantTypeRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -46,22 +46,18 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto createRestaurant(RestaurantRequestDto restaurantRequestDto, User userInfo) {
         User user = userRepository.findById(restaurantRequestDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found")); //userID 체크
-
+                .orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
+        //userID 체크
         RestaurantType type = restaurantTypeRepository.findById(restaurantRequestDto.getRestaurantTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("RestaurantType not found")); //타입값 체크
-
-        //1010 update, 권한 생성 후, 유저Id 체크
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND)); //타입값 체크
+        //권한 생성 후, 유저Id 체크
         checkUser(new Restaurant(user, type, restaurantRequestDto), userInfo);
-
         //사용자 ROLE 체크함. 권한 체크
         if(user.getRole() != UserRoleEnum.Owner && user.getRole() != UserRoleEnum.Manager && user.getRole() != UserRoleEnum.Master) {
-            throw new IllegalArgumentException("해당 유저는 사장님으로 등록되어 있지 않습니다. 확인 후 재시도해주세요");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_CREATE_RESTAURANT);
         }
-
         // Restaurant entity를 생성한다 (편의 생성자 이용)
         Restaurant res = new Restaurant(user, type, restaurantRequestDto);
-
         //생성된 엔티티를 DB에 저장해 Insert query 작동시킴
         Restaurant saved = restaurantRepository.save(res);
         //저장된 엔티티를 클라이언트에게 DTO를 이용해 변환한 후 반환해준다.
@@ -89,7 +85,7 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public RestaurantDetailDto getRestaurant(UUID restaurantId) {
         Restaurant r = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다: " + restaurantId));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
         return RestaurantDetailDto.from(r);
     }
 
@@ -97,7 +93,7 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto updateRestaurant(UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto, User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
         //체크로직 적용
         checkUser(restaurant, userInfo);
         restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
@@ -113,21 +109,23 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto deleteRestaurant(UUID restaurantId,User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
         checkUser(restaurant, userInfo);
         restaurant.setStatus(false);
         return RestaurantInfoDto.convertDto(restaurant);
     }
     //삭제된 레스토랑 롤백
-    //식당 status 체크하는 로직을 따로 도입해야 할까요?
     @Transactional
     public RestaurantInfoDto RollbackDeletedRestaurant(UUID restaurantId,User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
-        checkUser(restaurant, userInfo);
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
+        if(userInfo.getRole() != UserRoleEnum.Manager && userInfo.getRole() != UserRoleEnum.Master) {
+            throw new BusinessException(ExceptionCode.FORBIDDEN_ROLLBACK_RESTAURANT);
+        }
         restaurant.setStatus(true);
         return RestaurantInfoDto.convertDto(restaurant);
     }
+
     //  카테고리/키워드 기반 목록 조회 (for users)
     @Transactional(readOnly = true)
     public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword) {
@@ -172,12 +170,12 @@ public class RestaurantService {
                 && t.getRestaurantTypeCode().equals(code);
     }
 
+
     // 특정 식당의 메뉴 조회 (기본: Hidden/Deleted 제외, includeHidden=true면 전부)
     @Transactional(readOnly = true)
     public List<FoodListDto> getRestaurantMenu(UUID restaurantId, boolean includeHidden) {
-        // 식당 존재 여부만 확인 (없으면 404 성격의 예외)
         if (!restaurantRepository.existsById(restaurantId)) {
-            throw new IllegalArgumentException("식당을 찾을 수 없습니다: " + restaurantId);
+            throw new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND);
         }
 
         return foodRepository.findAll().stream()
@@ -194,12 +192,11 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public RestaurantFoodDetailDto getFoodDetail(UUID restaurantId, UUID foodId) {
         Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId,restaurantId)
-                .orElseThrow( () -> new IllegalArgumentException("메뉴가 등록되어있지 않거나 정보 입력이 잘못되었습니다. " +
-                        " restaurantId:" + restaurantId + " foodId:" + foodId));
+                .orElseThrow( () -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
 
         //판매중인 상품이 아니면 조회가 불가능하다.
         if(foodDetails.getFoodStatus() != FoodStatus.Ok) {
-            throw new IllegalArgumentException("해당 상품은 현재 판매하지 않는 상품입니다.");
+            throw new BusinessException(ExceptionCode.FOOD_NOT_SELL);
         }
         return RestaurantFoodDetailDto.convertDto(foodDetails);
     }
@@ -209,24 +206,26 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public List<RestaurantFoodOptionDetailDto> getFoodDetails(UUID restaurantId, UUID foodId) {
         Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId,restaurantId)
-                .orElseThrow( () -> new IllegalArgumentException("메뉴가 등록되어있지 않거나 정보 입력이 잘못되었습니다. " +
-                        " restaurantId:" + restaurantId + " foodId:" + foodId));
+                .orElseThrow( () -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
+
         //판매중인 상품이 아니면 조회가 불가능하다.
         if(foodDetails.getFoodStatus() != FoodStatus.Ok) {
-            throw new IllegalArgumentException("해당 상품은 현재 판매하지 않는 상품이라 옵션조회가 불가능합니다.");
+            throw new BusinessException(ExceptionCode.FOOD_NOT_SELL);
         }
         List<FoodOption> foodOption = foodOptionRepository.findByFood_IdAndDeletedFalse(foodId);
+        if (foodOption.isEmpty()) {
+            throw new BusinessException(ExceptionCode.OPTION_NOT_FOUND);
+        }
         return RestaurantFoodOptionDetailDto.convertList(restaurantId,foodId,foodOption);
     }
 
-    //본인 체크하기
+    //본인 체크하기 (수정,삭제)
     private void checkUser(Restaurant restaurant, User userInfo) {
         //요청하는 user
         User requester = restaurant.getUser();
-        //Duplicated Fragment 경고로 인해 방식 수정
         //본인 체크 로직
         if (!userInfo.getUserId().equals(requester.getUserId()) && (restaurant.getUser().getRole() == UserRoleEnum.Owner || restaurant.getUser().getRole() == UserRoleEnum.Customer)) {
-            throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_RESTAURANT);
         }
     }
 }
