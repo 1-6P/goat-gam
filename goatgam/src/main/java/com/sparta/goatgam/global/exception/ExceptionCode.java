@@ -30,10 +30,12 @@ public enum ExceptionCode {
 
     //식당(R)
     RESTAURANT_NOT_FOUND("R01", "식당을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    FORBIDDEN_CREATE_RESTAURANT_("R02", "식당 생성 권한이 없습니다..", HttpStatus.FORBIDDEN),
+    FORBIDDEN_CREATE_RESTAURANT_("R02", "식당 생성 권한이 없습니다.", HttpStatus.FORBIDDEN),
     FORBIDDEN_UPDATE_RESTAURANT("R03", "식당 정보를 수정할 권한이 없습니다.", HttpStatus.FORBIDDEN),
-    FORBIDDEN_DELETE_RESTAURANT("R04", "식당 정보를 삭제할 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    //FORBIDDEN_DELETE_RESTAURANT("R04", "식당 정보를 삭제할 권한이 없습니다.", HttpStatus.FORBIDDEN),
     FORBIDDEN_ROLLBACK_RESTAURANT("R05", "식당 삭제를 롤백할 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    RESTAURANT_TYPE_NOT_FOUND("R06", "올바른 식당 타입 ID가 아닙니다.", HttpStatus.NOT_FOUND),
+    FORBIDDEN_RESTAURANT("R07", "식당에 대한 권한이 없습니다.", HttpStatus.FORBIDDEN),
 
     //주소 (A)
     ADDRESS_USER_NOT_FOUND("A01", "해당 유저의 주소가 없습니다.", HttpStatus.NOT_FOUND),
@@ -76,6 +78,7 @@ public enum ExceptionCode {
     //주문내역 (ORDER)
     ORDER_NOT_FOUND("ORDER01", "존재하지 않는 주문내역입니다.", HttpStatus.NOT_FOUND),
     FORBIDDEN_ORDER("ORDER02", "주문에 대한 권한이 없습니다. ", HttpStatus.FORBIDDEN),
+    FORBIDDEN_ORDER_REFUND("ORDER03", "주문에 대한 환불 권한이 없습니다. ", HttpStatus.FORBIDDEN),
 
     //리뷰 (RV)
     REVIEW_NOT_FOUND("RV01", "해당 리뷰를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
@@ -88,9 +91,21 @@ public enum ExceptionCode {
     //결제처리 (PG)
     PG_NOT_FOUND("PG01", "결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     PG_TIMEOUT("PG02", "결제 처리 시간이 지났습니다.", HttpStatus.CONFLICT),
+    PG_AMOUNT_INCORRECT("PG03", "금액이 일치하지 않습니다.", HttpStatus.CONFLICT),
+    PG_CANCEL_TIMEOUT("PG04", "취소 가능 시간이 지났습니다.", HttpStatus.CONFLICT),
+    PG_CANT_REFUND("PG06", "환불이 불가한 상태입니다.", HttpStatus.CONFLICT),
+    PG_REFUND_AMOUNT_INCORRECT("PG07", "주문금액 이상은 환불할 수 없습니다.", HttpStatus.BAD_REQUEST),
+
+
+    //주문처리 (OP)
+    ORDER_ALREADY_PROCESSED("OP01", "주문이 이미 처리되었습니다.", HttpStatus.CONFLICT),
+    ORDER_ACCEPT_REQUIRED("OP02", "먼저 주문을 수락해야 합니다.", HttpStatus.BAD_REQUEST),
+    ORDER_PREPARED_REQUIRED("OP03", "먼저 주문이 준비되어야 합니다.", HttpStatus.BAD_REQUEST),
+    ORDER_DELIVERY_REQUIRED("OP04", "아직 배송이 출발하지 않았습니다.", HttpStatus.BAD_REQUEST),
+
+
+
     ;
-
-
     private final String code;
     private final String message;
     private final HttpStatus status;

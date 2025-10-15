@@ -6,6 +6,8 @@ import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.entity.FoodOption;
 import com.sparta.goatgam.domain.owner.repository.FoodOptionRepository;
 import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +32,7 @@ public class FoodOptionService {
             FoodOption existingOption = existingOptionOpt.get();
 
             if (!existingOption.isDeleted()) {
-                throw new RuntimeException("이미 존재하는 옵션 이름입니다.");
+                throw new BusinessException(ExceptionCode.OPTION_DUPLICATED);
             }else{
                 existingOption.changeStatus(false);
                 existingOption.update(foodOptionRequestDto);
@@ -53,7 +55,7 @@ public class FoodOptionService {
     public ResultResponseDto updateOption(UUID restaurantId, UUID menuId, UUID optionId, FoodOptionRequestDto foodOptionRequestDto, User user) {
         foodService.validateRestaurantOwner(restaurantId, user);
         foodService.validateFoodInRestaurant(menuId, restaurantId);
-        FoodOption foodOption = foodOptionRepository.findById(optionId).orElseThrow(() -> new RuntimeException("해당 옵션이 없습니다."));
+        FoodOption foodOption = foodOptionRepository.findById(optionId).orElseThrow(() -> new BusinessException(ExceptionCode.OPTION_NOT_FOUND));
 
         foodOption.update(foodOptionRequestDto);
 
@@ -64,10 +66,10 @@ public class FoodOptionService {
     public ResultResponseDto deleteOption(UUID restaurantId, UUID menuId, UUID optionId, User user) {
         foodService.validateRestaurantOwner(restaurantId, user);
         foodService.validateFoodInRestaurant(menuId, restaurantId);
-        FoodOption foodOption = foodOptionRepository.findById(optionId).orElseThrow(() -> new RuntimeException("해당 옵션이 없습니다."));
+        FoodOption foodOption = foodOptionRepository.findById(optionId).orElseThrow(() -> new BusinessException(ExceptionCode.OPTION_NOT_FOUND));
 
         if(foodOption.isDeleted()) {
-            throw new RuntimeException("이미 삭제된 옵션입니다.");
+            throw new BusinessException(ExceptionCode.OPTION_ALREADY_DELETED);
         }
 
         foodOption.changeStatus(true);
