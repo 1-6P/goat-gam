@@ -16,8 +16,6 @@ import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -171,6 +169,7 @@ public class RestaurantService {
                 && t.getRestaurantTypeCode() != null
                 && t.getRestaurantTypeCode().equals(code);
     }
+
 
     // 특정 식당의 메뉴 조회 (기본: Hidden/Deleted 제외, includeHidden=true면 전부)
     @Transactional(readOnly = true)
