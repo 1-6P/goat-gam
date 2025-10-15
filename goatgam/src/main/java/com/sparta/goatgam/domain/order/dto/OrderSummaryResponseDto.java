@@ -4,6 +4,7 @@ import com.sparta.goatgam.domain.order.entity.Order;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ public class OrderSummaryResponseDto {
     private String restaurantName;
     private String address;
     private LocalDateTime orderTime;
-    private int totalPrice;
+    private BigDecimal totalPrice;
 
     public OrderSummaryResponseDto(Order order) {
         this.orderId = order.getOrderId();

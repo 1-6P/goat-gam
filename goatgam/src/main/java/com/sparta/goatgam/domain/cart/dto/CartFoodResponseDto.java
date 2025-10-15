@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class CartFoodResponseDto {
     private UUID foodId;
     private String foodName;
     private String foodImage;
-    private int price;
+    private BigDecimal price;
     private int quantity;
     private FoodStatus foodStatus;
     private List<CartFoodOptionResponseDto> cartFoodOptions;

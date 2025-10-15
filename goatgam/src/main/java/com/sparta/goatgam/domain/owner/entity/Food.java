@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -27,7 +28,7 @@ public class Food extends BaseEntity {
     private String foodName;
 
     @Column(name = "food_price", nullable = false)
-    private int foodPrice;
+    private BigDecimal foodPrice;
 
     @Column(name = "food_image")
     private String foodImage;

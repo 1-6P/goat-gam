@@ -24,6 +24,7 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,14 +83,15 @@ public class OrderService {
         Cart cart = cartRepository.findByUserAndIsDeletedFalse(user)
                 .orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_EMPTY_CART));
 
-        int totalprice = 0;
+        BigDecimal totalprice = new BigDecimal("0");
         List<OrderFood> foodsToAdd = new ArrayList<>();
 
         for (CartFood food : cart.getCartFoods()) {
-            totalprice += food.getFood().getFoodPrice();
+            totalprice = totalprice.add(food.getFood().getFoodPrice());
             for (CartFoodOption option : food.getCartFoodOptions()) {
-                totalprice += option.getFoodOption().getSurcharge();
+                totalprice = totalprice.add(option.getFoodOption().getSurcharge());
             }
+            totalprice = totalprice.multiply(BigDecimal.valueOf(food.getQuantity()));
             foodsToAdd.add(OrderFood.fromCartFood(food));
         }
 

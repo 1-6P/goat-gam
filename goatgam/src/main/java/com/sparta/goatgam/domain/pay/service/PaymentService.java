@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -31,11 +32,11 @@ public class PaymentService {
     public MessageAndIdResponseDto varifyAmount(PaymentVerifyRequestDto paymentVerifyRequestDto, User user) {
         Order order = orderRepository.findById(paymentVerifyRequestDto.getOrderId()).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
 
-        if(!order.getUser().getUserId().equals(user.getUserId())) {
+        if (!order.getUser().getUserId().equals(user.getUserId())) {
             throw new BusinessException(ExceptionCode.INVALID_USER);
         }
 
-        if(order.getTotalPrice() != paymentVerifyRequestDto.getAmount()){
+        if (!Objects.equals(order.getTotalPrice(), paymentVerifyRequestDto.getAmount())) {
             throw new BusinessException(ExceptionCode.PG_AMOUNT_INCORRECT);
         }
         return new MessageAndIdResponseDto("varify success", null);
@@ -47,11 +48,11 @@ public class PaymentService {
         Order order = orderRepository.findById(dto.getOrderId())
                 .orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
 
-        if(!order.getUser().getUserId().equals(user.getUserId())) {
+        if (!order.getUser().getUserId().equals(user.getUserId())) {
             throw new BusinessException(ExceptionCode.INVALID_USER);
         }
 
-        if (order.getTotalPrice() != dto.getAmount()) {
+        if (!Objects.equals(order.getTotalPrice(), dto.getAmount())) {
             throw new BusinessException(ExceptionCode.PG_AMOUNT_INCORRECT);
         }
 
@@ -79,11 +80,11 @@ public class PaymentService {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
         Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new BusinessException(ExceptionCode.PG_NOT_FOUND));
 
-        if(!order.getUser().equals(user)){
+        if (!order.getUser().equals(user)) {
             throw new BusinessException(ExceptionCode.FORBIDDEN_ORDER);
         }
 
-        if(Duration.between(payment.getApprovedAt(), LocalDateTime.now()).toMinutes() > 5){
+        if (Duration.between(payment.getApprovedAt(), LocalDateTime.now()).toMinutes() > 5) {
             throw new BusinessException(ExceptionCode.PG_CANCEL_TIMEOUT);
         }
 
@@ -98,15 +99,15 @@ public class PaymentService {
         Order order = orderRepository.findById(dto.getOrderId()).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
         Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new BusinessException(ExceptionCode.PG_NOT_FOUND));
 
-        if(!order.getRestaurant().getUser().getUserId().equals(user.getUserId())) {
+        if (!order.getRestaurant().getUser().getUserId().equals(user.getUserId())) {
             throw new BusinessException(ExceptionCode.FORBIDDEN_ORDER_REFUND);
         }
 
-        if(payment.getPaymentStatus() != paymentStatusEnum.Done){
+        if (payment.getPaymentStatus() != paymentStatusEnum.Done) {
             throw new BusinessException(ExceptionCode.PG_CANT_REFUND);
         }
 
-        if(dto.getAmount() > payment.getAmount()){
+        if (dto.getAmount().compareTo(payment.getAmount()) > 0) {
             throw new BusinessException(ExceptionCode.PG_REFUND_AMOUNT_INCORRECT);
         }
 

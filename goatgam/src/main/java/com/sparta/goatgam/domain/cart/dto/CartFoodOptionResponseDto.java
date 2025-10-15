@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -15,7 +16,7 @@ public class CartFoodOptionResponseDto {
     private UUID cartFoodOptionId;
     private UUID foodOptionId;
     private String content;
-    private int price;
+    private BigDecimal price;
 
     public CartFoodOptionResponseDto(CartFoodOption cartFoodOption) {
         this.cartFoodOptionId = cartFoodOption.getCartFoodOptionId();
