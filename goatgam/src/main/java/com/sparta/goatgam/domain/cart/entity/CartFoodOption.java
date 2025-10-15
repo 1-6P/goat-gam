@@ -35,10 +35,6 @@ public class CartFoodOption extends BaseEntity {
     private boolean isDeleted;
 
     public static CartFoodOption create(FoodOption foodOption) {
-        if (foodOption.isDeleted()) {
-            throw new IllegalArgumentException("삭제된 옵션은 장바구니에 추가할 수 없습니다.");
-        }
-
         CartFoodOption cartFoodOption = new CartFoodOption();
 
         cartFoodOption.foodOption = foodOption;

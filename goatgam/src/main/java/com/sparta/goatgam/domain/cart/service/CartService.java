@@ -8,6 +8,7 @@ import com.sparta.goatgam.domain.cart.repository.CartFoodRepository;
 import com.sparta.goatgam.domain.cart.repository.CartRepository;
 import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.entity.FoodOption;
+import com.sparta.goatgam.domain.owner.entity.FoodStatus;
 import com.sparta.goatgam.domain.owner.repository.FoodOptionRepository;
 import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
@@ -47,11 +48,11 @@ public class CartService {
     @Transactional
     public MessageAndIdResponseDto addCartFood(CartFoodRequestDto cartFoodRequestDto, User user) {
         Restaurant restaurant = restaurantRepository.findById(cartFoodRequestDto.restaurantId()).orElseThrow(() ->
-                new IllegalArgumentException("식당을 찾을 수 없습니다."));
+                new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
         Food food = foodRepository.findByIdAndRestaurant_RestaurantId(
                 cartFoodRequestDto.foodId(),
                 cartFoodRequestDto.restaurantId()
-        ).orElseThrow(() -> new IllegalArgumentException("음식을 찾을 수 없습니다."));
+        ).orElseThrow(() -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
         // 1. 해당 유저가 소유하고 있는 활성화 카드 정보 가져오기.
         // 2. 없으면 새로 생성
         Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseGet(() -> {
@@ -59,6 +60,8 @@ public class CartService {
             cartRepository.save(newCart);
             return newCart;
         });
+
+        if (!food.getFoodStatus().equals(FoodStatus.Ok)) throw new BusinessException(ExceptionCode.FOOD_NOT_SELL);
 
         // 3. 있으면 requestDto에서 restaurantId 가져와서 cart의 restaurantId와 비교
         // 4. 있는데 같으면 카트 유지
@@ -88,12 +91,13 @@ public class CartService {
         if (cartFoodRequestDto.options() != null)
             for (UUID foodOptionId : cartFoodRequestDto.options()) {
                 FoodOption foodOption = foodOptionRepository.findById(foodOptionId).orElseThrow(() ->
-                        new IllegalArgumentException("음식 옵션을 찾을 수 없습니다. foodOptionId: " + foodOptionId));
+                        new BusinessException(ExceptionCode.OPTION_NOT_FOUND));
 
                 if (!foodOption.getFood().getId().equals(food.getId())) {
-                    throw new IllegalArgumentException("이 음식의 옵션이 아닙니다. " +
-                            "foodId: " + food.getId() + "foodOptionId: " + foodOptionId);
+                    throw new BusinessException(ExceptionCode.OPTION_INPUT_ERROR);
                 }
+
+                if (foodOption.isDeleted()) throw new BusinessException(ExceptionCode.CART_DELETED_OPTION);
 
                 CartFoodOption cartFoodOption = CartFoodOption.create(foodOption);
                 cartFood.addCartFoodOption(cartFoodOption);
@@ -107,7 +111,10 @@ public class CartService {
     @Transactional
     public MessageAndIdResponseDto updateCartFoodOption(CartFoodOptionUpdateRequestDto cartFoodOptionUpdateRequestDto, User user) {
         CartFood cartFood = cartFoodRepository.findById(cartFoodOptionUpdateRequestDto.cartFoodId()).orElseThrow(() ->
-                new IllegalArgumentException("장바구니에 해당 음식이 존재하지 않습니다."));
+                new BusinessException(ExceptionCode.CART_MISSING_FOOD));
+
+        if (!cartFood.getCart().getUser().getUserId().equals(user.getUserId()))
+            throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_CART);
 
         ArrayList<UUID> newFoodOptionList;
         if (cartFoodOptionUpdateRequestDto.changeOptionList() == null)
@@ -129,6 +136,7 @@ public class CartService {
             if (optionEquals(cartFoodItem, cartFoodOptionUpdateRequestDto.changeOptionList())) {
                 cartFood.delete(user);
                 cartFoodItem.setQuantity(cartFoodItem.getQuantity() + cartFood.getQuantity());
+
                 return new MessageAndIdResponseDto("옵션을 성공적으로 변경했습니다.", cartFood.getCart().getCartId());
             }
         }
@@ -136,12 +144,13 @@ public class CartService {
         // 새 옵션 저장
         for (UUID foodOptionId : newFoodOptionList) {
             FoodOption foodOption = foodOptionRepository.findById(foodOptionId).orElseThrow(() ->
-                    new IllegalArgumentException("음식 옵션을 찾을 수 없습니다. foodOptionId: " + foodOptionId));
+                    new BusinessException(ExceptionCode.OPTION_NOT_FOUND));
 
             if (!foodOption.getFood().getId().equals(cartFood.getFood().getId())) {
-                throw new IllegalArgumentException("이 음식의 옵션이 아닙니다. " +
-                        "foodId: " + cartFood.getFood().getId() + "foodOptionId: " + foodOptionId);
+                throw new BusinessException(ExceptionCode.OPTION_INPUT_ERROR);
             }
+
+            if (foodOption.isDeleted()) throw new BusinessException(ExceptionCode.CART_DELETED_OPTION);
 
             CartFoodOption cartFoodOption = CartFoodOption.create(foodOption);
             cartFood.addCartFoodOption(cartFoodOption);
@@ -175,10 +184,13 @@ public class CartService {
     @Transactional
     public MessageAndIdResponseDto deleteCartFood(UUID cartFoodId, User user) {
         CartFood cartFood = cartFoodRepository.findById(cartFoodId).orElseThrow(() ->
-                new IllegalArgumentException("장바구니내 음식 정보를 찾을 수 없습니다."));
+                new BusinessException(ExceptionCode.CART_MISSING_FOOD));
+
+        if (!cartFood.getCart().getUser().getUserId().equals(user.getUserId()))
+            throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_CART);
 
         if (cartFood.getIsDeleted())
-            throw new IllegalArgumentException("이미 삭제된 음식입니다.");
+            throw new BusinessException(ExceptionCode.CART_FOOD_ALREADY_DELETED);
 
         cartFood.delete(user);
 

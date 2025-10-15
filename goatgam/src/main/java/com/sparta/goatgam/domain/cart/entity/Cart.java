@@ -4,6 +4,8 @@ import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.entity.RestaurantEnum;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -47,15 +49,15 @@ public class Cart extends BaseEntity {
     public static Cart create(User user, Restaurant restaurant) {
         // 사용자 검증
         if (!user.getStatus()) {
-            throw new IllegalArgumentException("삭제된 사용자는 음식을 담을 수 없습니다.");
+            throw new BusinessException(ExceptionCode.CART_DELETED_USER);
         }
 
         // 식당 검증
         if (!restaurant.isStatus()) {
-            throw new IllegalArgumentException("삭제된 식당 음식을 담을 수 없습니다.");
+            throw new BusinessException(ExceptionCode.CART_DELETED_RESTAURANT);
         }
         if (restaurant.getIsPublic() != RestaurantEnum.Open) {
-            throw new IllegalArgumentException("운영중인 식당 음식만 담을 수 있습니다.");
+            throw new BusinessException(ExceptionCode.CART_RESTAURANT_NOT_OPENED);
         }
 
         Cart cart = new Cart();

@@ -14,6 +14,8 @@ import com.sparta.goatgam.domain.order.entity.StatusEnum;
 import com.sparta.goatgam.domain.order.repository.OrderRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,7 +60,7 @@ public class OrderService {
 
         if (userId != null) {
             User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다. id=" + userId));
+                    .orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
 
             orderSummaryList = orderRepository.findAllByUser(user, pageable).map(AdminOrderSummaryResponseDto::new);
         } else {
@@ -70,7 +72,7 @@ public class OrderService {
 
     public OrderDetailResponseDto getOrderDetail(UUID orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 주문 내역입니다."));
+                new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
 
         return new OrderDetailResponseDto(order);
     }
@@ -78,7 +80,7 @@ public class OrderService {
     @Transactional
     public OrderSaveResponseDto addOrder(User user, String request) {
         Cart cart = cartRepository.findByUserAndIsDeletedFalse(user)
-                .orElseThrow(() -> new IllegalArgumentException("장바구니가 비었습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_EMPTY_CART));
 
         int totalprice = 0;
         List<OrderFood> foodsToAdd = new ArrayList<>();
@@ -112,5 +114,4 @@ public class OrderService {
 
         return new OrderSaveResponseDto(order.getOrderId(), "주문내역이 저장되었습니다.");
     }
-
 }

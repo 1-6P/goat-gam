@@ -1,7 +1,6 @@
 package com.sparta.goatgam.domain.cart.entity;
 
 import com.sparta.goatgam.domain.owner.entity.Food;
-import com.sparta.goatgam.domain.owner.entity.FoodStatus;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -47,11 +46,6 @@ public class CartFood extends BaseEntity {
     private boolean isDeleted;
 
     public static CartFood create(Food food, int quantity) {
-        // 음식 검증
-        if (food.getFoodStatus() != FoodStatus.Ok) {
-            throw new IllegalArgumentException("판매중인 음식이 아닙니다.");
-        }
-
         CartFood cartFood = new CartFood();
 
         cartFood.quantity = quantity;
