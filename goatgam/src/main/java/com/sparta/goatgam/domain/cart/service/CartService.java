@@ -16,6 +16,8 @@ import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,14 @@ public class CartService {
 
     private final FoodRepository foodRepository;
     private final FoodOptionRepository foodOptionRepository;
+
+    public CartResponseDto getCartInfo(User user) {
+        Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseThrow(() ->
+                new BusinessException(ExceptionCode.CART_NOT_FOUND));
+
+        // @SQLRestriction 어노테이션으로 인해 삭제된 CartFood와 CartFoodOption은 자동으로 제외됨
+        return new CartResponseDto(cart);
+    }
 
     @Transactional
     public MessageAndIdResponseDto addCartFood(CartFoodRequestDto cartFoodRequestDto, User user) {
@@ -96,14 +106,6 @@ public class CartService {
         return new MessageAndIdResponseDto("장바구니에 음식을 성공적으로 담았습니다.", cart.getCartId());
     }
 
-    public CartResponseDto getCartInfo(User user) {
-        Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseThrow(() ->
-                new IllegalArgumentException("생성된 장바구니가 없습니다."));
-
-        // @SQLRestriction 어노테이션으로 인해 삭제된 CartFood와 CartFoodOption은 자동으로 제외됨
-        return new CartResponseDto(cart);
-    }
-
     @Transactional
     public MessageAndIdResponseDto updateCartFoodOption(CartFoodUpdateRequestDto cartFoodUpdateRequestDto, User user) {
         CartFood cartFood = cartFoodRepository.findById(cartFoodUpdateRequestDto.cartFoodId()).orElseThrow(() ->
@@ -148,6 +150,19 @@ public class CartService {
         }
 
         return new MessageAndIdResponseDto("옵션을 성공적으로 변경했습니다.", cartFood.getCart().getCartId());
+    }
+
+    @Transactional
+    public MessageAndIdResponseDto deleteCartFood(UUID cartFoodId, User user) {
+        CartFood cartFood = cartFoodRepository.findById(cartFoodId).orElseThrow(() ->
+                new IllegalArgumentException("장바구니내 음식 정보를 찾을 수 없습니다."));
+
+        if (cartFood.getIsDeleted())
+            throw new IllegalArgumentException("이미 삭제된 음식입니다.");
+
+        cartFood.delete(user);
+
+        return new MessageAndIdResponseDto("성공적으로 삭제되었습니다.", cartFood.getCart().getCartId());
     }
 
     private boolean optionEquals(CartFood cartFoodA, List<UUID> optionIdListB) {

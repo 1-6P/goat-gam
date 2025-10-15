@@ -1,10 +1,11 @@
 package com.sparta.goatgam.domain.ai.service;
 
+import com.sparta.goatgam.domain.owner.entity.Food;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 import java.util.Map;
@@ -19,28 +20,40 @@ public class GeminiService {
     @Value("${google.gemini.model}")
     private String modelName;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestClient restClient = RestClient.builder()
+            .baseUrl("https://generativelanguage.googleapis.com/v1beta")
+            .defaultHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+            .build();
 
-    public String generateMenuDescription(String prompt) {
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent?key=" + apiKey;
+    public String generateMenuDescription(Food food, String prompt) {
+        String endpoint = "/models/" + modelName + ":generateContent?key=" + apiKey;
 
-        Map<String, Object> body = Map.of("contents", List.of(Map.of("parts", List.of(Map.of("text", "50글자 내로 간략하게 " + prompt)))));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+        Map<String, Object> body = Map.of(
+                "contents", List.of(
+                        Map.of("parts", List.of(
+                                Map.of("text", food.getFoodName() + "의 메뉴 설명을 작성할거야. 50글자 내로 간략하게 " + prompt)
+                        ))
+                )
+        );
 
         try {
-            List<Map<String, Object>> candidates = (List<Map<String, Object>>) response.getBody().get("candidates");
+            Map<String, Object> response = restClient.post()
+                    .uri(endpoint)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+
+            List<Map<String, Object>> candidates = (List<Map<String, Object>>) response.get("candidates");
             Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
             List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
             return (String) parts.get(0).get("text");
+
         } catch (Exception e) {
             e.printStackTrace();
             return "AI 설명 생성 실패";
         }
     }
 }
+
 
