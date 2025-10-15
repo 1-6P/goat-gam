@@ -90,7 +90,7 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public RestaurantDetailDto getRestaurant(UUID restaurantId) {
         Restaurant r = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다: " + restaurantId));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
         return RestaurantDetailDto.from(r);
     }
 
@@ -98,9 +98,10 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto updateRestaurant(UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto, User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
         //체크로직 적용
         checkUser(restaurant, userInfo);
+
         restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
         restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
         restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
@@ -114,7 +115,7 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto deleteRestaurant(UUID restaurantId,User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
         checkUser(restaurant, userInfo);
         restaurant.setStatus(false);
         return RestaurantInfoDto.convertDto(restaurant);
@@ -124,7 +125,7 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto RollbackDeletedRestaurant(UUID restaurantId,User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
         checkUser(restaurant, userInfo);
         restaurant.setStatus(true);
         return RestaurantInfoDto.convertDto(restaurant);
@@ -230,7 +231,7 @@ public class RestaurantService {
         //Duplicated Fragment 경고로 인해 방식 수정
         //본인 체크 로직
         if (!userInfo.getUserId().equals(requester.getUserId()) && (restaurant.getUser().getRole() == UserRoleEnum.Owner || restaurant.getUser().getRole() == UserRoleEnum.Customer)) {
-            throw new IllegalArgumentException("인증된 사용자 정보와 요청의 userId가 일치하지 않습니다.");
+            throw new BusinessException(ExceptionCode.INVALID_USER);
         }
     }
 }
