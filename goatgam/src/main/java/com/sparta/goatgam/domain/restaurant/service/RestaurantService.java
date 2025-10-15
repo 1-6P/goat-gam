@@ -48,21 +48,16 @@ public class RestaurantService {
         User user = userRepository.findById(restaurantRequestDto.getUserId())
                 .orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
         //userID 체크
-
         RestaurantType type = restaurantTypeRepository.findById(restaurantRequestDto.getRestaurantTypeId())
                 .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND)); //타입값 체크
-
-        //1010 update, 권한 생성 후, 유저Id 체크
+        //권한 생성 후, 유저Id 체크
         checkUser(new Restaurant(user, type, restaurantRequestDto), userInfo);
-
         //사용자 ROLE 체크함. 권한 체크
         if(user.getRole() != UserRoleEnum.Owner && user.getRole() != UserRoleEnum.Manager && user.getRole() != UserRoleEnum.Master) {
             throw new BusinessException(ExceptionCode.FORBIDDEN_CREATE_RESTAURANT);
         }
-
         // Restaurant entity를 생성한다 (편의 생성자 이용)
         Restaurant res = new Restaurant(user, type, restaurantRequestDto);
-
         //생성된 엔티티를 DB에 저장해 Insert query 작동시킴
         Restaurant saved = restaurantRepository.save(res);
         //저장된 엔티티를 클라이언트에게 DTO를 이용해 변환한 후 반환해준다.
@@ -90,7 +85,7 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public RestaurantDetailDto getRestaurant(UUID restaurantId) {
         Restaurant r = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
         return RestaurantDetailDto.from(r);
     }
 
@@ -98,10 +93,9 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto updateRestaurant(UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto, User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
         //체크로직 적용
         checkUser(restaurant, userInfo);
-
         restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
         restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
         restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
@@ -115,22 +109,22 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto deleteRestaurant(UUID restaurantId,User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
         checkUser(restaurant, userInfo);
         restaurant.setStatus(false);
         return RestaurantInfoDto.convertDto(restaurant);
     }
     //삭제된 레스토랑 롤백
-    //식당 status 체크하는 로직을 따로 도입해야 할까요?
     @Transactional
     public RestaurantInfoDto RollbackDeletedRestaurant(UUID restaurantId,User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
-        checkUser(restaurant, userInfo);
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
+        if(userInfo.getRole() != UserRoleEnum.Manager && userInfo.getRole() != UserRoleEnum.Master) {
+            throw new BusinessException(ExceptionCode.FORBIDDEN_ROLLBACK_RESTAURANT);
+        }
         restaurant.setStatus(true);
         return RestaurantInfoDto.convertDto(restaurant);
     }
-
 
     //  카테고리/키워드 기반 목록 조회 (for users)
     @Transactional(readOnly = true)
@@ -224,14 +218,13 @@ public class RestaurantService {
         return RestaurantFoodOptionDetailDto.convertList(restaurantId,foodId,foodOption);
     }
 
-    //본인 체크하기
+    //본인 체크하기 (수정,삭제)
     private void checkUser(Restaurant restaurant, User userInfo) {
         //요청하는 user
         User requester = restaurant.getUser();
-        //Duplicated Fragment 경고로 인해 방식 수정
         //본인 체크 로직
         if (!userInfo.getUserId().equals(requester.getUserId()) && (restaurant.getUser().getRole() == UserRoleEnum.Owner || restaurant.getUser().getRole() == UserRoleEnum.Customer)) {
-            throw new BusinessException(ExceptionCode.INVALID_USER);
+            throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_RESTAURANT);
         }
     }
 }
