@@ -54,6 +54,17 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderFood> orderFoods;
 
+    public Order(String address, int totalprice, String request, LocalDateTime now, StatusEnum statusEnum, String nickname, User user, Restaurant restaurant, List<OrderFood> orderFoods) {
+        this.address = address;
+        this.totalPrice = totalprice;
+        this.request = request;
+        this.orderTime = now;
+        this.status = statusEnum;
+        this.statusBy = nickname;
+        this.user = user;
+        this.restaurant = restaurant;
+        this.orderFoods = orderFoods;
+      
     public void changeStatus(StatusEnum status){
         this.status = status;
     }
