@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,13 @@ public class OwnerController {
     private final OwnerService ownerService;
 
     @GetMapping()
-    public Page<OrderSummaryResponseDto> getOrders(@PathVariable UUID restaurantId,
-                                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                   @RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int size,
-                                                   @RequestParam(defaultValue = "DESC") Sort.Direction sort,
-                                                   @RequestParam(required = false) StatusEnum status) {
-        return ownerService.getOrder(restaurantId, userDetails.getUser(), page, size, sort, status);
+    public ResponseEntity<PagedModel<OrderSummaryResponseDto>> getOrders(@PathVariable UUID restaurantId,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                      @RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "10") int size,
+                                      @RequestParam(defaultValue = "DESC") Sort.Direction sort,
+                                      @RequestParam(required = false) StatusEnum status) {
+        return ResponseEntity.ok(ownerService.getOrder(restaurantId, userDetails.getUser(), page, size, sort, status));
     }
 
     @GetMapping("/{orderId}")

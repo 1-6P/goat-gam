@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,7 @@ public class OwnerService {
     private final OrderRepository orderRepository;
 
     @Transactional(readOnly = true)
-    public Page<OrderSummaryResponseDto> getOrder(UUID restaurantId, User user, int page, int size, Sort.Direction direction, StatusEnum status) {
+    public PagedModel<OrderSummaryResponseDto> getOrder(UUID restaurantId, User user, int page, int size, Sort.Direction direction, StatusEnum status) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new RuntimeException("식당을 찾을 수 없습니다."));
         if (!restaurant.getUser().getUserId().equals(user.getUserId())) {
             throw new RuntimeException("해당 식당의 권한이 없습니다.");
@@ -42,8 +43,7 @@ public class OwnerService {
         } else {
             orders = orderRepository.findByRestaurantAndStatus(restaurant, status, pageable);
         }
-
-        return orders.map(OrderSummaryResponseDto::new);
+        return new PagedModel<>(orders.map(OrderSummaryResponseDto::new));
     }
 
     @Transactional(readOnly = true)
