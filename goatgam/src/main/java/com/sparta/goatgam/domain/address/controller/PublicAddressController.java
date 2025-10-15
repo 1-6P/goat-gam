@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.address.controller;
 
 import com.sparta.goatgam.domain.address.dto.BeopjeongdongSearchDto;
+import com.sparta.goatgam.domain.address.dto.PublicAddressSearchRequestDto;
 import com.sparta.goatgam.domain.address.entity.Sido;
 import com.sparta.goatgam.domain.address.entity.Sigungu;
 import com.sparta.goatgam.domain.address.service.PublicAddressService;
@@ -36,24 +37,26 @@ public class PublicAddressController {
     public ResponseEntity<List<Sigungu>> listSigungu(@RequestParam String sidoCode){
         return ResponseEntity.ok(publicAddressService.listSigungu(sidoCode));
     }
+
     // 법정동 검색
     @GetMapping("/beopjeongdong/search")
     public ResponseEntity<PagedModel<BeopjeongdongSearchDto>> search(
-            @RequestParam(required = false) String dongNameKeyword,
-            @RequestParam(required = false) String sidoCode,
-            @RequestParam(required = false) String sigunguCode,
-            @RequestParam int page,
-            @RequestParam int size
+            PublicAddressSearchRequestDto requestDto
     ){
-        String qNorm = normalizeKo(dongNameKeyword);
+        String qNorm = normalizeKo(requestDto.getDongNameKeyword());
 
         Pageable pageable = makePageable(
-                page,
-                size,
+                requestDto.getPage(),
+                requestDto.getSize(),
                 order(Sort.Direction.ASC, "name")  // 기본 정렬 기준(원하는 필드로 교체 가능)
         );
 
-        return ResponseEntity.ok(publicAddressService.search(qNorm, sidoCode, sigunguCode, pageable));
+        return ResponseEntity.ok(publicAddressService.search(
+                qNorm,
+                requestDto.getSidoCode(),
+                requestDto.getSigunguCode(),
+                pageable
+        ));
     }
 
     static String normalizeKo(String s) {
