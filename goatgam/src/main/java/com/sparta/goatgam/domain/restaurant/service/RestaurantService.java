@@ -14,6 +14,8 @@ import com.sparta.goatgam.domain.restaurant.repository.RestaurantTypeRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -44,7 +46,8 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto createRestaurant(RestaurantRequestDto restaurantRequestDto, User userInfo) {
         User user = userRepository.findById(restaurantRequestDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found")); //userID 체크
+                .orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
+        //userID 체크
 
         RestaurantType type = restaurantTypeRepository.findById(restaurantRequestDto.getRestaurantTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("RestaurantType not found")); //타입값 체크
@@ -126,6 +129,8 @@ public class RestaurantService {
         restaurant.setStatus(true);
         return RestaurantInfoDto.convertDto(restaurant);
     }
+
+    
     //  카테고리/키워드 기반 목록 조회 (for users)
     @Transactional(readOnly = true)
     public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword) {
