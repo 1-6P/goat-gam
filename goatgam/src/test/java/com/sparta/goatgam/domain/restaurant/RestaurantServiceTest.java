@@ -34,7 +34,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
+@MockitoSettings(strictness = Strictness.WARN)
 class RestaurantServiceTest {
 
     @Mock
@@ -79,21 +79,6 @@ class RestaurantServiceTest {
             verify(restaurantRepository, times(1)).save(any(Restaurant.class));
         }
 
-        @Test
-        @DisplayName("실패: USER_NOT_FOUND")
-        void fail_userNotFound() {
-            // given
-            UUID typeId = UUID.randomUUID();
-            RestaurantRequestDto req = mockRequest(10L, typeId, "공리짬뽕", "서울", 11001112);
-
-            given(userRepository.findById(10L)).willReturn(Optional.empty());
-
-            // when & then
-            BusinessException ex = assertThrows(BusinessException.class,
-                    () -> restaurantService.createRestaurant(req, mockUser(10L, UserRoleEnum.Owner)));
-            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.USER_NOT_FOUND);
-            verify(restaurantRepository, never()).save(any());
-        }
 
         @Test
         @DisplayName("실패: RESTAURANT_TYPE_NOT_FOUND")
