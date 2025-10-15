@@ -7,9 +7,8 @@ import com.sparta.goatgam.domain.address.repository.BeopjeongdongRepository;
 import com.sparta.goatgam.domain.address.repository.SidoRepository;
 import com.sparta.goatgam.domain.address.repository.SigunguRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,17 +32,19 @@ public class PublicAddressService {
         return sigunguRepository.findBySido_SidoCodeAndAbolishedFalseOrderByNameAsc(sidoCode);
     }
 
-    public List<BeopjeongdongSearchDto> search(
+    public PagedModel<BeopjeongdongSearchDto> search(
             String qNorm,
             String sidoCode,
             String sigunguCode,
             Pageable pageable
     ) {
-        String qLower = toLowerOrNull(qNorm);
+        String qLower  = toLowerOrNull(qNorm);
+        String qLike   = qLower == null ? null : "%" + qLower + "%";
+        String qPrefix = qLower == null ? null : qLower + "%";
         String sd     = trimOrNull(sidoCode);
         String sg     = trimOrNull(sigunguCode);
 
-        return beopjeongdongRepository.search(qLower, sd, sg, pageable);
+        return new PagedModel<>(beopjeongdongRepository.search(qLower, qLike, qPrefix, sd, sg, pageable));
     }
 
     // ---- utils ----

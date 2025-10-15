@@ -6,14 +6,11 @@ import com.sparta.goatgam.domain.address.entity.Sigungu;
 import com.sparta.goatgam.domain.address.service.PublicAddressService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Locale;
@@ -41,17 +38,19 @@ public class PublicAddressController {
     }
     // 법정동 검색
     @GetMapping("/beopjeongdong/search")
-    public ResponseEntity<List<BeopjeongdongSearchDto>> search(
-            @RequestParam(required = false) String q,
+    public ResponseEntity<PagedModel<BeopjeongdongSearchDto>> search(
+            @RequestParam(required = false) String dongNameKeyword,
             @RequestParam(required = false) String sidoCode,
-            @RequestParam(required = false) String sigunguCode
+            @RequestParam(required = false) String sigunguCode,
+            @RequestParam int page,
+            @RequestParam int size
     ){
-        String qNorm = normalizeKo(q);
+        String qNorm = normalizeKo(dongNameKeyword);
 
         Pageable pageable = makePageable(
-                0,
-                10,
-                order(Sort.Direction.ASC, "dongName")  // 기본 정렬 기준(원하는 필드로 교체 가능)
+                page,
+                size,
+                order(Sort.Direction.ASC, "name")  // 기본 정렬 기준(원하는 필드로 교체 가능)
         );
 
         return ResponseEntity.ok(publicAddressService.search(qNorm, sidoCode, sigunguCode, pageable));
@@ -59,9 +58,8 @@ public class PublicAddressController {
 
     static String normalizeKo(String s) {
         if (s == null) return null;
-        String x = s.toLowerCase(Locale.KOREAN)
+        return s.toLowerCase(Locale.KOREAN)
                 .replaceAll("\\s+", "");
-        return x;
     }
 
 }
