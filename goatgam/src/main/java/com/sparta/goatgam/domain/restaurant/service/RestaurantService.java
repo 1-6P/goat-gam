@@ -50,14 +50,14 @@ public class RestaurantService {
         //userID 체크
 
         RestaurantType type = restaurantTypeRepository.findById(restaurantRequestDto.getRestaurantTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("RestaurantType not found")); //타입값 체크
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND)); //타입값 체크
 
         //1010 update, 권한 생성 후, 유저Id 체크
         checkUser(new Restaurant(user, type, restaurantRequestDto), userInfo);
 
         //사용자 ROLE 체크함. 권한 체크
         if(user.getRole() != UserRoleEnum.Owner && user.getRole() != UserRoleEnum.Manager && user.getRole() != UserRoleEnum.Master) {
-            throw new IllegalArgumentException("해당 유저는 사장님으로 등록되어 있지 않습니다. 확인 후 재시도해주세요");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_CREATE_RESTAURANT);
         }
 
         // Restaurant entity를 생성한다 (편의 생성자 이용)
