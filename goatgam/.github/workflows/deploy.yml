@@ -1,37 +1,37 @@
-name: Deploy Spring Boot to AWS EC2
+name: Deploy Spring Boot (Docker) to AWS EC2
 
 on:
   push:
-    branches: [ "release" ]  # release 브랜치에 push될 때 실행
+    branches: [ "release" ]  # ✅ release 브랜치에서만 배포 실행
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      #GitHub에서 코드 체크아웃
-      - name: Checkout source code
+      # 1️⃣ 코드 가져오기
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      #JDK 설정
+      # 2️⃣ JDK 17 설정 (빌드용)
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      #Maven 빌드
-      - name: Build with Maven
+      # 3️⃣ Maven 빌드
+      - name: Build JAR
         run: mvn clean package -DskipTests
 
-      #SSH 키 파일 생성
-      - name: Setup SSH key
+      # 4️⃣ SSH 키 설정
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.AWS_KEY }}" > ~/.ssh/aws-key.pem
           chmod 600 ~/.ssh/aws-key.pem
 
-      #EC2에 환경변수 파일(.env) 생성
+      # 5️⃣ .env 파일 생성
       - name: Create .env file
         run: |
           echo "DB_URL=${{ secrets.DB_URL }}" > .env
@@ -41,28 +41,42 @@ jobs:
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
           cat .env
 
-      #EC2에 JAR & .env 전송
-      - name: Copy files to EC2
+      # 6️⃣ EC2로 프로젝트 복사
+      - name: Copy project to EC2
         run: |
-          scp -i ~/.ssh/aws-key.pem -o StrictHostKeyChecking=no target/*.jar ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/home/${{ secrets.AWS_USER }}/app.jar
-          scp -i ~/.ssh/aws-key.pem -o StrictHostKeyChecking=no .env ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/home/${{ secrets.AWS_USER }}/.env
+          scp -i ~/.ssh/aws-key.pem -o StrictHostKeyChecking=no -r . ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/home/${{ secrets.AWS_USER }}/goatgam
 
-      #EC2에서 애플리케이션 재시작
-      - name: Restart Spring Boot app on EC2
+      # 7️⃣ EC2에서 Docker 빌드 및 실행
+      - name: Build and Run Docker container on EC2
         run: |
           ssh -i ~/.ssh/aws-key.pem -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
-          # 환경변수 로드
-          export $(grep -v '^#' /home/${{ secrets.AWS_USER }}/.env | xargs)
+          cd ~/goatgam
           
-          # 기존 애플리케이션 종료
-          if pgrep -f "java -jar" > /dev/null
+          # Docker 설치 확인 (없으면 설치)
+          if ! command -v docker &> /dev/null
           then
-            echo "Stopping existing application..."
-            pkill -f "java -jar"
-            sleep 5
+            echo "Docker not found. Installing Docker..."
+            sudo apt-get update -y
+            sudo apt-get install -y ca-certificates curl gnupg
+            sudo install -m 0755 -d /etc/apt/keyrings
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+            echo \
+              "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+              $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+              sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+            sudo apt-get update -y
+            sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
           fi
           
-          # 새 버전 실행
-          echo "Starting new application..."
-          nohup java -jar /home/${{ secrets.AWS_USER }}/app.jar > /home/${{ secrets.AWS_USER }}/app.log 2>&1 &
+          # 기존 컨테이너 종료 및 삭제
+          sudo docker stop goatgam || true
+          sudo docker rm goatgam || true
+          
+          # ✅ 나중에 Dockerfile 추가되면 이 명령이 실제 빌드됨
+          sudo docker build -t goatgam .
+          
+          # ✅ .env 파일 적용 + 8080 포트 연결
+          sudo docker run -d --name goatgam --env-file .env -p 8080:8080 goatgam
+          
+          echo "✅ Docker container started successfully!"
           EOF
