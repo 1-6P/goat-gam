@@ -13,6 +13,8 @@ import com.sparta.goatgam.domain.review.entity.Review;
 import com.sparta.goatgam.domain.review.repository.ReviewRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import com.sparta.goatgam.global.util.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,28 +37,28 @@ public class ReviewService {
     @Transactional
     public void createReview(Long userId,UUID restaurantId , UUID orderId ,ReviewRequestDto requestDto) {
         Restaurant restaurant =restaurantRepository.findById(restaurantId)
-                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 식당입니다."));
+                        .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
 
         if (!order.getUser().getUserId().equals(userId)){
-            throw new IllegalArgumentException("본인 주문이 아닌경우 리뷰를 작성할 수 없습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_CREATE_REVIEW_);
         }
 
         if (!order.getStatus().equals(StatusEnum.Completed)){
-            throw new IllegalArgumentException("배송 완료된 주문만 리뷰를 작성할 수 있습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_ORDER_REVIEW);
         }
 
         if (reviewRepository.existsByOrderAndStatus(order, true)){
-            throw new IllegalArgumentException("해당 주문에 대한 리뷰가 이미 작성되었습니다.");
+            throw new BusinessException(ExceptionCode.REVIEW_ORDER_NOT_ALLOWED);
         }
 
         if (requestDto.getRate() < 0 || requestDto.getRate() > 6){
-            throw new IllegalArgumentException("평점은 1점 이상 5점 이하만 가능합니다.");
+            throw new BusinessException(ExceptionCode.REVIEW_RATE_ERROR);
         }
 
 
@@ -76,13 +78,13 @@ public class ReviewService {
     @Transactional
     public ReviewUpdateResponseDto updateReview(Long userId, UUID reviewId, UpdateReviewRequestDto requestDto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 후기입니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.REVIEW_NOT_FOUND));
 
         if (!review.getUser().getUserId().equals(userId)){
-            throw new IllegalArgumentException("본인이 작성한 리뷰만 수정할 수 있습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_ORDER_REVIEW);
         }
 
         review.updateReview(
@@ -96,10 +98,10 @@ public class ReviewService {
     @Transactional
     public ReviewUpdateResponseDto deleteReview(Long userId, UUID reviewId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 후기입니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.REVIEW_NOT_FOUND));
 
         review.deleteReview(user.getNickname());
         return new ReviewUpdateResponseDto(reviewId, "리뷰가 삭제되었습니다.");

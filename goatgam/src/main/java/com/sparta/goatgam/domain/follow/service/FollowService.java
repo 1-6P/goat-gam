@@ -8,6 +8,8 @@ import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,16 +33,16 @@ public class FollowService {
     public UUID addFollow(Long userId, UUID restaurantId) {
 
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                new BusinessException(ExceptionCode.USER_NOT_FOUND));
 
         Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 식당입니다."));
+                new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
 
         Follow existFollow = followRepository.findByUser_UserIdAndRestaurant_RestaurantId(userId,restaurantId);
 
         if (existFollow != null){
             if (Boolean.TRUE.equals(existFollow.getFollowStatus())){
-                throw new IllegalArgumentException("이미 팔로우 중입니다.");
+                throw new BusinessException(ExceptionCode.FOLLOW_ALREADY);
             }
             existFollow.reFollow(user.getNickname());
             return existFollow.getFollowId();
@@ -84,10 +86,10 @@ public class FollowService {
     @Transactional
     public FollowResponseDto unFollow(Long userId, UUID followId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                new BusinessException(ExceptionCode.USER_NOT_FOUND));
 
         Follow follow = followRepository.findById(followId).orElseThrow(() ->
-                new IllegalArgumentException("현재 팔로우 상태가 아닙니다."));
+                new BusinessException(ExceptionCode.FOLLOW_NO));
 
         if (follow.getFollowStatus()){
             follow.unFollow(user.getNickname());
