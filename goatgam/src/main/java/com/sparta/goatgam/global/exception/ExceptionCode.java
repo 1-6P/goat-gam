@@ -30,10 +30,11 @@ public enum ExceptionCode {
 
     //식당(R)
     RESTAURANT_NOT_FOUND("R01", "식당을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    FORBIDDEN_CREATE_RESTAURANT_("R02", "식당 생성 권한이 없습니다..", HttpStatus.FORBIDDEN),
+    FORBIDDEN_CREATE_RESTAURANT("R02", "식당 생성 권한이 없습니다..", HttpStatus.FORBIDDEN),
     FORBIDDEN_UPDATE_RESTAURANT("R03", "식당 정보를 수정할 권한이 없습니다.", HttpStatus.FORBIDDEN),
     FORBIDDEN_DELETE_RESTAURANT("R04", "식당 정보를 삭제할 권한이 없습니다.", HttpStatus.FORBIDDEN),
     FORBIDDEN_ROLLBACK_RESTAURANT("R05", "식당 삭제를 롤백할 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    RESTAURANT_TYPE_NOT_FOUND("R06", "올바른 식당 타입 ID가 아닙니다.", HttpStatus.NOT_FOUND),
 
     //주소 (A)
     ADDRESS_USER_NOT_FOUND("A01", "해당 유저의 주소가 없습니다.", HttpStatus.NOT_FOUND),

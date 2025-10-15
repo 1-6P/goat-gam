@@ -50,14 +50,14 @@ public class RestaurantService {
         //userID 체크
 
         RestaurantType type = restaurantTypeRepository.findById(restaurantRequestDto.getRestaurantTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("RestaurantType not found")); //타입값 체크
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND)); //타입값 체크
 
         //1010 update, 권한 생성 후, 유저Id 체크
         checkUser(new Restaurant(user, type, restaurantRequestDto), userInfo);
 
         //사용자 ROLE 체크함. 권한 체크
         if(user.getRole() != UserRoleEnum.Owner && user.getRole() != UserRoleEnum.Manager && user.getRole() != UserRoleEnum.Master) {
-            throw new IllegalArgumentException("해당 유저는 사장님으로 등록되어 있지 않습니다. 확인 후 재시도해주세요");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_CREATE_RESTAURANT);
         }
 
         // Restaurant entity를 생성한다 (편의 생성자 이용)
@@ -90,7 +90,7 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public RestaurantDetailDto getRestaurant(UUID restaurantId) {
         Restaurant r = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다: " + restaurantId));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
         return RestaurantDetailDto.from(r);
     }
 
@@ -98,9 +98,10 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto updateRestaurant(UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto, User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
         //체크로직 적용
         checkUser(restaurant, userInfo);
+
         restaurant.setRestaurantName(restaurantUpdateDto.getRestaurantName());
         restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
         restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
@@ -114,7 +115,7 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto deleteRestaurant(UUID restaurantId,User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("식당을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
         checkUser(restaurant, userInfo);
         restaurant.setStatus(false);
         return RestaurantInfoDto.convertDto(restaurant);
@@ -124,13 +125,13 @@ public class RestaurantService {
     @Transactional
     public RestaurantInfoDto RollbackDeletedRestaurant(UUID restaurantId,User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_TYPE_NOT_FOUND));
         checkUser(restaurant, userInfo);
         restaurant.setStatus(true);
         return RestaurantInfoDto.convertDto(restaurant);
     }
 
-    
+
     //  카테고리/키워드 기반 목록 조회 (for users)
     @Transactional(readOnly = true)
     public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword) {
