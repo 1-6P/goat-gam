@@ -1,8 +1,6 @@
 package com.sparta.goatgam.domain.order.controller;
 
-import com.sparta.goatgam.domain.order.dto.AdminOrderSummaryResponseDto;
-import com.sparta.goatgam.domain.order.dto.OrderDetailResponseDto;
-import com.sparta.goatgam.domain.order.dto.OrderSummaryResponseDto;
+import com.sparta.goatgam.domain.order.dto.*;
 import com.sparta.goatgam.domain.order.service.OrderService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,5 +58,11 @@ public class OrderController {
             @PathVariable UUID orderId) {
 
         return ResponseEntity.ok(orderService.getOrderDetail(orderId));
+    }
+
+    @Operation(summary = "장바구니로 주문 등록", description = "장바구니 아이디로 주문요청을 한다.")
+    @PostMapping("")
+    public ResponseEntity<OrderSaveResponseDto> addOrder(@AuthenticationPrincipal UserDetailsImpl principal, @RequestBody OrderRequestContentDto body) {
+        return ResponseEntity.ok(orderService.addOrder(principal.getUser(), body.request()));
     }
 }
