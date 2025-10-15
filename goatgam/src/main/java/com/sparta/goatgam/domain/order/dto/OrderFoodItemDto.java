@@ -1,0 +1,24 @@
+package com.sparta.goatgam.domain.order.dto;
+
+import com.sparta.goatgam.domain.order.entity.OrderFood;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@Getter
+@AllArgsConstructor
+public class OrderFoodItemDto {
+    private String foodName;
+    private List<String> options;
+    private BigDecimal price;
+    private int quantity;
+
+    public OrderFoodItemDto(OrderFood orderFood) {
+        this.foodName = orderFood.getFoodName();
+        this.options = orderFood.getOptionList();
+        this.price = orderFood.getFood().getFoodPrice();
+        this.quantity = orderFood.getQuantity();
+    }
+}

@@ -1,0 +1,207 @@
+package com.sparta.goatgam.domain.cart.service;
+
+import com.sparta.goatgam.domain.cart.dto.*;
+import com.sparta.goatgam.domain.cart.entity.Cart;
+import com.sparta.goatgam.domain.cart.entity.CartFood;
+import com.sparta.goatgam.domain.cart.entity.CartFoodOption;
+import com.sparta.goatgam.domain.cart.repository.CartFoodRepository;
+import com.sparta.goatgam.domain.cart.repository.CartRepository;
+import com.sparta.goatgam.domain.owner.entity.Food;
+import com.sparta.goatgam.domain.owner.entity.FoodOption;
+import com.sparta.goatgam.domain.owner.entity.FoodStatus;
+import com.sparta.goatgam.domain.owner.repository.FoodOptionRepository;
+import com.sparta.goatgam.domain.owner.repository.FoodRepository;
+import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
+import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
+import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class CartService {
+
+    private final CartRepository cartRepository;
+    private final CartFoodRepository cartFoodRepository;
+
+    private final RestaurantRepository restaurantRepository;
+
+    private final FoodRepository foodRepository;
+    private final FoodOptionRepository foodOptionRepository;
+
+    public CartResponseDto getCartInfo(User user) {
+        Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseThrow(() ->
+                new BusinessException(ExceptionCode.CART_NOT_FOUND));
+
+        // @SQLRestriction 어노테이션으로 인해 삭제된 CartFood와 CartFoodOption은 자동으로 제외됨
+        return new CartResponseDto(cart);
+    }
+
+    @Transactional
+    public MessageAndIdResponseDto addCartFood(CartFoodRequestDto cartFoodRequestDto, User user) {
+        Restaurant restaurant = restaurantRepository.findById(cartFoodRequestDto.restaurantId()).orElseThrow(() ->
+                new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
+        Food food = foodRepository.findByIdAndRestaurant_RestaurantId(
+                cartFoodRequestDto.foodId(),
+                cartFoodRequestDto.restaurantId()
+        ).orElseThrow(() -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
+        // 1. 해당 유저가 소유하고 있는 활성화 카드 정보 가져오기.
+        // 2. 없으면 새로 생성
+        Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseGet(() -> {
+            Cart newCart = Cart.create(user, restaurant);
+            cartRepository.save(newCart);
+            return newCart;
+        });
+
+        if (!food.getFoodStatus().equals(FoodStatus.Ok)) throw new BusinessException(ExceptionCode.FOOD_NOT_SELL);
+
+        // 3. 있으면 requestDto에서 restaurantId 가져와서 cart의 restaurantId와 비교
+        // 4. 있는데 같으면 카트 유지
+        if (cart.getRestaurant().getRestaurantId().equals(cartFoodRequestDto.restaurantId())) {
+            // 7. 카트에 이미 해당 음식 있으면 개수만 더해서 update(옵션까지 동일해야함)
+            List<CartFood> cartFoodList = cartFoodRepository.findAllByCartAndFoodAndIsDeletedFalse(cart, food);
+            for (CartFood cartFood : cartFoodList) {
+                if (food.getId().equals(cartFood.getFood().getId()) &&
+                        optionEquals(cartFood, cartFoodRequestDto.options())
+                ) {
+                    cartFood.setQuantity(cartFood.getQuantity() + cartFoodRequestDto.quantity());
+
+                    return new MessageAndIdResponseDto("장바구니에 음식을 성공적으로 담았습니다.", cart.getCartId());
+                }
+            }
+        } else {
+            // 5. 있는데 다르면 카트 삭제 후 새 카트 생성
+            cart.delete(user);
+            cart = Cart.create(user, restaurant);
+            cartRepository.save(cart);
+        }
+
+        // 6. 카트에 음식 담기   -> message와 카트 ID return
+        CartFood cartFood = CartFood.create(food, cartFoodRequestDto.quantity());
+
+        // 7. 옵션 있으면 옵션도 담기
+        if (cartFoodRequestDto.options() != null)
+            for (UUID foodOptionId : cartFoodRequestDto.options()) {
+                FoodOption foodOption = foodOptionRepository.findById(foodOptionId).orElseThrow(() ->
+                        new BusinessException(ExceptionCode.OPTION_NOT_FOUND));
+
+                if (!foodOption.getFood().getId().equals(food.getId())) {
+                    throw new BusinessException(ExceptionCode.OPTION_INPUT_ERROR);
+                }
+
+                if (foodOption.isDeleted()) throw new BusinessException(ExceptionCode.CART_DELETED_OPTION);
+
+                CartFoodOption cartFoodOption = CartFoodOption.create(foodOption);
+                cartFood.addCartFoodOption(cartFoodOption);
+            }
+
+        cart.addCartFood(cartFood);
+
+        return new MessageAndIdResponseDto("장바구니에 음식을 성공적으로 담았습니다.", cart.getCartId());
+    }
+
+    @Transactional
+    public MessageAndIdResponseDto updateCartFoodOption(CartFoodOptionUpdateRequestDto cartFoodOptionUpdateRequestDto, User user) {
+        CartFood cartFood = cartFoodRepository.findById(cartFoodOptionUpdateRequestDto.cartFoodId()).orElseThrow(() ->
+                new BusinessException(ExceptionCode.CART_MISSING_FOOD));
+
+        if (!cartFood.getCart().getUser().getUserId().equals(user.getUserId()))
+            throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_CART);
+
+        ArrayList<UUID> newFoodOptionList;
+        if (cartFoodOptionUpdateRequestDto.changeOptionList() == null)
+            newFoodOptionList = new ArrayList<>();
+        else
+            newFoodOptionList = new ArrayList<>(cartFoodOptionUpdateRequestDto.changeOptionList());
+
+        // 옵션 비교해서 삭제된 옵션 지우고
+        for (CartFoodOption cartFoodOption : cartFood.getCartFoodOptions()) {
+            if (!newFoodOptionList.contains(cartFoodOption.getFoodOption().getId())) {
+                cartFoodOption.delete(user);
+            } else {
+                newFoodOptionList.remove(cartFoodOption.getFoodOption().getId());
+            }
+        }
+
+        // 변경된 음식과 기존 음식 비교해서 같으면 음식 자체를 지우고 qnatity plus
+        for (CartFood cartFoodItem : cartFood.getCart().getCartFoods()) {
+            if (optionEquals(cartFoodItem, cartFoodOptionUpdateRequestDto.changeOptionList())) {
+                cartFood.delete(user);
+                cartFoodItem.setQuantity(cartFoodItem.getQuantity() + cartFood.getQuantity());
+
+                return new MessageAndIdResponseDto("옵션을 성공적으로 변경했습니다.", cartFood.getCart().getCartId());
+            }
+        }
+
+        // 새 옵션 저장
+        for (UUID foodOptionId : newFoodOptionList) {
+            FoodOption foodOption = foodOptionRepository.findById(foodOptionId).orElseThrow(() ->
+                    new BusinessException(ExceptionCode.OPTION_NOT_FOUND));
+
+            if (!foodOption.getFood().getId().equals(cartFood.getFood().getId())) {
+                throw new BusinessException(ExceptionCode.OPTION_INPUT_ERROR);
+            }
+
+            if (foodOption.isDeleted()) throw new BusinessException(ExceptionCode.CART_DELETED_OPTION);
+
+            CartFoodOption cartFoodOption = CartFoodOption.create(foodOption);
+            cartFood.addCartFoodOption(cartFoodOption);
+        }
+
+        return new MessageAndIdResponseDto("옵션을 성공적으로 변경했습니다.", cartFood.getCart().getCartId());
+    }
+
+    @Transactional
+    public MessageAndIdResponseDto updateCartFoodQuantity(UUID cartFoodId, CartFoodUpdateRequestDto quantity, User user) {
+        CartFood cartFood = cartFoodRepository.findById(cartFoodId).orElseThrow(() ->
+                new BusinessException(ExceptionCode.CART_MISSING_FOOD));
+
+        if (!cartFood.getCart().getUser().getUserId().equals(user.getUserId()))
+            throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_CART);
+
+        if (cartFood.getIsDeleted()) throw new BusinessException(ExceptionCode.CART_DELETED_FOOD);
+
+        if (quantity.updateType().equals(QuantityUpdateTypeEnum.INCREASE)) {
+            cartFood.setQuantity(cartFood.getQuantity() + 1);
+        } else {
+            if (cartFood.getQuantity() < 2) {
+                throw new BusinessException(ExceptionCode.CART_FOOD_QUANTITY_LOWER_THEN_2);
+            }
+            cartFood.setQuantity(cartFood.getQuantity() - 1);
+        }
+
+        return new MessageAndIdResponseDto("수량을 성공적으로 변경했습니다.", cartFood.getCart().getCartId());
+    }
+
+    @Transactional
+    public MessageAndIdResponseDto deleteCartFood(UUID cartFoodId, User user) {
+        CartFood cartFood = cartFoodRepository.findById(cartFoodId).orElseThrow(() ->
+                new BusinessException(ExceptionCode.CART_MISSING_FOOD));
+
+        if (!cartFood.getCart().getUser().getUserId().equals(user.getUserId()))
+            throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_CART);
+
+        if (cartFood.getIsDeleted())
+            throw new BusinessException(ExceptionCode.CART_FOOD_ALREADY_DELETED);
+
+        cartFood.delete(user);
+
+        return new MessageAndIdResponseDto("성공적으로 삭제되었습니다.", cartFood.getCart().getCartId());
+    }
+
+    private boolean optionEquals(CartFood cartFoodA, List<UUID> optionIdListB) {
+        Set<UUID> optionIdSetA = cartFoodA.getCartFoodOptions().stream().map(o -> o.getFoodOption().getId())
+                .collect(Collectors.toSet());
+        Set<UUID> optionIdSetB = new HashSet<>(Optional.ofNullable(optionIdListB).orElse(List.of()));
+
+        return optionIdSetA.equals(optionIdSetB);
+    }
+}
