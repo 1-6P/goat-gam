@@ -79,15 +79,16 @@ public class OrderService {
     public OrderSaveResponseDto addOrder(User user, String request) {
         Cart cart = cartRepository.findByUserAndIsDeletedFalse(user)
                 .orElseThrow(() -> new IllegalArgumentException("장바구니가 비었습니다."));
-        // 장바구니 내용을 주문 내역으로 옮긴다.
+
         int totalprice = 0;
-        List<OrderFood> orderFoods = new ArrayList<>();
-        for (CartFood food : cart.getCartFoods() ) {
+        List<OrderFood> foodsToAdd = new ArrayList<>();
+
+        for (CartFood food : cart.getCartFoods()) {
             totalprice += food.getFood().getFoodPrice();
-            for (CartFoodOption option : food.getCartFoodOptions() ) {
+            for (CartFoodOption option : food.getCartFoodOptions()) {
                 totalprice += option.getFoodOption().getSurcharge();
             }
-            orderFoods.add(OrderFood.fromCartFood(food));
+            foodsToAdd.add(OrderFood.fromCartFood(food));
         }
 
         Order order = new Order(
@@ -99,10 +100,17 @@ public class OrderService {
                 user.getNickname(),
                 user,
                 cart.getRestaurant(),
-                orderFoods
+                new ArrayList<>()
         );
+
+        for (OrderFood of : foodsToAdd) {
+            order.addOrderFood(of);
+        }
+
         orderRepository.save(order);
+        cart.delete(user);
 
         return new OrderSaveResponseDto(order.getOrderId(), "주문내역이 저장되었습니다.");
     }
+
 }

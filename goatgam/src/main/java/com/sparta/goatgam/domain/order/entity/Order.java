@@ -65,6 +65,12 @@ public class Order extends BaseEntity {
         this.restaurant = restaurant;
         this.orderFoods = orderFoods;
     }
+
+    public void addOrderFood(OrderFood orderFood) {
+        orderFoods.add(orderFood);
+        orderFood.setOrder(this);
+    }
+
     public void changeStatus(StatusEnum status){
         this.status = status;
     }
