@@ -62,11 +62,13 @@ public enum ExceptionCode {
     OPTION_INPUT_ERROR("O03", "음식과 옵션이 올바르게 연결되지 않았습니다.", HttpStatus.BAD_REQUEST),
     OPTION_ALREADY_DELETED("O04", "삭제된 옵션입니다", HttpStatus.GONE),
 
-
     //장바구니 (C)
     CART_NOT_FOUND("C01", "생성된 장바구니가 없습니다.", HttpStatus.NOT_FOUND),
     CART_MISSING_FOOD("C02", "장바구니에 해당 음식이 없습니다.", HttpStatus.NOT_FOUND),
     CART_DELETED_OPTION("C03", "장바구니에 삭제된 옵션은 담을 수 없습니다.", HttpStatus.GONE),
+    CART_DELETED_FOOD("C04", "이미 삭제된 음식입니다.", HttpStatus.GONE),
+    CART_FOOD_QUANTITY_LOWER_THEN_2("C05", "장바구니에 담긴 음식의 수량이 2보다 작습니다. 수량이 1개인 음식은 삭제 api를 요청해주세요", HttpStatus.BAD_REQUEST),
+    FORBIDDEN_UPDATE_CART("C06", "장바구니 접근 권한이 없습니다.", HttpStatus.FORBIDDEN),
 
     //AI (AI)
     AI_LOG_NOT_FOUND("AI01", "AI 로그를 찾을 수 없습니다", HttpStatus.NOT_FOUND),

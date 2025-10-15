@@ -1,8 +1,6 @@
 package com.sparta.goatgam.domain.cart.service;
 
-import com.sparta.goatgam.domain.cart.dto.CartFoodRequestDto;
-import com.sparta.goatgam.domain.cart.dto.CartFoodUpdateRequestDto;
-import com.sparta.goatgam.domain.cart.dto.CartResponseDto;
+import com.sparta.goatgam.domain.cart.dto.*;
 import com.sparta.goatgam.domain.cart.entity.Cart;
 import com.sparta.goatgam.domain.cart.entity.CartFood;
 import com.sparta.goatgam.domain.cart.entity.CartFoodOption;
@@ -107,15 +105,15 @@ public class CartService {
     }
 
     @Transactional
-    public MessageAndIdResponseDto updateCartFoodOption(CartFoodUpdateRequestDto cartFoodUpdateRequestDto, User user) {
-        CartFood cartFood = cartFoodRepository.findById(cartFoodUpdateRequestDto.cartFoodId()).orElseThrow(() ->
+    public MessageAndIdResponseDto updateCartFoodOption(CartFoodOptionUpdateRequestDto cartFoodOptionUpdateRequestDto, User user) {
+        CartFood cartFood = cartFoodRepository.findById(cartFoodOptionUpdateRequestDto.cartFoodId()).orElseThrow(() ->
                 new IllegalArgumentException("장바구니에 해당 음식이 존재하지 않습니다."));
 
         ArrayList<UUID> newFoodOptionList;
-        if (cartFoodUpdateRequestDto.changeOptionList() == null)
+        if (cartFoodOptionUpdateRequestDto.changeOptionList() == null)
             newFoodOptionList = new ArrayList<>();
         else
-            newFoodOptionList = new ArrayList<>(cartFoodUpdateRequestDto.changeOptionList());
+            newFoodOptionList = new ArrayList<>(cartFoodOptionUpdateRequestDto.changeOptionList());
 
         // 옵션 비교해서 삭제된 옵션 지우고
         for (CartFoodOption cartFoodOption : cartFood.getCartFoodOptions()) {
@@ -128,7 +126,7 @@ public class CartService {
 
         // 변경된 음식과 기존 음식 비교해서 같으면 음식 자체를 지우고 qnatity plus
         for (CartFood cartFoodItem : cartFood.getCart().getCartFoods()) {
-            if (optionEquals(cartFoodItem, cartFoodUpdateRequestDto.changeOptionList())) {
+            if (optionEquals(cartFoodItem, cartFoodOptionUpdateRequestDto.changeOptionList())) {
                 cartFood.delete(user);
                 cartFoodItem.setQuantity(cartFoodItem.getQuantity() + cartFood.getQuantity());
                 return new MessageAndIdResponseDto("옵션을 성공적으로 변경했습니다.", cartFood.getCart().getCartId());
@@ -150,6 +148,28 @@ public class CartService {
         }
 
         return new MessageAndIdResponseDto("옵션을 성공적으로 변경했습니다.", cartFood.getCart().getCartId());
+    }
+
+    @Transactional
+    public MessageAndIdResponseDto updateCartFoodQuantity(UUID cartFoodId, CartFoodUpdateRequestDto quantity, User user) {
+        CartFood cartFood = cartFoodRepository.findById(cartFoodId).orElseThrow(() ->
+                new BusinessException(ExceptionCode.CART_MISSING_FOOD));
+
+        if (!cartFood.getCart().getUser().getUserId().equals(user.getUserId()))
+            throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_CART);
+
+        if (cartFood.getIsDeleted()) throw new BusinessException(ExceptionCode.CART_DELETED_FOOD);
+
+        if (quantity.updateType().equals(QuantityUpdateTypeEnum.INCREASE)) {
+            cartFood.setQuantity(cartFood.getQuantity() + 1);
+        } else {
+            if (cartFood.getQuantity() < 2) {
+                throw new BusinessException(ExceptionCode.CART_FOOD_QUANTITY_LOWER_THEN_2);
+            }
+            cartFood.setQuantity(cartFood.getQuantity() - 1);
+        }
+
+        return new MessageAndIdResponseDto("수량을 성공적으로 변경했습니다.", cartFood.getCart().getCartId());
     }
 
     @Transactional
