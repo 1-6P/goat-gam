@@ -13,7 +13,6 @@ import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.exception.BusinessException;
 import com.sparta.goatgam.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
