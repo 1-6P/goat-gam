@@ -2,6 +2,7 @@ package com.sparta.goatgam.domain.restaurant.controller;
 
 import com.sparta.goatgam.domain.owner.dto.FoodListDto;
 import com.sparta.goatgam.domain.restaurant.dto.*;
+import com.sparta.goatgam.domain.restaurant.service.MenuSearchService;
 import com.sparta.goatgam.domain.restaurant.service.RestaurantService;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -22,6 +24,7 @@ import java.util.UUID;
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
+    private final MenuSearchService menuSearchService;
 
     //전체 조회
     @Operation(summary = "관리자용 식당 목록 조회", description = "카테고리 코드/키워드로 필터링. 파라미터 없으면 전체 조회,stauts=false인 값도 조회")
@@ -106,6 +109,17 @@ public class RestaurantController {
     @GetMapping("/{restaurantId}/menu/{foodId}/option")
     public List<RestaurantFoodOptionDetailDto> getFoodOptionDetail (@PathVariable UUID restaurantId, @PathVariable UUID foodId) {
         return restaurantService.getFoodDetails(restaurantId,foodId);
+    }
+
+    // 메뉴 검색
+    @Operation(summary = "식당 내 메뉴 검색", description = "특정 식당 내에서 메뉴 이름 또는 설명을 기준으로 검색합니다. Hidden, Deleted 상태는 제외됩니다.")
+    @GetMapping("/{restaurantId}/menu/search")
+    public ResponseEntity<Map<String, Object>> searchMenus(
+        @PathVariable UUID restaurantId,
+        @RequestParam String keyword
+    ) {
+        List<FoodListDto> results = menuSearchService.searchMenus(restaurantId, keyword);
+        return ResponseEntity.ok(Map.of("results", results));
     }
 }
 
