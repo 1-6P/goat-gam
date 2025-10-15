@@ -1,0 +1,68 @@
+name: Deploy Spring Boot to AWS EC2
+
+on:
+  push:
+    branches: [ "release" ]  # release 브랜치에 push될 때 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      #GitHub에서 코드 체크아웃
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      #JDK 설정
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      #Maven 빌드
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      #SSH 키 파일 생성
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_KEY }}" > ~/.ssh/aws-key.pem
+          chmod 600 ~/.ssh/aws-key.pem
+
+      #EC2에 환경변수 파일(.env) 생성
+      - name: Create .env file
+        run: |
+          echo "DB_URL=${{ secrets.DB_URL }}" > .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+          cat .env
+
+      #EC2에 JAR & .env 전송
+      - name: Copy files to EC2
+        run: |
+          scp -i ~/.ssh/aws-key.pem -o StrictHostKeyChecking=no target/*.jar ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/home/${{ secrets.AWS_USER }}/app.jar
+          scp -i ~/.ssh/aws-key.pem -o StrictHostKeyChecking=no .env ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/home/${{ secrets.AWS_USER }}/.env
+
+      #EC2에서 애플리케이션 재시작
+      - name: Restart Spring Boot app on EC2
+        run: |
+          ssh -i ~/.ssh/aws-key.pem -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
+          # 환경변수 로드
+          export $(grep -v '^#' /home/${{ secrets.AWS_USER }}/.env | xargs)
+          
+          # 기존 애플리케이션 종료
+          if pgrep -f "java -jar" > /dev/null
+          then
+            echo "Stopping existing application..."
+            pkill -f "java -jar"
+            sleep 5
+          fi
+          
+          # 새 버전 실행
+          echo "Starting new application..."
+          nohup java -jar /home/${{ secrets.AWS_USER }}/app.jar > /home/${{ secrets.AWS_USER }}/app.log 2>&1 &
+          EOF
