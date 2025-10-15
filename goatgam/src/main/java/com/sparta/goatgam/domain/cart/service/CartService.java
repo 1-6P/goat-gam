@@ -16,6 +16,8 @@ import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +40,7 @@ public class CartService {
 
     public CartResponseDto getCartInfo(User user) {
         Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseThrow(() ->
-                new IllegalArgumentException("생성된 장바구니가 없습니다."));
+                new BusinessException(ExceptionCode.CART_NOT_FOUND));
 
         // @SQLRestriction 어노테이션으로 인해 삭제된 CartFood와 CartFoodOption은 자동으로 제외됨
         return new CartResponseDto(cart);
