@@ -4,6 +4,7 @@ import com.sparta.goatgam.domain.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -30,11 +31,11 @@ public class Payment {
     private PaymentMethodEnum method;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_status", nullable = false,  length = 10)
+    @Column(name = "payment_status", nullable = false, length = 10)
     private paymentStatusEnum paymentStatus;
 
     @Column(name = "amount", nullable = false, updatable = false)
-    private int amount;
+    private BigDecimal amount;
 
     @Column(name = "requested_at", nullable = false, updatable = false)
     private LocalDateTime requestedAt;

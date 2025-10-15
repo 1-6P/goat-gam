@@ -4,6 +4,7 @@ import com.sparta.goatgam.domain.owner.entity.Food;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -11,7 +12,7 @@ import java.util.UUID;
 public class FoodListDto {
     private UUID foodId;
     private String name;
-    private Integer price;
+    private BigDecimal price;
     private String image;
     private String explain;
     private String status; // Ok/Soldout/Hidden/Deleted

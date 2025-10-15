@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +27,7 @@ public class FoodOption extends BaseEntity {
     private String contents;
 
     @Column(name = "option_surcharge", nullable = false)
-    private int surcharge;
+    private BigDecimal surcharge;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_id", nullable = false, updatable = false)

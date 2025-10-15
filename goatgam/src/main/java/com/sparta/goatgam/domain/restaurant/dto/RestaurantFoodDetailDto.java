@@ -3,6 +3,8 @@ package com.sparta.goatgam.domain.restaurant.dto;
 import com.sparta.goatgam.domain.owner.entity.Food;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -11,7 +13,7 @@ public class RestaurantFoodDetailDto {
     private UUID foodId;
     private String foodName;
     private String foodExplain;
-    private int foodPrice;
+    private BigDecimal foodPrice;
     private String foodStatus;
     private String restaurantName;
 

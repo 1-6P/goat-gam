@@ -5,8 +5,12 @@ import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +32,7 @@ public class Order extends BaseEntity {
     private String address;
 
     @Column(name = "total_price", nullable = false, updatable = false)
-    private int totalPrice;
+    private BigDecimal totalPrice;
 
     @Column(name = "request", updatable = false)
     private String request;
@@ -54,7 +58,7 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderFood> orderFoods;
 
-    public Order(String address, int totalprice, String request, LocalDateTime now, StatusEnum statusEnum, String nickname, User user, Restaurant restaurant, List<OrderFood> orderFoods) {
+    public Order(String address, BigDecimal totalprice, String request, LocalDateTime now, StatusEnum statusEnum, String nickname, User user, Restaurant restaurant, List<OrderFood> orderFoods) {
         this.address = address;
         this.totalPrice = totalprice;
         this.request = request;
@@ -71,7 +75,7 @@ public class Order extends BaseEntity {
         orderFood.setOrder(this);
     }
 
-    public void changeStatus(StatusEnum status){
+    public void changeStatus(StatusEnum status) {
         this.status = status;
     }
 }

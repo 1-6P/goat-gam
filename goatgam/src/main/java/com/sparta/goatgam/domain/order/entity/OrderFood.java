@@ -3,13 +3,13 @@ package com.sparta.goatgam.domain.order.entity;
 import com.sparta.goatgam.domain.cart.entity.CartFood;
 import com.sparta.goatgam.domain.cart.entity.CartFoodOption;
 import com.sparta.goatgam.domain.owner.entity.Food;
-import com.sparta.goatgam.domain.owner.entity.FoodOption;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,7 +38,8 @@ public class OrderFood extends BaseEntity {
     private int quantity;
 
     @Column(name = "price", nullable = false)
-    private int price;
+    private BigDecimal price;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
@@ -53,9 +54,9 @@ public class OrderFood extends BaseEntity {
                 .map(opt -> opt.getFoodOption().getContents())
                 .toList();
 
-        int price = cartFood.getFood().getFoodPrice();
-        for (CartFoodOption option : cartFood.getCartFoodOptions()){
-            price += option.getFoodOption().getSurcharge();
+        BigDecimal price = cartFood.getFood().getFoodPrice();
+        for (CartFoodOption option : cartFood.getCartFoodOptions()) {
+            price = price.add(option.getFoodOption().getSurcharge());
         }
 
         return OrderFood.builder()

@@ -4,6 +4,7 @@ import com.sparta.goatgam.domain.order.entity.OrderFood;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -11,7 +12,7 @@ import java.util.List;
 public class OrderFoodItemDto {
     private String foodName;
     private List<String> options;
-    private int price;
+    private BigDecimal price;
     private int quantity;
 
     public OrderFoodItemDto(OrderFood orderFood) {

@@ -3,6 +3,8 @@ package com.sparta.goatgam.domain.restaurant.dto;
 import com.sparta.goatgam.domain.owner.entity.FoodOption;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,7 +16,7 @@ public class RestaurantFoodOptionDetailDto {
     private UUID foodId;
     private UUID optionId;
     private String optionContents;
-    private int optionSurcharge;
+    private BigDecimal optionSurcharge;
 
     public static List<RestaurantFoodOptionDetailDto> convertList(UUID restaurantId, UUID foodId ,List<FoodOption> foodOption) {
         return foodOption.stream().
