@@ -8,8 +8,9 @@ import com.sparta.goatgam.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -34,13 +35,13 @@ public class AIController {
     @Operation(summary = "관리자용 AI요청 전체 조회", description = "모든 AI 요청을 조회 (관리자만 가능)")
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
     @GetMapping
-    public Page<AiResponseDto> getAllAiRequest(
+    public ResponseEntity<PagedModel<AiResponseDto>> getAllAiRequest(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "desc") String sort
+            @RequestParam(defaultValue = "DESC") Sort.Direction sort
     ) {
-        Sort.Direction direction = sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        return aiService.getAiRequest(page, size, direction);
+
+        return ResponseEntity.ok(aiService.getAiRequest(page, size, sort));
     }
 
     @Operation(summary = "AI 요청 단건 조회", description = "하나의 AI요청에 대한 정보를 조회")

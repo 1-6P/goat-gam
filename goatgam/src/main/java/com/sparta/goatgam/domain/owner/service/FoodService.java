@@ -10,8 +10,9 @@ import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,7 @@ public class FoodService {
             Food existingFood = existingFoodOpt.get();
 
             if (existingFood.getFoodStatus() == FoodStatus.Ok || existingFood.getFoodStatus() == FoodStatus.Hidden) {
-                throw new RuntimeException("이미 존재하는 메뉴 이름입니다.");
+                throw new BusinessException(ExceptionCode.FOOD_DUPLICATED);
             }
 
             if (existingFood.getFoodStatus() == FoodStatus.Deleted) {
@@ -86,10 +87,10 @@ public class FoodService {
     //음식점 권한 조회
     public Restaurant validateRestaurantOwner(UUID restaurantId, User currentUser) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 식당이 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
 
         if (!restaurant.getUser().getUserId().equals(currentUser.getUserId())) {
-            throw new AccessDeniedException("해당 식당에 대한 권한이 없습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_RESTAURANT);
         }
         return restaurant;
     }
@@ -97,14 +98,14 @@ public class FoodService {
     //음식이 해당 매장의 음식인지 확인
     public Food validateFoodInRestaurant(UUID menuId, UUID restaurantId) {
         Food food = foodRepository.findById(menuId)
-                .orElseThrow(() -> new RuntimeException("해당 음식이 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
 
         if (!food.getRestaurant().getRestaurantId().equals(restaurantId)) {
-            throw new RuntimeException("해당 식당의 음식이 아닙니다.");
+            throw new BusinessException(ExceptionCode.FOOD_INPUT_ERROR);
         }
 
         if (food.getFoodStatus().equals(FoodStatus.Deleted)) {
-            throw new RuntimeException("이미 삭제된 음식입니다.");
+            throw new BusinessException(ExceptionCode.FOOD_ALREADY_DELETED);
         }
         return food;
     }

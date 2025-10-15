@@ -1,13 +1,9 @@
 package com.sparta.goatgam.domain.cart.dto;
 
-import jakarta.annotation.Nullable;
-
-import java.util.List;
-import java.util.UUID;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public record CartFoodUpdateRequestDto(
-        UUID cartFoodId,
-        @Nullable
-        List<UUID> changeOptionList
+        @Schema(description = "증감 옵션입니다. \"INCREASE\" 또는 \"DECREASE\"를 입력하세요.", example = "INCREASE")
+        QuantityUpdateTypeEnum updateType
 ) {
 }

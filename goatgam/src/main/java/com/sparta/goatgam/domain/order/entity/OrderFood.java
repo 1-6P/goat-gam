@@ -1,6 +1,9 @@
 package com.sparta.goatgam.domain.order.entity;
 
+import com.sparta.goatgam.domain.cart.entity.CartFood;
+import com.sparta.goatgam.domain.cart.entity.CartFoodOption;
 import com.sparta.goatgam.domain.owner.entity.Food;
+import com.sparta.goatgam.domain.owner.entity.FoodOption;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,6 +17,7 @@ import java.util.UUID;
 @Table(name = "p_order_food")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderFood extends BaseEntity {
@@ -33,9 +37,8 @@ public class OrderFood extends BaseEntity {
     @Column(name = "quantity", nullable = false, updatable = false)
     private int quantity;
 
-    @Column(name = "price", nullable = false, updatable = false)
+    @Column(name = "price", nullable = false)
     private int price;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
@@ -43,4 +46,23 @@ public class OrderFood extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_id")
     private Food food;
+
+    public static OrderFood fromCartFood(CartFood cartFood) {
+        List<String> options = cartFood.getCartFoodOptions()
+                .stream()
+                .map(opt -> opt.getFoodOption().getContents())
+                .toList();
+
+        int price = cartFood.getFood().getFoodPrice();
+        for (CartFoodOption option : cartFood.getCartFoodOptions()){
+            price += option.getFoodOption().getSurcharge();
+        }
+
+        return OrderFood.builder()
+                .foodName(cartFood.getFood().getFoodName())
+                .optionList(options)
+                .quantity(cartFood.getQuantity())
+                .price(price)
+                .food(cartFood.getFood()).build();
+    }
 }

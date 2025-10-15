@@ -62,11 +62,13 @@ public enum ExceptionCode {
     OPTION_INPUT_ERROR("O03", "음식과 옵션이 올바르게 연결되지 않았습니다.", HttpStatus.BAD_REQUEST),
     OPTION_ALREADY_DELETED("O04", "삭제된 옵션입니다", HttpStatus.GONE),
 
-
     //장바구니 (C)
     CART_NOT_FOUND("C01", "생성된 장바구니가 없습니다.", HttpStatus.NOT_FOUND),
     CART_MISSING_FOOD("C02", "장바구니에 해당 음식이 없습니다.", HttpStatus.NOT_FOUND),
     CART_DELETED_OPTION("C03", "장바구니에 삭제된 옵션은 담을 수 없습니다.", HttpStatus.GONE),
+    CART_DELETED_FOOD("C04", "이미 삭제된 음식입니다.", HttpStatus.GONE),
+    CART_FOOD_QUANTITY_LOWER_THEN_2("C05", "장바구니에 담긴 음식의 수량이 2보다 작습니다. 수량이 1개인 음식은 삭제 api를 요청해주세요", HttpStatus.BAD_REQUEST),
+    FORBIDDEN_UPDATE_CART("C06", "장바구니 접근 권한이 없습니다.", HttpStatus.FORBIDDEN),
 
     //AI (AI)
     AI_LOG_NOT_FOUND("AI01", "AI 로그를 찾을 수 없습니다", HttpStatus.NOT_FOUND),
@@ -87,7 +89,6 @@ public enum ExceptionCode {
     REVIEW_ORDER_NOT_ALLOWED("RV04", "해당 주문에 대한 리뷰가 이미 작성되었습니다.", HttpStatus.BAD_REQUEST),
     REVIEW_RATE_ERROR("RV05", "평점은 1점 이상 5점 이하만 가능합니다.", HttpStatus.BAD_REQUEST),
 
-
     //결제처리 (PG)
     PG_NOT_FOUND("PG01", "결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     PG_TIMEOUT("PG02", "결제 처리 시간이 지났습니다.", HttpStatus.CONFLICT),
@@ -96,15 +97,12 @@ public enum ExceptionCode {
     PG_CANT_REFUND("PG06", "환불이 불가한 상태입니다.", HttpStatus.CONFLICT),
     PG_REFUND_AMOUNT_INCORRECT("PG07", "주문금액 이상은 환불할 수 없습니다.", HttpStatus.BAD_REQUEST),
 
-
     //주문처리 (OP)
     ORDER_ALREADY_PROCESSED("OP01", "주문이 이미 처리되었습니다.", HttpStatus.CONFLICT),
     ORDER_ACCEPT_REQUIRED("OP02", "먼저 주문을 수락해야 합니다.", HttpStatus.BAD_REQUEST),
     ORDER_PREPARED_REQUIRED("OP03", "먼저 주문이 준비되어야 합니다.", HttpStatus.BAD_REQUEST),
     ORDER_DELIVERY_REQUIRED("OP04", "아직 배송이 출발하지 않았습니다.", HttpStatus.BAD_REQUEST),
-
-
-
+  
     ;
     private final String code;
     private final String message;

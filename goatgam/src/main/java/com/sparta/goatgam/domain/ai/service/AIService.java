@@ -9,11 +9,14 @@ import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.entity.FoodStatus;
 import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import com.sparta.goatgam.global.util.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +33,14 @@ public class AIService {
     @Transactional
     public ResultResponseDto createAiRequest(UUID menuId, User currentUser, AIRequestDto dto) {
         Food food = foodRepository.findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 메뉴를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
 
         if (!food.getRestaurant().getUser().getUserId().equals(currentUser.getUserId())) {
-            throw new SecurityException("해당 메뉴에 대한 권한이 없습니다.");
+            throw new BusinessException(ExceptionCode.FORBIDDEN_CREATE_MENU);
         }
 
         if(food.getFoodStatus() == FoodStatus.Deleted) {
-            throw new RuntimeException("삭제된 메뉴입니다.");
+            throw new BusinessException(ExceptionCode.FOOD_ALREADY_DELETED);
         }
 
         String answer = geminiService.generateMenuDescription(food, dto.getPrompt());
@@ -49,18 +52,18 @@ public class AIService {
         return new ResultResponseDto(ai.getAnswer(), food.getId());
     }
 
-    public Page<AiResponseDto> getAiRequest(int page, int size, Sort.Direction direction) {
+    public PagedModel<AiResponseDto> getAiRequest(int page, int size, Sort.Direction direction) {
         Pageable pageable = PageableUtils.makePageable(page, size,
                 PageableUtils.order(direction, "createdAt"));
 
         Page<AI> logs = aiRepository.findAll(pageable);
 
-        return logs.map(AiResponseDto::new);
+        return new PagedModel<>(logs.map(AiResponseDto::new));
     }
 
     public AiResponseDto getAiRequestById(UUID id) {
         AI ai = aiRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 AI 로그를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.AI_LOG_NOT_FOUND));
         return new AiResponseDto(ai);
     }
 }
