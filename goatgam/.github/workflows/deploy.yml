@@ -20,9 +20,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3️⃣ Maven 빌드
-      - name: Build JAR
-        run: mvn clean package -DskipTests
+      # 3️⃣ Gradle 빌드 (테스트 제외)
+      - name: Build JAR (Gradle)
+        run: ./gradlew clean build -x test
 
       # 4️⃣ SSH 키 설정
       - name: Setup SSH
@@ -72,7 +72,7 @@ jobs:
           sudo docker stop goatgam || true
           sudo docker rm goatgam || true
           
-          # ✅ 나중에 Dockerfile 추가되면 이 명령이 실제 빌드됨
+          # ✅ Docker 이미지 빌드
           sudo docker build -t goatgam .
           
           # ✅ .env 파일 적용 + 8080 포트 연결
