@@ -130,7 +130,7 @@ public class RestaurantService {
         return RestaurantInfoDto.convertDto(restaurant);
     }
 
-    
+
     //  카테고리/키워드 기반 목록 조회 (for users)
     @Transactional(readOnly = true)
     public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword) {
