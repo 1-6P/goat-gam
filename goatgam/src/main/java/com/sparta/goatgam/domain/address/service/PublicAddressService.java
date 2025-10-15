@@ -32,7 +32,7 @@ public class PublicAddressService {
         return sigunguRepository.findBySido_SidoCodeAndAbolishedFalseOrderByNameAsc(sidoCode);
     }
 
-    public ResponseEntity<List<BeopjeongdongSearchDto>> search(
+    public List<BeopjeongdongSearchDto> search(
             String qNorm,
             String sidoCode,
             String sigunguCode,
@@ -42,10 +42,7 @@ public class PublicAddressService {
         String sd     = trimOrNull(sidoCode);
         String sg     = trimOrNull(sigunguCode);
 
-        List<BeopjeongdongSearchDto> result =
-                beopjeongdongRepository.search(qLower, sd, sg, page);
-
-        return ResponseEntity.ok(result);
+        return beopjeongdongRepository.search(qLower, sd, sg, page);
     }
 
     // ---- utils ----

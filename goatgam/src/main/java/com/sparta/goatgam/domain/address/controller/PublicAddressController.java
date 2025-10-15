@@ -43,7 +43,7 @@ public class PublicAddressController {
             @RequestParam(defaultValue = "20") int limit
     ){
         String qNorm = normalizeKo(q);
-        return publicAddressService.search(qNorm, sidoCode, sigunguCode, PageRequest.of(0, limit));
+        return ResponseEntity.ok(publicAddressService.search(qNorm, sidoCode, sigunguCode, PageRequest.of(0, limit)));
     }
 
     static String normalizeKo(String s) {
