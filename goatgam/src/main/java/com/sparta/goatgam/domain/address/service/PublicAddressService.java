@@ -8,6 +8,7 @@ import com.sparta.goatgam.domain.address.repository.SidoRepository;
 import com.sparta.goatgam.domain.address.repository.SigunguRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,13 +37,13 @@ public class PublicAddressService {
             String qNorm,
             String sidoCode,
             String sigunguCode,
-            PageRequest page
+            Pageable pageable
     ) {
         String qLower = toLowerOrNull(qNorm);
         String sd     = trimOrNull(sidoCode);
         String sg     = trimOrNull(sigunguCode);
 
-        return beopjeongdongRepository.search(qLower, sd, sg, page);
+        return beopjeongdongRepository.search(qLower, sd, sg, pageable);
     }
 
     // ---- utils ----

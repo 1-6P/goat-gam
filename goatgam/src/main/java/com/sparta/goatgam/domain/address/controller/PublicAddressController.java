@@ -7,6 +7,8 @@ import com.sparta.goatgam.domain.address.service.PublicAddressService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Locale;
+
+import static com.sparta.goatgam.global.util.PageableUtils.makePageable;
+import static com.sparta.goatgam.global.util.PageableUtils.order;
 
 @Slf4j
 @RestController
@@ -39,11 +44,17 @@ public class PublicAddressController {
     public ResponseEntity<List<BeopjeongdongSearchDto>> search(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) String sidoCode,
-            @RequestParam(required = false) String sigunguCode,
-            @RequestParam(defaultValue = "20") int limit
+            @RequestParam(required = false) String sigunguCode
     ){
         String qNorm = normalizeKo(q);
-        return ResponseEntity.ok(publicAddressService.search(qNorm, sidoCode, sigunguCode, PageRequest.of(0, limit)));
+
+        Pageable pageable = makePageable(
+                0,
+                10,
+                order(Sort.Direction.ASC, "dongName")  // 기본 정렬 기준(원하는 필드로 교체 가능)
+        );
+
+        return ResponseEntity.ok(publicAddressService.search(qNorm, sidoCode, sigunguCode, pageable));
     }
 
     static String normalizeKo(String s) {
