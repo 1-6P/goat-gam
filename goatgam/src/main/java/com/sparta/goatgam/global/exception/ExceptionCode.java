@@ -35,7 +35,7 @@ public enum ExceptionCode {
     FORBIDDEN_DELETE_RESTAURANT("R04", "식당 정보를 삭제할 권한이 없습니다.", HttpStatus.FORBIDDEN),
     FORBIDDEN_ROLLBACK_RESTAURANT("R05", "식당 삭제를 롤백할 권한이 없습니다.", HttpStatus.FORBIDDEN),
     FORBIDDEN_PROCESS_RESTAURANT("OP06", "해당 식당의 주문을 처리할 권한이 없습니다.", HttpStatus.FORBIDDEN),
-    FORBIDDEN_RESTAURANT("R05", "식당에 대한 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    FORBIDDEN_RESTAURANT("R07", "식당에 대한 권한이 없습니다.", HttpStatus.FORBIDDEN),
 
     //주소 (A)
     ADDRESS_USER_NOT_FOUND("A01", "해당 유저의 주소가 없습니다.", HttpStatus.NOT_FOUND),
