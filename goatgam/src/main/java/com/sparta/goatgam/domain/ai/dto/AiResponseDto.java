@@ -14,7 +14,7 @@ public class AiResponseDto {
     private final String input;
     private final String answer;
     private final boolean status;
-    private final long userId;
+    private final Long userId;
     private final UUID foodId;
     private final LocalDateTime createdAt;
 
