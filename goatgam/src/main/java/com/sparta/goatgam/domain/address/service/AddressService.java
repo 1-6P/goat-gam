@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.address.service;
 
+import com.sparta.goatgam.domain.address.dto.AddressChangeDto;
 import com.sparta.goatgam.domain.address.dto.AddressCreateRequestDto;
 import com.sparta.goatgam.domain.address.dto.AddressDeleteResponseDto;
 import com.sparta.goatgam.domain.address.dto.AddressResponseDto;
@@ -9,6 +10,10 @@ import com.sparta.goatgam.domain.address.entity.Sido;
 import com.sparta.goatgam.domain.address.entity.Sigungu;
 import com.sparta.goatgam.domain.address.repository.AddressRepository;
 import com.sparta.goatgam.domain.address.repository.BeopjeongdongRepository;
+import com.sparta.goatgam.domain.user.entity.User;
+import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
+import com.sparta.goatgam.global.exception.BusinessException;
+import com.sparta.goatgam.global.exception.ExceptionCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -106,5 +111,34 @@ public class AddressService {
 
     private AddressResponseDto toResponse(Address a) {
         return AddressResponseDto.from(a);
+    }
+
+    @Transactional
+    public MessageAndIdResponseDto changeAddress(UUID addressId, AddressChangeDto requestDto, User user) {
+        Address address = addressRepository.findById(addressId).orElseThrow(() -> new BusinessException(ExceptionCode.ADDRESS_NOT_FOUND));
+        if(address.getUserId() != user.getUserId())
+            throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_ADDRESS);
+
+        String code10 = normalizeCode10(requestDto.getBeopjeongDong());
+
+        if (code10 == null) throw new BusinessException(ExceptionCode.ADDRESS_INPUT_ERROR);
+        String base8 = code10.substring(0, 8);
+
+        Beopjeongdong beopjeongdong = beopjeongdongRepository.findById(base8)
+                .orElseThrow(() -> new BusinessException(ExceptionCode.ADDRESS_NOT_EXIST));
+
+        Sigungu sigungu = beopjeongdong.getSigungu();
+        Sido sido = beopjeongdong.getSigungu().getSido();
+
+        Address newAddress = Address.builder()
+                .id(UUID.randomUUID())
+                .userId(user.getUserId())
+                .dong(beopjeongdong).sigungu(sigungu).sido(sido)
+                .roadAddress(requestDto.getRoadAddress()).detail(requestDto.getDetail())
+                .isDefault(address.isDefault()).status(true).build();
+
+        address.update(newAddress);
+
+        return new MessageAndIdResponseDto("update address success", addressId);
     }
 }

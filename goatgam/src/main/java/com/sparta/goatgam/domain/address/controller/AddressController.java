@@ -1,8 +1,10 @@
 package com.sparta.goatgam.domain.address.controller;
 
+import com.sparta.goatgam.domain.address.dto.AddressChangeDto;
 import com.sparta.goatgam.domain.address.dto.AddressCreateRequestDto;
 import com.sparta.goatgam.domain.address.dto.AddressResponseDto;
 import com.sparta.goatgam.domain.address.service.AddressService;
+import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -63,5 +65,10 @@ public class AddressController {
     @GetMapping("")
     public ResponseEntity<List<AddressResponseDto>> getAllAddresses(){
         return ResponseEntity.ok(addressService.getAllAddress());
+    }
+
+    @PostMapping("/{addressId}/update")
+    public ResponseEntity<MessageAndIdResponseDto> changeAddress(@PathVariable UUID addressId, @RequestBody AddressChangeDto requestDto, @AuthenticationPrincipal UserDetailsImpl principal){
+        return ResponseEntity.ok(addressService.changeAddress(addressId, requestDto, principal.getUser()));
     }
 }

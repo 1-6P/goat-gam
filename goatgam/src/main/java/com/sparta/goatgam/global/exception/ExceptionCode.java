@@ -42,6 +42,8 @@ public enum ExceptionCode {
     ADDRESS_USER_NOT_HAVE("A02", "유저에게 해당 주소가 없습니다.", HttpStatus.NOT_FOUND),
     ADDRESS_INPUT_ERROR("A03", "올바른 법정동코드 형식이 아닙니다.", HttpStatus.BAD_REQUEST),
     ADDRESS_NOT_EXIST("A04", "존재하지 않는 법정동 코드입니다.", HttpStatus.NOT_FOUND),
+    ADDRESS_NOT_FOUND("A05", "해당 주소를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    FORBIDDEN_UPDATE_ADDRESS("A06", "주소 수정 권한이 없습니다.", HttpStatus.FORBIDDEN),
 
     //음식(F)
     FOOD_NOT_FOUND("F01", "메뉴를 찾을 수 없습니다", HttpStatus.NOT_FOUND),
