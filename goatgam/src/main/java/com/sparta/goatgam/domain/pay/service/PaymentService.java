@@ -4,6 +4,7 @@ import com.sparta.goatgam.domain.order.entity.Order;
 import com.sparta.goatgam.domain.order.entity.StatusEnum;
 import com.sparta.goatgam.domain.order.repository.OrderRepository;
 import com.sparta.goatgam.domain.pay.dto.PaymentConfirmRequestDto;
+import com.sparta.goatgam.domain.pay.dto.PaymentResponseDto;
 import com.sparta.goatgam.domain.pay.dto.PaymentVerifyRequestDto;
 import com.sparta.goatgam.domain.pay.entity.Payment;
 import com.sparta.goatgam.domain.pay.entity.PaymentMethodEnum;
@@ -14,32 +15,41 @@ import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
 import com.sparta.goatgam.global.exception.BusinessException;
 import com.sparta.goatgam.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
+
+import static com.sparta.goatgam.global.util.PageableUtils.makePageable;
+import static com.sparta.goatgam.global.util.PageableUtils.order;
 
 @Service
 @RequiredArgsConstructor
 
+@Slf4j
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
-    public MessageAndIdResponseDto varifyAmount(PaymentVerifyRequestDto paymentVerifyRequestDto, User user) {
-        Order order = orderRepository.findById(paymentVerifyRequestDto.getOrderId()).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
+    public MessageAndIdResponseDto verifyAmount(PaymentVerifyRequestDto paymentVerifyRequestDto, User user) {
+        Order order = orderRepository.findById(paymentVerifyRequestDto.getOrderId()).orElseThrow(()
+                -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
 
         if (!order.getUser().getUserId().equals(user.getUserId())) {
             throw new BusinessException(ExceptionCode.INVALID_USER);
         }
 
-        if (!Objects.equals(order.getTotalPrice(), paymentVerifyRequestDto.getAmount())) {
+        if (order.getTotalPrice().intValue() != paymentVerifyRequestDto.getAmount().intValue()) {
             throw new BusinessException(ExceptionCode.PG_AMOUNT_INCORRECT);
         }
-        return new MessageAndIdResponseDto("varify success", null);
+        return new MessageAndIdResponseDto("verify success", null);
     }
 
     @Transactional
@@ -52,7 +62,7 @@ public class PaymentService {
             throw new BusinessException(ExceptionCode.INVALID_USER);
         }
 
-        if (!Objects.equals(order.getTotalPrice(), dto.getAmount())) {
+        if (order.getTotalPrice().intValue() != dto.getAmount().intValue()) {
             throw new BusinessException(ExceptionCode.PG_AMOUNT_INCORRECT);
         }
 
@@ -77,8 +87,10 @@ public class PaymentService {
 
     @Transactional
     public MessageAndIdResponseDto cancelPayment(UUID orderId, User user) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
-        Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new BusinessException(ExceptionCode.PG_NOT_FOUND));
+        Order order = orderRepository.findById(orderId).orElseThrow(()
+                -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
+        Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(()
+                -> new BusinessException(ExceptionCode.PG_NOT_FOUND));
 
         if (!order.getUser().equals(user)) {
             throw new BusinessException(ExceptionCode.FORBIDDEN_ORDER);
@@ -96,8 +108,10 @@ public class PaymentService {
 
     @Transactional
     public MessageAndIdResponseDto refundPayment(PaymentVerifyRequestDto dto, User user) {
-        Order order = orderRepository.findById(dto.getOrderId()).orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
-        Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(() -> new BusinessException(ExceptionCode.PG_NOT_FOUND));
+        Order order = orderRepository.findById(dto.getOrderId()).orElseThrow(()
+                -> new BusinessException(ExceptionCode.ORDER_NOT_FOUND));
+        Payment payment = paymentRepository.findPaymentByOrder(order).orElseThrow(()
+                -> new BusinessException(ExceptionCode.PG_NOT_FOUND));
 
         if (!order.getRestaurant().getUser().getUserId().equals(user.getUserId())) {
             throw new BusinessException(ExceptionCode.FORBIDDEN_ORDER_REFUND);
@@ -115,5 +129,17 @@ public class PaymentService {
         order.changeStatus(StatusEnum.Refund);
 
         return new MessageAndIdResponseDto("refund success", dto.getOrderId());
+    }
+
+    public PagedModel<PaymentResponseDto> getPaymentList(int page, int size, String direction, User user) {
+        Pageable pageable = makePageable(
+                page,
+                size,
+                order((direction.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC), "requestedAt")
+        );
+
+        Page<Payment> payments = paymentRepository.findAllByOrderUser(user, pageable);
+
+        return new PagedModel<>(payments.map(PaymentResponseDto::new));
     }
 }
