@@ -67,6 +67,16 @@ public class AddressController {
         return ResponseEntity.ok(addressService.getAllAddress());
     }
 
+    @Operation(summary = "default 주소 설정", description = "기본 배송지를 변경할 수 있습니다. 설정된 주소로 주문이 수행됩니다.")
+    @PatchMapping("/{addressId}")
+    public ResponseEntity<MessageAndIdResponseDto> updateDefaultAddress(
+            @PathVariable UUID addressId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(addressService.updateDefaultAddress(addressId, userDetails.getUser()));
+    }
+
+    @Operation(summary = "주소 수정", description = "본인의 주소를 수정할 수 있습니다.")
     @PostMapping("/{addressId}/update")
     public ResponseEntity<MessageAndIdResponseDto> changeAddress(@PathVariable UUID addressId, @RequestBody AddressChangeDto requestDto, @AuthenticationPrincipal UserDetailsImpl principal){
         return ResponseEntity.ok(addressService.changeAddress(addressId, requestDto, principal.getUser()));
