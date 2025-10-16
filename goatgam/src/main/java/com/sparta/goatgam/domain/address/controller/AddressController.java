@@ -1,6 +1,5 @@
 package com.sparta.goatgam.domain.address.controller;
 
-import com.sparta.goatgam.domain.address.dto.AddressChangeDto;
 import com.sparta.goatgam.domain.address.dto.AddressCreateRequestDto;
 import com.sparta.goatgam.domain.address.dto.AddressResponseDto;
 import com.sparta.goatgam.domain.address.service.AddressService;
@@ -31,7 +30,7 @@ public class AddressController {
             description = "유저는 본인 주소를 추가할 수 있다."
     )
     @PostMapping("")
-    public ResponseEntity<AddressResponseDto> createAddress (@AuthenticationPrincipal UserDetailsImpl principal, @RequestBody AddressCreateRequestDto requestDto){
+    public ResponseEntity<AddressResponseDto> createAddress(@AuthenticationPrincipal UserDetailsImpl principal, @RequestBody AddressCreateRequestDto requestDto) {
         Long userId = principal.getUser().getUserId();
         return ResponseEntity.ok(addressService.addAddress(userId, requestDto));
     }
@@ -42,7 +41,7 @@ public class AddressController {
             description = "유저는 본인 주소 리스트를 조회할 수 있습니다."
     )
     @GetMapping("/my")
-    public ResponseEntity<List<AddressResponseDto>> getAddress(@AuthenticationPrincipal UserDetailsImpl principal){
+    public ResponseEntity<List<AddressResponseDto>> getAddress(@AuthenticationPrincipal UserDetailsImpl principal) {
         return ResponseEntity.ok(addressService.getUserAddress(principal.getUser().getUserId()));
     }
 
@@ -52,7 +51,7 @@ public class AddressController {
             description = "주소 아이디로 주소를 삭제할 수 있다."
     )
     @DeleteMapping("/{addressId}")
-    public ResponseEntity<?> deleteUserAddress(@AuthenticationPrincipal UserDetailsImpl principal, @PathVariable UUID addressId){
+    public ResponseEntity<?> deleteUserAddress(@AuthenticationPrincipal UserDetailsImpl principal, @PathVariable UUID addressId) {
         return ResponseEntity.ok(addressService.delete(principal.getUser().getUserId(), addressId));
     }
 
@@ -63,7 +62,7 @@ public class AddressController {
     )
     @PreAuthorize("hasAnyAuthority('Master','Manager')")
     @GetMapping("")
-    public ResponseEntity<List<AddressResponseDto>> getAllAddresses(){
+    public ResponseEntity<List<AddressResponseDto>> getAllAddresses() {
         return ResponseEntity.ok(addressService.getAllAddress());
     }
 
@@ -74,11 +73,5 @@ public class AddressController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.ok(addressService.updateDefaultAddress(addressId, userDetails.getUser()));
-    }
-
-    @Operation(summary = "주소 수정", description = "본인의 주소를 수정할 수 있습니다.")
-    @PostMapping("/{addressId}/update")
-    public ResponseEntity<MessageAndIdResponseDto> changeAddress(@PathVariable UUID addressId, @RequestBody AddressChangeDto requestDto, @AuthenticationPrincipal UserDetailsImpl principal){
-        return ResponseEntity.ok(addressService.changeAddress(addressId, requestDto, principal.getUser()));
     }
 }
