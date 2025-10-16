@@ -13,8 +13,6 @@ import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.entity.FoodOption;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.user.entity.User;
-import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
-import static org.assertj.core.api.Assertions.assertThat;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
 import com.sparta.goatgam.global.exception.BusinessException;
 import com.sparta.goatgam.global.exception.ExceptionCode;
