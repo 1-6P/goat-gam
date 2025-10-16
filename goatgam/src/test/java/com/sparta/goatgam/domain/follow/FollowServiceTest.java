@@ -1,8 +1,9 @@
-package com.sparta.goatgam.domain.follow.service;
+package com.sparta.goatgam.domain.follow;
 import com.sparta.goatgam.domain.follow.dto.FollowInfoDto;
 import com.sparta.goatgam.domain.follow.dto.FollowResponseDto;
 import com.sparta.goatgam.domain.follow.entity.Follow;
 import com.sparta.goatgam.domain.follow.repository.FollowRepository;
+import com.sparta.goatgam.domain.follow.service.FollowService;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.user.entity.User;
