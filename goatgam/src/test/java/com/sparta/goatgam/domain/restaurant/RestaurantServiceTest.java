@@ -40,10 +40,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.WARN)
-    //mock에서 setter 부르지 마세요
+//mock에서 setter 부르지 마세요
 class RestaurantServiceTest {
 
     @Mock
@@ -257,7 +258,7 @@ class RestaurantServiceTest {
             given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
 
             BusinessException exception = assertThrows(BusinessException.class,
-                                                       () -> restaurantService.updateRestaurant(id,new RestaurantUpdateDto("va1","val2","val3",1100,RestaurantEnum.Open),notOwner));
+                    () -> restaurantService.updateRestaurant(id,new RestaurantUpdateDto(),notOwner));
 
             assertThat(exception.getExceptionCode()).isEqualTo(ExceptionCode.FORBIDDEN_UPDATE_RESTAURANT);
 
@@ -301,6 +302,7 @@ class RestaurantServiceTest {
 
             RestaurantInfoDto dto = restaurantService.deleteRestaurant(id, owner);
 
+            //then
             assertThat(dto.isStatus()).isFalse();
 
         }
