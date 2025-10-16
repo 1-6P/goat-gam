@@ -5,7 +5,9 @@ import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantDetailDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantInfoDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
+import com.sparta.goatgam.domain.restaurant.dto.RestaurantUpdateDto;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
+import com.sparta.goatgam.domain.restaurant.entity.RestaurantEnum;
 import com.sparta.goatgam.domain.restaurant.entity.RestaurantType;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantTypeRepository;
@@ -173,6 +175,134 @@ class RestaurantServiceTest {
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.RESTAURANT_NOT_FOUND);
         }
     }
+
+    //---------------------updateRestaurant--
+
+    @Nested
+    class updateRestaurant {
+        @Test
+        @DisplayName("성공 : 본인, 가게 정보 수정 완료")
+        void success() {
+            UUID id = UUID.randomUUID();
+            User owner = mockUser(100L,UserRoleEnum.Owner);
+            Restaurant r = mock(Restaurant.class);
+            r.setUser(owner);
+            r.setStatus(true);
+
+            //현재 dto에 builde가 없기 때문에 아래처럼 객체에 직접 넣어줌
+            RestaurantUpdateDto dto =   new RestaurantUpdateDto(
+                    "다미분식",
+                    "서울시 광화문로 20길",
+                    "02-1234-4440",
+                    11001112,
+                    RestaurantEnum.Open
+            );
+            given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
+
+            RestaurantInfoDto result = restaurantService.updateRestaurant(id,dto,owner);
+            assertThat(result.getRestaurantName()).isEqualTo("업데이트");
+
+        }
+
+        @Test
+        @DisplayName("업데이트 실패: 본인이 아닙니다 -> FORBIDEN_UPDATE_RESTAURANT" )
+        void fail_update_restaurant() {
+            UUID id = UUID.randomUUID();
+            User owner = mockUser(100L,UserRoleEnum.Owner);
+            User notOwner = mockUser(10L, UserRoleEnum.Owner);
+            Restaurant r = mock(Restaurant.class);
+            r.setUser(notOwner);
+
+            given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
+
+            BusinessException exception = assertThrows(BusinessException.class,
+                    () -> restaurantService.updateRestaurant(id,new RestaurantUpdateDto(),notOwner));
+
+            assertThat(exception.getExceptionCode()).isEqualTo(ExceptionCode.FORBIDDEN_UPDATE_RESTAURANT);
+
+        }
+
+    }
+
+    //------deleteRestaurant / rollback ---
+
+    @Nested
+    class deleteAndRollback {
+
+        @Test
+        @DisplayName("삭제 성공, 식당의 status를 false로 바꿉니다.")
+        void success() {
+            UUID id = UUID.randomUUID();
+            User owner = mockUser(100L,UserRoleEnum.Owner);
+
+            Restaurant r = mock(Restaurant.class);
+            r.setUser(owner);
+            r.setStatus(true);
+
+            given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
+
+            RestaurantInfoDto dto = restaurantService.deleteRestaurant(id, owner);
+
+            //then
+            assertThat(dto.isStatus()).isFalse();
+
+        }
+
+        @Test
+        @DisplayName("삭제 실패 : 권한 문제 -> FORBIDDEN_UPDATE_RESTAURANT" )
+        void fail_delete_restaurant() {
+            UUID id = UUID.randomUUID();
+            User owner = mockUser(100L,UserRoleEnum.Owner);
+            User notOwner = mockUser(10L, UserRoleEnum.Owner);
+
+            Restaurant r = mock(Restaurant.class);
+            r.setUser(owner);
+            r.setStatus(true);
+
+            given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
+
+            //When
+            BusinessException ex = assertThrows(BusinessException.class,
+                    () -> restaurantService.deleteRestaurant(id, notOwner));
+            //then
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FORBIDDEN_UPDATE_RESTAURANT);
+
+        }
+
+        @Test
+        @DisplayName("롤백 성공")
+        void success_rollback() {
+            UUID id = UUID.randomUUID();
+            User owner = mockUser(100L,UserRoleEnum.Owner);
+
+            Restaurant r =  mock(Restaurant.class);
+            r.setUser(owner);
+            r.setStatus(true);
+            given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
+
+            RestaurantInfoDto dto = restaurantService.RollbackDeletedRestaurant(id,owner);
+
+            assertThat(dto.isStatus()).isTrue();
+        }
+
+        @Test
+        @DisplayName("롤백 실패, FORBIDDEN_ROLLBACK_RESTAURANT")
+        void fail_rollback() {
+            UUID id = UUID.randomUUID();
+            User owner = mockUser(100L,UserRoleEnum.Owner); // Master & Manager 아님
+            Restaurant r =  mock(Restaurant.class);
+            r.setStatus(false);
+
+            given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
+
+            BusinessException exception = assertThrows(BusinessException.class,
+                    () -> restaurantService.RollbackDeletedRestaurant(id,owner));
+
+            assertThat(exception.getExceptionCode()).isEqualTo(ExceptionCode.FORBIDDEN_ROLLBACK_RESTAURANT);
+            //
+        }
+    }
+
 
     // ====== 테스트 헬퍼 (세터/생성자 없어도 동작하게 mock 기반) ======
     private User mockUser(Long id, UserRoleEnum role) {
