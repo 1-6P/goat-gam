@@ -1,5 +1,8 @@
 package com.sparta.goatgam.domain.restaurant;
 
+import com.sparta.goatgam.domain.owner.dto.FoodListDto;
+import com.sparta.goatgam.domain.owner.entity.Food;
+import com.sparta.goatgam.domain.owner.entity.FoodStatus;
 import com.sparta.goatgam.domain.owner.repository.FoodOptionRepository;
 import com.sparta.goatgam.domain.owner.repository.FoodRepository;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantDetailDto;
@@ -7,8 +10,10 @@ import com.sparta.goatgam.domain.restaurant.dto.RestaurantInfoDto;
 import com.sparta.goatgam.domain.restaurant.dto.RestaurantRequestDto;
 import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
 import com.sparta.goatgam.domain.restaurant.entity.RestaurantType;
+import com.sparta.goatgam.domain.restaurant.repository.MenuRepository;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantRepository;
 import com.sparta.goatgam.domain.restaurant.repository.RestaurantTypeRepository;
+import com.sparta.goatgam.domain.restaurant.service.MenuSearchService;
 import com.sparta.goatgam.domain.restaurant.service.RestaurantService;
 import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
@@ -25,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -191,5 +197,128 @@ class RestaurantServiceTest {
         when(dto.getRegionCode()).thenReturn(region);
         when(dto.getRestaurantNumber()).thenReturn("02-1234-5678");
         return dto;
+    }
+    //---------------------------------------------------------------------
+    @Mock
+    private MenuRepository menuRepository;
+    @InjectMocks
+    private MenuSearchService menuSearchService;
+
+    private final UUID restaurantId = UUID.randomUUID();
+
+    // ---------- searchMenus ----------
+    @Nested
+    @DisplayName("searchMenus() - 메뉴 검색 테스트")
+    class SearchMenus {
+
+        @Test
+        @DisplayName("성공: 식당 존재 + 정상 키워드 + 메뉴 존재")
+        void success() {
+            // given
+            given(restaurantRepository.existsById(restaurantId)).willReturn(true);
+
+            Food food1 = mockFood("짬뽕", "얼큰한 짬뽕", FoodStatus.Ok);
+            Food food2 = mockFood("짜장면", "달콤한 짜장", FoodStatus.Ok);
+
+            given(menuRepository.findByRestaurant_RestaurantIdAndFoodNameContainingIgnoreCase(restaurantId, "짬"))
+                .willReturn(List.of(food1));
+            given(menuRepository.findByRestaurant_RestaurantIdAndFoodExplainContainingIgnoreCase(restaurantId, "짬"))
+                .willReturn(List.of(food2));
+
+            // when
+            List<FoodListDto> result = menuSearchService.searchMenus(restaurantId, "짬");
+
+            // then
+            assertThat(result).hasSize(2);
+            verify(menuRepository, times(1))
+                .findByRestaurant_RestaurantIdAndFoodNameContainingIgnoreCase(any(), any());
+            verify(menuRepository, times(1))
+                .findByRestaurant_RestaurantIdAndFoodExplainContainingIgnoreCase(any(), any());
+        }
+
+        @Test
+        @DisplayName("실패: 존재하지 않는 식당 → RESTAURANT_NOT_FOUND")
+        void fail_restaurantNotFound() {
+            // given
+            given(restaurantRepository.existsById(restaurantId)).willReturn(false);
+
+            // when & then
+            BusinessException ex = assertThrows(BusinessException.class,
+                                                () -> menuSearchService.searchMenus(restaurantId, "짬뽕"));
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.RESTAURANT_NOT_FOUND);
+
+            verify(menuRepository, never())
+                .findByRestaurant_RestaurantIdAndFoodNameContainingIgnoreCase(any(), any());
+        }
+
+        @Test
+        @DisplayName("실패: 키워드 없음 → INVALID_INPUT")
+        void fail_keywordBlank() {
+            // given
+            given(restaurantRepository.existsById(restaurantId)).willReturn(true);
+
+            // when & then
+            BusinessException ex = assertThrows(BusinessException.class,
+                                                () -> menuSearchService.searchMenus(restaurantId, " "));
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.INVALID_INPUT);
+
+            verify(menuRepository, never())
+                .findByRestaurant_RestaurantIdAndFoodNameContainingIgnoreCase(any(), any());
+        }
+
+        @Test
+        @DisplayName("실패: 메뉴 결과 없음 → FOOD_NOT_FOUND")
+        void fail_noMenuFound() {
+            // given
+            given(restaurantRepository.existsById(restaurantId)).willReturn(true);
+            given(menuRepository.findByRestaurant_RestaurantIdAndFoodNameContainingIgnoreCase(restaurantId, "탕"))
+                .willReturn(List.of());
+            given(menuRepository.findByRestaurant_RestaurantIdAndFoodExplainContainingIgnoreCase(restaurantId, "탕"))
+                .willReturn(List.of());
+
+            // when & then
+            BusinessException ex = assertThrows(BusinessException.class,
+                                                () -> menuSearchService.searchMenus(restaurantId, "탕"));
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FOOD_NOT_FOUND);
+
+            verify(menuRepository, times(1))
+                .findByRestaurant_RestaurantIdAndFoodNameContainingIgnoreCase(any(), any());
+        }
+
+        @Test
+        @DisplayName("성공: Hidden/Deleted 메뉴는 제외됨")
+        void success_excludeHiddenDeleted() {
+            // given
+            UUID restaurantId = UUID.randomUUID();
+            String keyword = "짬뽕";
+
+            given(restaurantRepository.existsById(restaurantId)).willReturn(true);
+
+            Food hidden = mockFood("비밀메뉴", "숨김", FoodStatus.Hidden);
+            Food deleted = mockFood("삭제됨", "지워짐", FoodStatus.Deleted);
+            Food ok = mockFood("짬뽕", "얼큰", FoodStatus.Ok);
+
+            given(menuRepository.findByRestaurant_RestaurantIdAndFoodNameContainingIgnoreCase(restaurantId, keyword))
+                .willReturn(List.of(hidden, deleted, ok));
+            given(menuRepository.findByRestaurant_RestaurantIdAndFoodExplainContainingIgnoreCase(restaurantId, keyword))
+                .willReturn(List.of());
+
+            // when
+            List<FoodListDto> result = menuSearchService.searchMenus(restaurantId, keyword);
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).getName()).isEqualTo("짬뽕");
+    }
+
+    // ====== 테스트 헬퍼 ======
+    private Food mockFood(String name, String explain, FoodStatus status) {
+        Food f = mock(Food.class);
+        when(f.getFoodName()).thenReturn(name);
+        when(f.getFoodExplain()).thenReturn(explain);
+        when(f.getFoodStatus()).thenReturn(status);
+        return f;
+    }
+
     }
 }
