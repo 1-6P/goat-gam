@@ -34,9 +34,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.WARN)
+//mock에서 setter 부르지 마세요
 class RestaurantServiceTest {
 
     @Mock
@@ -145,15 +147,20 @@ class RestaurantServiceTest {
         @DisplayName("성공: 단건 상세 조회")
         void success() {
             UUID id = UUID.randomUUID();
+            User owner = new User();
+            owner.setUserId(100L);
+
+
+            RestaurantType t = mock(RestaurantType.class);
+            when(t.getRestaurantTypeCode()).thenReturn(20);
 
             // Restaurant도 mock으로 만들어서 from()이 호출할 법한 게터 스텁
             Restaurant r = mock(Restaurant.class);
             when(r.getRestaurantId()).thenReturn(id);
             when(r.getRestaurantName()).thenReturn("공리짬뽕");
             when(r.getRestaurantAddress()).thenReturn("서울");
-            RestaurantType t = mock(RestaurantType.class);
-            t.setRestaurantTypeCode(20);
             when(r.getRestaurantTypeId()).thenReturn(t);
+            when(r.getUser()).thenReturn(owner);
             when(r.isStatus()).thenReturn(true);
 
             given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
@@ -184,24 +191,46 @@ class RestaurantServiceTest {
         @DisplayName("성공 : 본인, 가게 정보 수정 완료")
         void success() {
             UUID id = UUID.randomUUID();
-            User owner = mockUser(100L,UserRoleEnum.Owner);
-            Restaurant r = mock(Restaurant.class);
-            r.setUser(owner);
-            r.setStatus(true);
+            User owner = mockUser(100L, UserRoleEnum.Owner);
 
-            //현재 dto에 builde가 없기 때문에 아래처럼 객체에 직접 넣어줌
-            RestaurantUpdateDto dto =   new RestaurantUpdateDto(
+            Restaurant r = mock(Restaurant.class);
+            when(r.getUser()).thenReturn(owner);
+            when(r.isStatus()).thenReturn(true);
+            when(r.getRestaurantId()).thenReturn(id);
+
+            //convertDto에서 사용
+            when(r.getRestaurantName()).thenReturn("다미분식");
+            when(r.getRestaurantAddress()).thenReturn("서울시 광화문로 20길");
+            when(r.getRestaurantNumber()).thenReturn("02-1234-4440");
+            when(r.getRegionCode()).thenReturn(11001112);
+            when(r.getIsPublic()).thenReturn(RestaurantEnum.Open);
+
+           //타입
+            RestaurantType type = mock(RestaurantType.class);
+            when(type.getRestaurantTypeName()).thenReturn("분식");
+            when(type.getRestaurantTypeCode()).thenReturn(20);
+            when(r.getRestaurantTypeId()).thenReturn(type);
+
+            given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
+
+            RestaurantUpdateDto dto = new RestaurantUpdateDto(
                     "다미분식",
                     "서울시 광화문로 20길",
                     "02-1234-4440",
                     11001112,
                     RestaurantEnum.Open
             );
-            given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
 
-            RestaurantInfoDto result = restaurantService.updateRestaurant(id,dto,owner);
-            assertThat(result.getRestaurantName()).isEqualTo("업데이트");
+            RestaurantInfoDto result = restaurantService.updateRestaurant(id, dto, owner);
 
+            assertThat(result).isNotNull();
+            assertThat(result.getRestaurantName()).isEqualTo("다미분식");
+            assertThat(result.getRestaurantAddress()).isEqualTo("서울시 광화문로 20길");
+            assertThat(result.getRestaurantNumber()).isEqualTo("02-1234-4440");
+            assertThat(result.getRegionCode()).isEqualTo(11001112);
+            assertThat(result.getIsPublic()).isEqualTo(RestaurantEnum.Open);
+            // (타입명도 쓰면)
+            // assertThat(result.getRestaurantTypeName()).isEqualTo("분식");
         }
 
         @Test
@@ -211,12 +240,17 @@ class RestaurantServiceTest {
             User owner = mockUser(100L,UserRoleEnum.Owner);
             User notOwner = mockUser(10L, UserRoleEnum.Owner);
             Restaurant r = mock(Restaurant.class);
-            r.setUser(notOwner);
+
+            //onwer 반환해야 본인아 아닌걸 확인할 수 있음
+            when(r.getUser()).thenReturn(owner);
+            when(r.getRestaurantId()).thenReturn(id);
+            when(r.isStatus()).thenReturn(true);
+
 
             given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
 
             BusinessException exception = assertThrows(BusinessException.class,
-                    () -> restaurantService.updateRestaurant(id,new RestaurantUpdateDto(),notOwner));
+                    () -> restaurantService.updateRestaurant(id,new RestaurantUpdateDto("va1","val2","val3",1100,RestaurantEnum.Open),notOwner));
 
             assertThat(exception.getExceptionCode()).isEqualTo(ExceptionCode.FORBIDDEN_UPDATE_RESTAURANT);
 
@@ -231,19 +265,35 @@ class RestaurantServiceTest {
 
         @Test
         @DisplayName("삭제 성공, 식당의 status를 false로 바꿉니다.")
+
+        //mock에선 set이 안먹기때문에, 기존 상태를 재현해줘야함 (getter /setter)
+        //spy 사용
         void success() {
             UUID id = UUID.randomUUID();
-            User owner = mockUser(100L,UserRoleEnum.Owner);
-
+            User owner = mockUser(100L, UserRoleEnum.Owner);
             Restaurant r = mock(Restaurant.class);
-            r.setUser(owner);
-            r.setStatus(true);
+            //  checkUser
+            when(r.getUser()).thenReturn(owner);
+            when(r.getRestaurantId()).thenReturn(id);
+            //   convertDto
+            when(r.getRestaurantName()).thenReturn("가게");
+            when(r.getRestaurantAddress()).thenReturn("서울");
+            when(r.getRestaurantNumber()).thenReturn("02-0000-0000");
+            when(r.getRegionCode()).thenReturn(11001112);
+            when(r.getIsPublic()).thenReturn(RestaurantEnum.Open);
+            // 삭제 이후 convertDto가 부를 값: status=false
+            when(r.isStatus()).thenReturn(false);
+
+            // 타입도 쓰면 스텁 필요
+            RestaurantType type = mock(RestaurantType.class);
+            when(type.getRestaurantTypeName()).thenReturn("중식");
+            when(type.getRestaurantTypeCode()).thenReturn(20);
+            when(r.getRestaurantTypeId()).thenReturn(type);
 
             given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
 
             RestaurantInfoDto dto = restaurantService.deleteRestaurant(id, owner);
 
-            //then
             assertThat(dto.isStatus()).isFalse();
 
         }
@@ -256,8 +306,8 @@ class RestaurantServiceTest {
             User notOwner = mockUser(10L, UserRoleEnum.Owner);
 
             Restaurant r = mock(Restaurant.class);
-            r.setUser(owner);
-            r.setStatus(true);
+            when(r.getUser()).thenReturn(owner);
+            when(r.getRestaurantId()).thenReturn(id);
 
             given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
 
@@ -273,14 +323,26 @@ class RestaurantServiceTest {
         @DisplayName("롤백 성공")
         void success_rollback() {
             UUID id = UUID.randomUUID();
-            User owner = mockUser(100L,UserRoleEnum.Owner);
+            User manager = mockUser(7L, UserRoleEnum.Manager);
 
-            Restaurant r =  mock(Restaurant.class);
-            r.setUser(owner);
-            r.setStatus(true);
+            Restaurant r = mock(Restaurant.class);
+            when(r.getRestaurantId()).thenReturn(id);
+            // 롤백 이후 convertDto가 읽을 값들
+            when(r.getRestaurantName()).thenReturn("가게");
+            when(r.getRestaurantAddress()).thenReturn("서울");
+            when(r.getRestaurantNumber()).thenReturn("02-0000-0000");
+            when(r.getRegionCode()).thenReturn(11001112);
+            when(r.getIsPublic()).thenReturn(RestaurantEnum.Open);
+            when(r.isStatus()).thenReturn(true); // 복구 후 상태
+
+            RestaurantType type = mock(RestaurantType.class);
+            when(type.getRestaurantTypeName()).thenReturn("중식");
+            when(type.getRestaurantTypeCode()).thenReturn(20);
+            when(r.getRestaurantTypeId()).thenReturn(type);
+
             given(restaurantRepository.findById(id)).willReturn(Optional.of(r));
 
-            RestaurantInfoDto dto = restaurantService.RollbackDeletedRestaurant(id,owner);
+            RestaurantInfoDto dto = restaurantService.RollbackDeletedRestaurant(id, manager);
 
             assertThat(dto.isStatus()).isTrue();
         }
