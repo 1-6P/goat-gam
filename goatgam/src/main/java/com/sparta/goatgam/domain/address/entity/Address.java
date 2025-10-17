@@ -1,6 +1,6 @@
 package com.sparta.goatgam.domain.address.entity;
 
-import com.sparta.goatgam.domain.address.dto.AddressCreateRequestDto;
+import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,8 +20,9 @@ public class Address extends BaseEntity {
     @Column(name = "address_id", columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dong_code", nullable = false)
@@ -44,7 +45,7 @@ public class Address extends BaseEntity {
     @Column(name = "is_default", nullable = false)
     private boolean isDefault;
 
-    @Column(name = "status",  nullable = false)
+    @Column(name = "status", nullable = false)
     private boolean status;
 
     public void update(Address newAddress) {
@@ -54,5 +55,4 @@ public class Address extends BaseEntity {
         this.roadAddress = newAddress.roadAddress;
         this.detail = newAddress.detail;
     }
-
 }
