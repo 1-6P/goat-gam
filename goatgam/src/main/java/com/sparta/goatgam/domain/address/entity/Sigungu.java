@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.address.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,6 +17,7 @@ public class Sigungu {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sido_code", nullable = false)
+    @JsonIgnore
     private Sido sido;
 
     @Column(name = "name", nullable = false, length = 50)

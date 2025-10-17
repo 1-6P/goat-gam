@@ -1,5 +1,7 @@
 package com.sparta.goatgam.domain.order.service;
 
+import com.sparta.goatgam.domain.address.entity.Address;
+import com.sparta.goatgam.domain.address.repository.AddressRepository;
 import com.sparta.goatgam.domain.cart.entity.Cart;
 import com.sparta.goatgam.domain.cart.entity.CartFood;
 import com.sparta.goatgam.domain.cart.entity.CartFoodOption;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.sparta.goatgam.domain.address.entity.Address.verifyDeliveryAvailable;
 import static com.sparta.goatgam.global.util.PageableUtils.makePageable;
 import static com.sparta.goatgam.global.util.PageableUtils.order;
 
@@ -41,6 +44,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
+    private final AddressRepository addressRepository;
 
     public PagedModel<OrderSummaryResponseDto> getMyOrderSummary(int page, int size, User user) {
         Pageable pageable = makePageable(page, size, order(Sort.Direction.DESC, "createdAt"));
@@ -95,8 +99,16 @@ public class OrderService {
             foodsToAdd.add(OrderFood.fromCartFood(food));
         }
 
+        Address address = addressRepository.findByUserUserIdAndIsDefaultTrue(user.getUserId()).orElseThrow(() ->
+                new BusinessException(ExceptionCode.ORDER_DEFAULT_ADDRESS_NOT_FOUND)
+        );
+
+        // 주문 지역 검증
+        if (!verifyDeliveryAvailable(cart.getRestaurant(), address))
+            throw new BusinessException(ExceptionCode.REGION_NOT_DELIVERABLE);
+
         Order order = new Order(
-                user.getAddress(),
+                address.getRoadAddress() + " " + address.getDetail(),
                 totalprice,
                 request,
                 LocalDateTime.now(),

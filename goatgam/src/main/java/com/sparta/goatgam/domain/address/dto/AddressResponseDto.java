@@ -22,7 +22,7 @@ public class AddressResponseDto {
     public static AddressResponseDto from(Address a) {
         return new AddressResponseDto(
                 a.getId(),
-                a.getUserId(),
+                a.getUser().getUserId(),
                 a.getSido().getSidoCode(),
                 a.getSigungu().getSigunguCode(),
                 a.getDong().getDongCode(),
@@ -36,7 +36,7 @@ public class AddressResponseDto {
     public static AddressResponseDto of(Address a, boolean defaultAddress) {
         return new AddressResponseDto(
                 a.getId(),
-                a.getUserId(),
+                a.getUser().getUserId(),
                 a.getSido().getSidoCode(),
                 a.getSigungu().getSigunguCode(),
                 a.getDong().getDongCode(),

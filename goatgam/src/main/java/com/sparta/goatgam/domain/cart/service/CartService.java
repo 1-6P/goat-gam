@@ -1,5 +1,7 @@
 package com.sparta.goatgam.domain.cart.service;
 
+import com.sparta.goatgam.domain.address.entity.Address;
+import com.sparta.goatgam.domain.address.repository.AddressRepository;
 import com.sparta.goatgam.domain.cart.dto.*;
 import com.sparta.goatgam.domain.cart.entity.Cart;
 import com.sparta.goatgam.domain.cart.entity.CartFood;
@@ -24,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.sparta.goatgam.domain.address.entity.Address.verifyDeliveryAvailable;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -36,6 +40,8 @@ public class CartService {
 
     private final FoodRepository foodRepository;
     private final FoodOptionRepository foodOptionRepository;
+
+    private final AddressRepository addressRepository;
 
     public CartResponseDto getCartInfo(User user) {
         Cart cart = cartRepository.findByUserAndIsDeletedFalse(user).orElseThrow(() ->
@@ -61,6 +67,15 @@ public class CartService {
             return newCart;
         });
 
+        // 주문 지역 검증
+        Address address = addressRepository.findByUserUserIdAndIsDefaultTrue(user.getUserId()).orElseThrow(() ->
+                new BusinessException(ExceptionCode.ORDER_DEFAULT_ADDRESS_NOT_FOUND)
+        );
+
+        if (!verifyDeliveryAvailable(restaurant, address))
+            throw new BusinessException(ExceptionCode.REGION_NOT_DELIVERABLE);
+
+        // 판매중인 음식인지 검증
         if (!food.getFoodStatus().equals(FoodStatus.Ok)) throw new BusinessException(ExceptionCode.FOOD_NOT_SELL);
 
         // 3. 있으면 requestDto에서 restaurantId 가져와서 cart의 restaurantId와 비교

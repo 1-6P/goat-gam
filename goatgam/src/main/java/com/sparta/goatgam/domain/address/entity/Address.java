@@ -1,5 +1,7 @@
 package com.sparta.goatgam.domain.address.entity;
 
+import com.sparta.goatgam.domain.restaurant.entity.Restaurant;
+import com.sparta.goatgam.domain.user.entity.User;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,8 +21,9 @@ public class Address extends BaseEntity {
     @Column(name = "address_id", columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dong_code", nullable = false)
@@ -43,7 +46,21 @@ public class Address extends BaseEntity {
     @Column(name = "is_default", nullable = false)
     private boolean isDefault;
 
-    @Column(name = "status",  nullable = false)
+    @Column(name = "status", nullable = false)
     private boolean status;
 
+    public static boolean verifyDeliveryAvailable(Restaurant restaurant, Address userAddress) {
+        String restaurantSigunguCode = restaurant.getRegionCode().toString().substring(0, 5);
+        String userAddressSigunguCode = userAddress.getSigungu().getSigunguCode();
+
+        return restaurantSigunguCode.equals(userAddressSigunguCode);
+    }
+
+    public void update(Address newAddress) {
+        this.dong = newAddress.dong;
+        this.sigungu = newAddress.sigungu;
+        this.sido = newAddress.sido;
+        this.roadAddress = newAddress.roadAddress;
+        this.detail = newAddress.detail;
+    }
 }

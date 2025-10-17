@@ -42,6 +42,8 @@ public enum ExceptionCode {
     ADDRESS_USER_NOT_HAVE("A02", "유저에게 해당 주소가 없습니다.", HttpStatus.NOT_FOUND),
     ADDRESS_INPUT_ERROR("A03", "올바른 법정동코드 형식이 아닙니다.", HttpStatus.BAD_REQUEST),
     ADDRESS_NOT_EXIST("A04", "존재하지 않는 법정동 코드입니다.", HttpStatus.NOT_FOUND),
+    ADDRESS_NOT_FOUND("A05", "해당 주소를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    FORBIDDEN_UPDATE_ADDRESS("A06", "주소 수정 권한이 없습니다.", HttpStatus.FORBIDDEN),
 
     //음식(F)
     FOOD_NOT_FOUND("F01", "메뉴를 찾을 수 없습니다", HttpStatus.NOT_FOUND),
@@ -84,6 +86,8 @@ public enum ExceptionCode {
     FORBIDDEN_ORDER("ORDER02", "주문에 대한 권한이 없습니다. ", HttpStatus.FORBIDDEN),
     FORBIDDEN_ORDER_REFUND("ORDER03", "주문에 대한 환불 권한이 없습니다. ", HttpStatus.FORBIDDEN),
     ORDER_EMPTY_CART("ORDER04", "장바구니가 비었습니다.", HttpStatus.GONE),
+    ORDER_DEFAULT_ADDRESS_NOT_FOUND("ORDER05", "기본 주소가 지정되어있지 않습니다.", HttpStatus.NOT_FOUND),
+    REGION_NOT_DELIVERABLE("ORDER06", "주문 가능한 지역이 아닙니다.", HttpStatus.BAD_REQUEST),
 
     //리뷰 (RV)
     REVIEW_NOT_FOUND("RV01", "해당 리뷰를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
