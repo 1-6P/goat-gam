@@ -5,6 +5,7 @@ import com.sparta.goatgam.global.jwt.JwtUtil;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import com.sparta.goatgam.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Tag(name = "유저 api", description = "유저 관련 기능 api입니다.")
 public class UserController {
 
     private final UserService userService;

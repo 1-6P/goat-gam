@@ -7,6 +7,7 @@ import com.sparta.goatgam.domain.address.service.AddressService;
 import com.sparta.goatgam.global.dto.MessageAndIdResponseDto;
 import com.sparta.goatgam.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/address")
+@Tag(name = "주소 API", description = "주소 관련 기능 API입니다.")
 public class AddressController {
 
     private final AddressService addressService;
@@ -76,10 +78,10 @@ public class AddressController {
     }
 
     @Operation(summary = "주소 변경", description = "사용자가 본인의 주소를 변경합니다.")
-    @PostMapping("/{addressId}/update")
+    @PatchMapping("/{addressId}/update")
     public ResponseEntity<MessageAndIdResponseDto> changeAddress(@PathVariable UUID addressId,
                                                                  @RequestBody AddressChangeDto requestDto,
-                                                                 @AuthenticationPrincipal UserDetailsImpl principal){
+                                                                 @AuthenticationPrincipal UserDetailsImpl principal) {
         return ResponseEntity.ok(addressService.changeAddress(addressId, requestDto, principal.getUser()));
     }
 }

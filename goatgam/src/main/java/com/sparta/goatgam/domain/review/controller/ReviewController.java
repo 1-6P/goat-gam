@@ -50,7 +50,7 @@ public class ReviewController {
     }
 
     @Operation(summary = "후기 삭제", description = "작성된 후기를 삭제합니다.")
-    @PatchMapping("/review/{reviewId}")
+    @DeleteMapping("/review/{reviewId}")
     public ResponseEntity<ReviewUpdateResponseDto> deleteReview(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID reviewId

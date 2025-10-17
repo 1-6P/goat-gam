@@ -36,13 +36,13 @@ public class PaymentController {
     }
 
     @Operation(summary = "결제 취소", description = "결제 후 5분 내로 취소 가능(주문자와 동일한 경우)")
-    @PostMapping("/cancel")
+    @PatchMapping("/cancel")
     public MessageAndIdResponseDto cancelPayment(@RequestParam UUID orderId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return paymentService.cancelPayment(orderId, userDetails.getUser());
     }
 
     @Operation(summary = "환불", description = "결제를 환불처리(주문한 가게의 사장님만)")
-    @PostMapping("/refund")
+    @PatchMapping("/refund")
     public MessageAndIdResponseDto refundPayment(@RequestBody PaymentVerifyRequestDto dto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return paymentService.refundPayment(dto, userDetails.getUser());
     }
