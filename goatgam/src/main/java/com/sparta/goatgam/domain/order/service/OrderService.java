@@ -104,7 +104,8 @@ public class OrderService {
         );
 
         // 주문 지역 검증
-        verifyDeliveryAvailable(cart.getRestaurant(), address);
+        if (!verifyDeliveryAvailable(cart.getRestaurant(), address))
+            throw new BusinessException(ExceptionCode.REGION_NOT_DELIVERABLE);
 
         Order order = new Order(
                 address.getRoadAddress() + " " + address.getDetail(),

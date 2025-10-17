@@ -72,7 +72,8 @@ public class CartService {
                 new BusinessException(ExceptionCode.ORDER_DEFAULT_ADDRESS_NOT_FOUND)
         );
 
-        verifyDeliveryAvailable(restaurant, address);
+        if (!verifyDeliveryAvailable(restaurant, address))
+            throw new BusinessException(ExceptionCode.REGION_NOT_DELIVERABLE);
 
         // 판매중인 음식인지 검증
         if (!food.getFoodStatus().equals(FoodStatus.Ok)) throw new BusinessException(ExceptionCode.FOOD_NOT_SELL);

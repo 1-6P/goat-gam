@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -40,24 +41,24 @@ public class RestaurantController {
     @Operation(summary = "식당 등록", description = "새로운 식당 등록하기")
     @PostMapping
     public RestaurantInfoDto createRestaurant(@RequestBody RestaurantRequestDto restaurantRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return restaurantService.createRestaurant(restaurantRequestDto,userDetails.getUser());
+        return restaurantService.createRestaurant(restaurantRequestDto, userDetails.getUser());
     }
 
     //단건 조회
-    @Operation(summary = "특정 식당 조회." , description = "특정 식당의 정보를 상세조회합니다.")
+    @Operation(summary = "특정 식당 조회.", description = "특정 식당의 정보를 상세조회합니다.")
     @GetMapping("/{restaurantId}")
     public ResponseEntity<RestaurantDetailDto> getDetail(@PathVariable UUID restaurantId) {
         return ResponseEntity.ok(restaurantService.getRestaurant(restaurantId));
     }
 
     //식당 등록정보 수정
-    @Operation(summary ="식당 등록정보 수정", description = "식당의 정보를 수정합니다.")
+    @Operation(summary = "식당 등록정보 수정", description = "식당의 정보를 수정합니다.")
     @PutMapping("/{restaurantId}")
     public ResponseEntity<RestaurantInfoDto> updateRestaurant(
             @PathVariable UUID restaurantId,
             @RequestBody RestaurantUpdateDto restaurantUpdateDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(restaurantService.updateRestaurant(restaurantId, restaurantUpdateDto,userDetails.getUser()));
+        return ResponseEntity.ok(restaurantService.updateRestaurant(restaurantId, restaurantUpdateDto, userDetails.getUser()));
     }
 
     //식당 등록정보 삭제
@@ -81,9 +82,10 @@ public class RestaurantController {
     @GetMapping
     public List<RestaurantInfoDto> list(
             @RequestParam(value = "restaurant_type_code", required = false) String typeCodeStr,
-            @RequestParam(value = "keyword", required = false) String keyword
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return restaurantService.findRestaurants(typeCodeStr, keyword);
+        return restaurantService.findRestaurants(typeCodeStr, keyword, userDetails.getUser());
     }
 
     //특정 식당의 메뉴 조회 (전체정보)
@@ -101,22 +103,22 @@ public class RestaurantController {
     @Operation(summary = "특정 식당 메뉴 상세보기 ", description = "특정 식당의 메뉴를 상세조회합니다.")
     @GetMapping("/{restaurantId}/menu/{foodId}")
     public ResponseEntity<RestaurantFoodDetailDto> getFoodDetail(@PathVariable UUID restaurantId, @PathVariable UUID foodId) {
-        return ResponseEntity.ok(restaurantService.getFoodDetail(restaurantId,foodId));
+        return ResponseEntity.ok(restaurantService.getFoodDetail(restaurantId, foodId));
     }
 
     //특정 메뉴의 모든 옵션을 조회하기 ->
     @Operation(summary = "특정 메뉴의 모든 옵션을 조회 ", description = "특정 메뉴의 모든 옵션을 조회합니다.")
     @GetMapping("/{restaurantId}/menu/{foodId}/option")
-    public List<RestaurantFoodOptionDetailDto> getFoodOptionDetail (@PathVariable UUID restaurantId, @PathVariable UUID foodId) {
-        return restaurantService.getFoodDetails(restaurantId,foodId);
+    public List<RestaurantFoodOptionDetailDto> getFoodOptionDetail(@PathVariable UUID restaurantId, @PathVariable UUID foodId) {
+        return restaurantService.getFoodDetails(restaurantId, foodId);
     }
 
     // 메뉴 검색
     @Operation(summary = "식당 내 메뉴 검색", description = "특정 식당 내에서 메뉴 이름 또는 설명을 기준으로 검색합니다. Hidden, Deleted 상태는 제외됩니다.")
     @GetMapping("/{restaurantId}/menu/search")
     public ResponseEntity<Map<String, Object>> searchMenus(
-        @PathVariable UUID restaurantId,
-        @RequestParam String keyword
+            @PathVariable UUID restaurantId,
+            @RequestParam String keyword
     ) {
         List<FoodListDto> results = menuSearchService.searchMenus(restaurantId, keyword);
         return ResponseEntity.ok(Map.of("results", results));

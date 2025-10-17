@@ -1,5 +1,8 @@
 package com.sparta.goatgam.domain.restaurant;
 
+import com.sparta.goatgam.domain.address.entity.Address;
+import com.sparta.goatgam.domain.address.entity.Sigungu;
+import com.sparta.goatgam.domain.address.repository.AddressRepository;
 import com.sparta.goatgam.domain.owner.dto.FoodListDto;
 import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.entity.FoodStatus;
@@ -57,6 +60,8 @@ class RestaurantServiceTest {
     private FoodRepository foodRepository;
     @Mock
     private FoodOptionRepository foodOptionRepository;
+    @Mock
+    private AddressRepository addressRepository;
 
     @InjectMocks
     private MenuSearchService menuSearchService;
@@ -513,6 +518,8 @@ class RestaurantServiceTest {
             @Test
             @DisplayName("성공: typeCode, keyword 둘 다 null → 전체 중 status=true만 반환")
             void success_all() {
+                User user = mockUser(1L, UserRoleEnum.Customer);
+
                 RestaurantType type = mock(RestaurantType.class);
                 when(type.getRestaurantTypeCode()).thenReturn(10);
 
@@ -521,13 +528,20 @@ class RestaurantServiceTest {
                 when(active.getRestaurantTypeId()).thenReturn(type);
                 when(active.getRestaurantName()).thenReturn("짬뽕타운");
                 when(active.getRestaurantAddress()).thenReturn("서울시 강남구");
+                when(active.getRegionCode()).thenReturn(11001000);
 
                 Restaurant inactive = mock(Restaurant.class);
                 when(inactive.isStatus()).thenReturn(false);
 
+                Address addr = mock(Address.class);
+                Sigungu sigungu = mock(Sigungu.class);
+                when(sigungu.getSigunguCode()).thenReturn("11001");
+                when(addr.getSigungu()).thenReturn(sigungu);
+                given(addressRepository.findByUserUserIdAndIsDefaultTrue(1L)).willReturn(Optional.of(addr));
+
                 given(restaurantRepository.findAll()).willReturn(List.of(active, inactive));
 
-                List<RestaurantInfoDto> result = restaurantService.findRestaurants(null, null);
+                List<RestaurantInfoDto> result = restaurantService.findRestaurants(null, null, user);
 
                 assertThat(result).hasSize(1);
                 assertThat(result.get(0).getRestaurantName()).isEqualTo("짬뽕타운");
@@ -536,6 +550,8 @@ class RestaurantServiceTest {
             @Test
             @DisplayName("성공: typeCode와 keyword 둘 다 필터 적용")
             void success_filtered() {
+                User user = mockUser(1L, UserRoleEnum.Customer);
+
                 RestaurantType type10 = mock(RestaurantType.class);
                 when(type10.getRestaurantTypeCode()).thenReturn(10);
                 RestaurantType type20 = mock(RestaurantType.class);
@@ -546,16 +562,24 @@ class RestaurantServiceTest {
                 when(a.getRestaurantTypeId()).thenReturn(type10);
                 when(a.getRestaurantName()).thenReturn("공리짬뽕");
                 when(a.getRestaurantAddress()).thenReturn("서울");
+                when(a.getRegionCode()).thenReturn(11001000);
 
                 Restaurant b = mock(Restaurant.class);
                 when(b.isStatus()).thenReturn(true);
                 when(b.getRestaurantTypeId()).thenReturn(type20);
                 when(b.getRestaurantName()).thenReturn("고양이분식");
                 when(b.getRestaurantAddress()).thenReturn("부산");
+                when(b.getRegionCode()).thenReturn(11001000);
+
+                Address addr = mock(Address.class);
+                Sigungu sigungu = mock(Sigungu.class);
+                when(sigungu.getSigunguCode()).thenReturn("11001");
+                when(addr.getSigungu()).thenReturn(sigungu);
+                given(addressRepository.findByUserUserIdAndIsDefaultTrue(1L)).willReturn(Optional.of(addr));
 
                 given(restaurantRepository.findAll()).willReturn(List.of(a, b));
 
-                List<RestaurantInfoDto> result = restaurantService.findRestaurants("10", "짬");
+                List<RestaurantInfoDto> result = restaurantService.findRestaurants("10", "짬", user);
 
                 assertThat(result).hasSize(1);
                 assertThat(result.get(0).getRestaurantName()).isEqualTo("공리짬뽕");
