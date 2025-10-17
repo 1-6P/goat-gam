@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.address.entity;
 
+import com.sparta.goatgam.domain.address.dto.AddressCreateRequestDto;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,5 +46,13 @@ public class Address extends BaseEntity {
 
     @Column(name = "status",  nullable = false)
     private boolean status;
+
+    public void update(Address newAddress) {
+        this.dong = newAddress.dong;
+        this.sigungu = newAddress.sigungu;
+        this.sido = newAddress.sido;
+        this.roadAddress = newAddress.roadAddress;
+        this.detail = newAddress.detail;
+    }
 
 }

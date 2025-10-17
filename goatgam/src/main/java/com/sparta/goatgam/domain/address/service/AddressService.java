@@ -129,4 +129,33 @@ public class AddressService {
 
         return new MessageAndIdResponseDto("기본 주소가 변경되었습니다.", addressId);
     }
+
+    @Transactional
+    public MessageAndIdResponseDto changeAddress(UUID addressId, AddressChangeDto requestDto, User user) {
+        Address address = addressRepository.findById(addressId).orElseThrow(() -> new BusinessException(ExceptionCode.ADDRESS_NOT_FOUND));
+        if(address.getUserId() != user.getUserId())
+            throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_ADDRESS);
+
+        String code10 = normalizeCode10(requestDto.getBeopjeongDong());
+
+        if (code10 == null) throw new BusinessException(ExceptionCode.ADDRESS_INPUT_ERROR);
+        String base8 = code10.substring(0, 8);
+
+        Beopjeongdong beopjeongdong = beopjeongdongRepository.findById(base8)
+                .orElseThrow(() -> new BusinessException(ExceptionCode.ADDRESS_NOT_EXIST));
+
+        Sigungu sigungu = beopjeongdong.getSigungu();
+        Sido sido = beopjeongdong.getSigungu().getSido();
+
+        Address newAddress = Address.builder()
+                .id(UUID.randomUUID())
+                .userId(user.getUserId())
+                .dong(beopjeongdong).sigungu(sigungu).sido(sido)
+                .roadAddress(requestDto.getRoadAddress()).detail(requestDto.getDetail())
+                .isDefault(address.isDefault()).status(true).build();
+
+        address.update(newAddress);
+
+        return new MessageAndIdResponseDto("update address success", addressId);
+    }
 }
