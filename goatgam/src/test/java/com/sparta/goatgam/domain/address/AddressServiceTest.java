@@ -35,8 +35,10 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.WARN)
 class AddressServiceTest {
 
-    @Mock private AddressRepository addressRepository;
-    @Mock private BeopjeongdongRepository beopjeongdongRepository;
+    @Mock
+    private AddressRepository addressRepository;
+    @Mock
+    private BeopjeongdongRepository beopjeongdongRepository;
 
     @InjectMocks
     private AddressService addressService;
