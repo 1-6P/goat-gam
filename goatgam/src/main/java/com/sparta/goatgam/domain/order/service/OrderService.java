@@ -1,5 +1,7 @@
 package com.sparta.goatgam.domain.order.service;
 
+import com.sparta.goatgam.domain.address.entity.Address;
+import com.sparta.goatgam.domain.address.repository.AddressRepository;
 import com.sparta.goatgam.domain.cart.entity.Cart;
 import com.sparta.goatgam.domain.cart.entity.CartFood;
 import com.sparta.goatgam.domain.cart.entity.CartFoodOption;
@@ -41,6 +43,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
+    private final AddressRepository addressRepository;
 
     public PagedModel<OrderSummaryResponseDto> getMyOrderSummary(int page, int size, User user) {
         Pageable pageable = makePageable(page, size, order(Sort.Direction.DESC, "createdAt"));
@@ -95,8 +98,12 @@ public class OrderService {
             foodsToAdd.add(OrderFood.fromCartFood(food));
         }
 
+        Address address = addressRepository.findByUserUserIdAndIsDefaultTrue(user.getUserId()).orElseThrow(() ->
+                new BusinessException(ExceptionCode.ORDER_DEFAULT_ADDRESS_NOT_FOUND)
+        );
+
         Order order = new Order(
-                user.getAddress(),
+                address.getRoadAddress() + " " + address.getDetail(),
                 totalprice,
                 request,
                 LocalDateTime.now(),
