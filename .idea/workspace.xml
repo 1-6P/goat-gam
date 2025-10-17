@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b2a6d045-5851-4016-b226-94bf513276ee" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/6999a84b-a3d7-4527-b047-fe834a60e73c.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/6999a84b-a3d7-4527-b047-fe834a60e73c/storage_v2/_src_/database/goatgam.2PWYCw.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/6999a84b-a3d7-4527-b047-fe834a60e73c/storage_v2/_src_/database/goatgam.2PWYCw/schema/public.abK9xQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/6999a84b-a3d7-4527-b047-fe834a60e73c/storage_v2/_src_/database/postgres.edMnLQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/6999a84b-a3d7-4527-b047-fe834a60e73c/storage_v2/_src_/database/postgres.edMnLQ/schema/information_schema.FNRwLQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/6999a84b-a3d7-4527-b047-fe834a60e73c/storage_v2/_src_/database/postgres.edMnLQ/schema/pg_catalog.0S1ZNQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/6999a84b-a3d7-4527-b047-fe834a60e73c/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/goat-gam.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/goatgam.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Changes.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Changes/shelved.patch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
+    <list id="7dab333d-5ada-45df-80de-ccd91768e5d2" name="Changes by Admin" comment="">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
+    <list id="d6580e7c-cc4e-4d49-9250-990065867c32" name="Changes by gang-eunseon" comment="">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
+    <list id="6d22242f-069c-4577-9050-1c6d2198479f" name="Changes by gustn" comment="" />
+    <list id="bdf6b340-b58c-4a5a-a6cf-4251380fd89d" name="Changes by hangw" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/goatgam">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/goatgam">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="goatgam" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="72-bug-develop-에러-해결" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/README.md">
+      <ranges>
+        <range start1="1" end1="2" start2="1" end2="1" changelist="d6580e7c-cc4e-4d49-9250-990065867c32" />
+        <range start1="6" end1="11" start2="5" end2="10" changelist="7dab333d-5ada-45df-80de-ccd91768e5d2" />
+        <range start1="12" end1="13" start2="11" end2="13" changelist="b2a6d045-5851-4016-b226-94bf513276ee" />
+        <range start1="15" end1="19" start2="15" end2="19" changelist="b2a6d045-5851-4016-b226-94bf513276ee" />
+        <range start1="142" end1="144" start2="142" end2="142" changelist="7dab333d-5ada-45df-80de-ccd91768e5d2" />
+        <range start1="180" end1="182" start2="178" end2="178" changelist="7dab333d-5ada-45df-80de-ccd91768e5d2" />
+        <range start1="268" end1="268" start2="264" end2="273" changelist="7dab333d-5ada-45df-80de-ccd91768e5d2" />
+      </ranges>
+    </file>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="33TDk0O0AjcTJd80dd1q0ZvSLUP" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.AddOrder.order_add_fail.executor": "Run",
+    "Gradle.AddOrder.order_add_success.executor": "Run",
+    "Gradle.Build goatgam.executor": "Run",
+    "Gradle.CreateRestaurant.executor": "Run",
+    "Gradle.CreateRestaurant.fail_notSelf_forbiddenUpdate.executor": "Run",
+    "Gradle.CreateRestaurant.fail_typeNotFound.executor": "Run",
+    "Gradle.CreateRestaurant.fail_userNotFound.executor": "Run",
+    "Gradle.CreateRestaurant.success_owner.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.GetRestaurant.executor": "Run",
+    "Gradle.GetRestaurant.success.executor": "Run",
+    "Gradle.GoatgamApplicationTests.executor": "Run",
+    "Gradle.OrderServiceTest.executor": "Run",
+    "Gradle.RestaurantServiceTest.executor": "Run",
+    "Gradle.deleteAndRollback.executor": "Run",
+    "Gradle.deleteAndRollback.fail_delete_restaurant.executor": "Run",
+    "Gradle.deleteAndRollback.success.executor": "Run",
+    "Gradle.deleteAndRollback.success_rollback.executor": "Run",
+    "Gradle.getMyOrderSummary.getMyOrderSummary_fail.executor": "Run",
+    "Gradle.getOrderDetail.executor": "Run",
+    "Gradle.getOrderDetail.getOrderDetail_success.executor": "Run",
+    "Gradle.getOrderSummary.executor": "Run",
+    "Gradle.getOrderSummary.getOrderSummary_success.executor": "Run",
+    "Gradle.getUserOrderSummary.executor": "Run",
+    "Gradle.updateRestaurant.executor": "Run",
+    "Gradle.updateRestaurant.fail_update_restaurant.executor": "Run",
+    "Gradle.updateRestaurant.success (1).executor": "Run",
+    "Gradle.updateRestaurant.success.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.GoatgamApplication.executor": "Run",
+    "git-widget-placeholder": "feature/readme",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "CodeWithMe",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.sparta.goatgam.domain.restaurant.dto" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26199.169" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-IU-252.26199.169" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b2a6d045-5851-4016-b226-94bf513276ee" name="Changes" comment="" />
+      <created>1759332308267</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1759332308267</updated>
+      <workItem from="1759332310553" duration="301000" />
+      <workItem from="1759375311994" duration="7955000" />
+      <workItem from="1759490033988" duration="1131000" />
+      <workItem from="1759502197656" duration="1319000" />
+      <workItem from="1759560095315" duration="3375000" />
+      <workItem from="1759573062825" duration="2664000" />
+      <workItem from="1759583424333" duration="9967000" />
+      <workItem from="1759593574284" duration="537000" />
+      <workItem from="1759673759578" duration="1123000" />
+      <workItem from="1759750358799" duration="2166000" />
+      <workItem from="1759818308569" duration="5764000" />
+      <workItem from="1759848931910" duration="4359000" />
+      <workItem from="1759916751415" duration="819000" />
+      <workItem from="1759929396700" duration="2970000" />
+      <workItem from="1759934331387" duration="3124000" />
+      <workItem from="1760019263283" duration="5308000" />
+      <workItem from="1760071971722" duration="3249000" />
+      <workItem from="1760319380848" duration="7487000" />
+      <workItem from="1760409052019" duration="2433000" />
+      <workItem from="1760413592193" duration="6992000" />
+      <workItem from="1760493441673" duration="13227000" />
+      <workItem from="1760531032919" duration="888000" />
+      <workItem from="1760576789544" duration="17190000" />
+      <workItem from="1760615372459" duration="4046000" />
+      <workItem from="1760667725127" duration="6940000" />
+    </task>
+    <task id="LOCAL-00001" summary="최신 파일 업데이트">
+      <option name="closed" value="true" />
+      <created>1759412036674</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1759412036674</updated>
+    </task>
+    <task id="LOCAL-00002" summary="workspace 충돌 방지">
+      <option name="closed" value="true" />
+      <created>1759490188708</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1759490188708</updated>
+    </task>
+    <task id="LOCAL-00003" summary="메뉴 옵션 목록조회">
+      <option name="closed" value="true" />
+      <created>1759750447385</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1759750447385</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="최신 파일 업데이트" />
+    <MESSAGE value="workspace 충돌 방지" />
+    <MESSAGE value="메뉴 옵션 목록조회" />
+    <option name="LAST_COMMIT_MESSAGE" value="메뉴 옵션 목록조회" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
