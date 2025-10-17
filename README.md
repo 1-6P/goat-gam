@@ -11,7 +11,7 @@
 </details>
 - [API 명세서](https://www.notion.so/27a2dc3ef51481629a77e7ef3666d515)
 
-## 서비스 구성 및 실행방법
+## 서비스 구성 및 실행방법!
 - [포팅 메뉴얼](https://www.notion.so/teamsparta/27e2dc3ef51480af9964e1b9a9435c43)
 
 ## 👨‍👩‍👧‍👦 팀원 소개
