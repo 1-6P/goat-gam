@@ -149,8 +149,18 @@ class AddressServiceTest {
         void success_filter_only_active() {
             // given
             Long userId = 10L;
-            Address inactive = mockAddress(UUID.randomUUID(), userId, false, false, "서울시 비활성", null, null, null);
-            Address active = mockAddress(UUID.randomUUID(), userId, true, true, "서울시 활성", null, null, null);
+
+            // 행정구역 mock 구성
+            Sido sido = mock(Sido.class);
+            Sigungu sigungu = mock(Sigungu.class);
+            Beopjeongdong dong = mock(Beopjeongdong.class);
+
+            when(sido.getSidoCode()).thenReturn("11");
+            when(sigungu.getName()).thenReturn("중구");
+            when(dong.getName()).thenReturn("명동");
+
+            Address inactive = mockAddress(UUID.randomUUID(), userId, false, false, "서울시 비활성", dong, sigungu, sido);
+            Address active = mockAddress(UUID.randomUUID(), userId, true, true, "서울시 활성", dong, sigungu, sido);
 
             given(addressRepository.findByUserId(userId)).willReturn(List.of(inactive, active));
 
@@ -160,6 +170,7 @@ class AddressServiceTest {
             // then
             assertThat(list).hasSize(1);
         }
+
 
         @Test
         @DisplayName("실패: 활성 주소 없음 -> IllegalArgumentException")
@@ -247,8 +258,17 @@ class AddressServiceTest {
         @DisplayName("성공: 전체 조회 -> DTO 매핑 수행")
         void success_all() {
             // given
-            Address a1 = mockAddress(UUID.randomUUID(), 1L, true, false, "서울1", null, null, null);
-            Address a2 = mockAddress(UUID.randomUUID(), 2L, false, false, "서울2", null, null, null);
+            Sido sido = mock(Sido.class);
+            Sigungu sigungu = mock(Sigungu.class);
+            Beopjeongdong dong = mock(Beopjeongdong.class);
+
+            when(sido.getSidoCode()).thenReturn("11");
+            when(sigungu.getName()).thenReturn("중구");
+            when(dong.getName()).thenReturn("명동");
+
+            Address a1 = mockAddress(UUID.randomUUID(), 1L, true, false, "서울1", dong, sigungu, sido);
+            Address a2 = mockAddress(UUID.randomUUID(), 2L, false, false, "서울2", dong, sigungu, sido);
+
             given(addressRepository.findAll()).willReturn(List.of(a1, a2));
 
             // when
