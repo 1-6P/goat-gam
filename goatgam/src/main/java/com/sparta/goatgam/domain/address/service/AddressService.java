@@ -19,7 +19,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -131,7 +134,7 @@ public class AddressService {
     @Transactional
     public MessageAndIdResponseDto changeAddress(UUID addressId, AddressChangeDto requestDto, User user) {
         Address address = addressRepository.findById(addressId).orElseThrow(() -> new BusinessException(ExceptionCode.ADDRESS_NOT_FOUND));
-        if (!Objects.equals(address.getUser().getUserId(), user.getUserId()))
+        if (address.getUser().getUserId().equals(user.getUserId()))
             throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_ADDRESS);
 
         String code10 = normalizeCode10(requestDto.getBeopjeongDong());

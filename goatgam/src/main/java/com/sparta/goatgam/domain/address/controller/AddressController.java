@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.address.controller;
 
+import com.sparta.goatgam.domain.address.dto.AddressChangeDto;
 import com.sparta.goatgam.domain.address.dto.AddressCreateRequestDto;
 import com.sparta.goatgam.domain.address.dto.AddressResponseDto;
 import com.sparta.goatgam.domain.address.service.AddressService;
@@ -72,5 +73,13 @@ public class AddressController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.ok(addressService.updateDefaultAddress(addressId, userDetails.getUser()));
+    }
+
+    @Operation(summary = "주소 변경", description = "사용자가 본인의 주소를 변경합니다.")
+    @PostMapping("/{addressId}/update")
+    public ResponseEntity<MessageAndIdResponseDto> changeAddress(@PathVariable UUID addressId,
+                                                                 @RequestBody AddressChangeDto requestDto,
+                                                                 @AuthenticationPrincipal UserDetailsImpl principal){
+        return ResponseEntity.ok(addressService.changeAddress(addressId, requestDto, principal.getUser()));
     }
 }
