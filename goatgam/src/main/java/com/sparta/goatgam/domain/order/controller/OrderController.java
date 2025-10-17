@@ -62,7 +62,10 @@ public class OrderController {
 
     @Operation(summary = "장바구니로 주문 등록", description = "장바구니 아이디로 주문요청을 한다.")
     @PostMapping("")
-    public ResponseEntity<OrderSaveResponseDto> addOrder(@AuthenticationPrincipal UserDetailsImpl principal, @RequestBody OrderRequestContentDto body) {
+    public ResponseEntity<OrderSaveResponseDto> addOrder(
+            @AuthenticationPrincipal UserDetailsImpl principal,
+            @RequestBody OrderRequestContentDto body
+    ) {
         return ResponseEntity.ok(orderService.addOrder(principal.getUser(), body.request()));
     }
 }

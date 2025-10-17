@@ -1,5 +1,7 @@
 package com.sparta.goatgam.domain.restaurant.service;
 
+import com.sparta.goatgam.domain.address.entity.Address;
+import com.sparta.goatgam.domain.address.repository.AddressRepository;
 import com.sparta.goatgam.domain.owner.dto.FoodListDto;
 import com.sparta.goatgam.domain.owner.entity.Food;
 import com.sparta.goatgam.domain.owner.entity.FoodOption;
@@ -16,12 +18,17 @@ import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import com.sparta.goatgam.domain.user.repository.UserRepository;
 import com.sparta.goatgam.global.exception.BusinessException;
 import com.sparta.goatgam.global.exception.ExceptionCode;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.UUID;
 
+import static com.sparta.goatgam.domain.address.entity.Address.verifyDeliveryAvailable;
+
 @Service
+@RequiredArgsConstructor
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
@@ -29,18 +36,7 @@ public class RestaurantService {
     private final RestaurantTypeRepository restaurantTypeRepository;
     private final FoodRepository foodRepository;
     private final FoodOptionRepository foodOptionRepository;
-
-    public RestaurantService(
-            RestaurantRepository restaurantRepository,
-            UserRepository userRepository,
-            RestaurantTypeRepository restaurantTypeRepository, FoodRepository foodRepository, FoodOptionRepository foodOptionRepository)
-    {
-        this.restaurantRepository = restaurantRepository;
-        this.userRepository = userRepository;
-        this.restaurantTypeRepository = restaurantTypeRepository;
-        this.foodRepository = foodRepository;
-        this.foodOptionRepository = foodOptionRepository;
-    }
+    private final AddressRepository addressRepository;
 
     //등록
     @Transactional
@@ -53,7 +49,7 @@ public class RestaurantService {
         //권한 생성 후, 유저Id 체크
         checkUser(new Restaurant(user, type, restaurantRequestDto), userInfo);
         //사용자 ROLE 체크함. 권한 체크
-        if(user.getRole() != UserRoleEnum.Owner && user.getRole() != UserRoleEnum.Manager && user.getRole() != UserRoleEnum.Master) {
+        if (user.getRole() != UserRoleEnum.Owner && user.getRole() != UserRoleEnum.Manager && user.getRole() != UserRoleEnum.Master) {
             throw new BusinessException(ExceptionCode.FORBIDDEN_CREATE_RESTAURANT);
         }
         // Restaurant entity를 생성한다 (편의 생성자 이용)
@@ -100,26 +96,28 @@ public class RestaurantService {
         restaurant.setRestaurantAddress(restaurantUpdateDto.getRestaurantAddress());
         restaurant.setRestaurantNumber(restaurantUpdateDto.getRestaurantNumber());
         restaurant.setIsPublic(restaurantUpdateDto.getIsPublic());
-        if(restaurantUpdateDto.getRegionCode() != 0) {
+        if (restaurantUpdateDto.getRegionCode() != 0) {
             restaurant.setRegionCode(restaurantUpdateDto.getRegionCode());
         }
         return RestaurantInfoDto.convertDto(restaurant);
     }
+
     //레스토랑 정보 삭제
     @Transactional
-    public RestaurantInfoDto deleteRestaurant(UUID restaurantId,User userInfo) {
+    public RestaurantInfoDto deleteRestaurant(UUID restaurantId, User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
         checkUser(restaurant, userInfo);
         restaurant.setStatus(false);
         return RestaurantInfoDto.convertDto(restaurant);
     }
+
     //삭제된 레스토랑 롤백
     @Transactional
-    public RestaurantInfoDto RollbackDeletedRestaurant(UUID restaurantId,User userInfo) {
+    public RestaurantInfoDto RollbackDeletedRestaurant(UUID restaurantId, User userInfo) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new BusinessException(ExceptionCode.RESTAURANT_NOT_FOUND));
-        if(userInfo.getRole() != UserRoleEnum.Manager && userInfo.getRole() != UserRoleEnum.Master) {
+        if (userInfo.getRole() != UserRoleEnum.Manager && userInfo.getRole() != UserRoleEnum.Master) {
             throw new BusinessException(ExceptionCode.FORBIDDEN_ROLLBACK_RESTAURANT);
         }
         restaurant.setStatus(true);
@@ -128,13 +126,19 @@ public class RestaurantService {
 
     //  카테고리/키워드 기반 목록 조회 (for users)
     @Transactional(readOnly = true)
-    public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword) {
+    public List<RestaurantInfoDto> findRestaurants(String typeCodeStr, String keyword, User user) {
         Integer typeCode = parseIntSafely(typeCodeStr); // 잘못된 값/빈문자 → null
         String kw = normalize(keyword);
+
+        Address address = addressRepository.findByUserUserIdAndIsDefaultTrue(user.getUserId()).orElseThrow(() ->
+                new BusinessException(ExceptionCode.ORDER_DEFAULT_ADDRESS_NOT_FOUND)
+        );
 
         return restaurantRepository.findAll().stream()
                 //값이 true인것만 출력됨
                 .filter(Restaurant::isStatus)
+                // 사용자와 같은 지역인 식당 필터링
+                .filter(r -> verifyDeliveryAvailable(r, address))
                 // 카테고리 필터
                 .filter(r -> typeCode == null || hasTypeCode(r, typeCode))
                 // 키워드 필터 (이름/주소)
@@ -149,8 +153,11 @@ public class RestaurantService {
 
     private Integer parseIntSafely(String s) {
         if (s == null || s.isBlank()) return null;
-        try { return Integer.valueOf(s.trim()); }
-        catch (NumberFormatException e) { return null; }
+        try {
+            return Integer.valueOf(s.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private String normalize(String s) {
@@ -191,11 +198,11 @@ public class RestaurantService {
     //특정 식당 메뉴 상세보기
     @Transactional(readOnly = true)
     public RestaurantFoodDetailDto getFoodDetail(UUID restaurantId, UUID foodId) {
-        Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId,restaurantId)
-                .orElseThrow( () -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
+        Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId, restaurantId)
+                .orElseThrow(() -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
 
         //판매중인 상품이 아니면 조회가 불가능하다.
-        if(foodDetails.getFoodStatus() != FoodStatus.Ok) {
+        if (foodDetails.getFoodStatus() != FoodStatus.Ok) {
             throw new BusinessException(ExceptionCode.FOOD_NOT_SELL);
         }
         return RestaurantFoodDetailDto.convertDto(foodDetails);
@@ -205,18 +212,18 @@ public class RestaurantService {
     //특정 메뉴 옵션 전체보기
     @Transactional(readOnly = true)
     public List<RestaurantFoodOptionDetailDto> getFoodDetails(UUID restaurantId, UUID foodId) {
-        Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId,restaurantId)
-                .orElseThrow( () -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
+        Food foodDetails = foodRepository.findByIdAndRestaurant_RestaurantId(foodId, restaurantId)
+                .orElseThrow(() -> new BusinessException(ExceptionCode.FOOD_NOT_FOUND));
 
         //판매중인 상품이 아니면 조회가 불가능하다.
-        if(foodDetails.getFoodStatus() != FoodStatus.Ok) {
+        if (foodDetails.getFoodStatus() != FoodStatus.Ok) {
             throw new BusinessException(ExceptionCode.FOOD_NOT_SELL);
         }
         List<FoodOption> foodOption = foodOptionRepository.findByFood_IdAndDeletedFalse(foodId);
         if (foodOption.isEmpty()) {
             throw new BusinessException(ExceptionCode.OPTION_NOT_FOUND);
         }
-        return RestaurantFoodOptionDetailDto.convertList(restaurantId,foodId,foodOption);
+        return RestaurantFoodOptionDetailDto.convertList(restaurantId, foodId, foodOption);
     }
 
     //본인 체크하기 (수정,삭제)

@@ -29,7 +29,4 @@ public class SignupRequestDto {
 
     @NotBlank
     private String phoneNumber;
-
-    @NotBlank
-    private String address;
 }

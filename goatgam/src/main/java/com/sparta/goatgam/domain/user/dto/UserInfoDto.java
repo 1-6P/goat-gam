@@ -4,6 +4,8 @@ import com.sparta.goatgam.domain.user.entity.UserRoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public class UserInfoDto {
@@ -13,6 +15,6 @@ public class UserInfoDto {
     String email;
     UserRoleEnum userRole;
     String phoneNumber;
-    String address;
+    List<UserAddressInfoDto> address;
     Boolean status;
 }

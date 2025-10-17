@@ -1,13 +1,13 @@
 package com.sparta.goatgam.domain.user.entity;
 
+import com.sparta.goatgam.domain.address.entity.Address;
 import com.sparta.goatgam.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "p_user")
@@ -43,26 +43,26 @@ public class User extends BaseEntity {
     @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;
 
-    @Column(name = "address", length = 255)
-    private String address;
-
     @Column(name = "status", nullable = false)
     private Boolean status = true;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses;
 
     public User(String username,
                 String nickname,
                 String email,
                 String password,
                 UserRoleEnum role,
-                String phoneNumber,
-                String address) {
+                String phoneNumber
+    ) {
         this.username = username;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.role = role;
         this.phoneNumber = phoneNumber;
-        this.address = address;
         this.status = true;
+        this.addresses = new ArrayList<>();
     }
 }

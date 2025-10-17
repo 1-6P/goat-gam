@@ -1,6 +1,7 @@
 package com.sparta.goatgam.domain.user.service;
 
 import com.sparta.goatgam.domain.user.dto.SignupRequestDto;
+import com.sparta.goatgam.domain.user.dto.UserAddressInfoDto;
 import com.sparta.goatgam.domain.user.dto.UserInfoDto;
 import com.sparta.goatgam.domain.user.dto.UserInfoUpdateDto;
 import com.sparta.goatgam.domain.user.entity.User;
@@ -22,9 +23,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     public record SoftDeleteResult(Long userId, boolean status, LocalDateTime deletedAt){}
 
-    // ADMIN_TOKEN
-    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
-
     public void signup(SignupRequestDto requestDto) {
 
         // 중복체크
@@ -41,8 +39,7 @@ public class UserService {
                 requestDto.getEmail(),
                 encodedPassword,
                 requestDto.getRole(),
-                requestDto.getPhoneNumber(),
-                requestDto.getAddress()
+                requestDto.getPhoneNumber()
         );
 
         // 사용자 등록
@@ -59,7 +56,6 @@ public class UserService {
         user.setPassword(requestDto.getPassword());
         user.setRole(requestDto.getUserRole());
         user.setPhoneNumber(requestDto.getPhoneNumber());
-        user.setAddress(requestDto.getAddress());
 
         userRepository.save(user);
     }
@@ -102,7 +98,7 @@ public class UserService {
                         user.getEmail(),
                         user.getRole(),
                         user.getPhoneNumber(),
-                        user.getAddress(),
+                        user.getAddresses().stream().map(UserAddressInfoDto::new).toList(),
                         user.getStatus() // 활성화 여부 (필요하면 user.isActive() 같은 값으로 교체)
                 ))
                 .toList();

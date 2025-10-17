@@ -32,8 +32,7 @@ public class AddressController {
     )
     @PostMapping("")
     public ResponseEntity<AddressResponseDto> createAddress(@AuthenticationPrincipal UserDetailsImpl principal, @RequestBody AddressCreateRequestDto requestDto) {
-        Long userId = principal.getUser().getUserId();
-        return ResponseEntity.ok(addressService.addAddress(userId, requestDto));
+        return ResponseEntity.ok(addressService.addAddress(principal.getUser(), requestDto));
     }
 
     // 유저 주소 조회
