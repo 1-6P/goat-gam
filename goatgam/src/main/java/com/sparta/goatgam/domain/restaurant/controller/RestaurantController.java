@@ -62,7 +62,7 @@ public class RestaurantController {
 
     //식당 등록정보 삭제
     @Operation(summary = "식당 등록정보 삭제", description = "식당의 정보를 삭제합니다.")
-    @PatchMapping("/{restaurantId}")
+    @DeleteMapping("/{restaurantId}")
     public ResponseEntity<RestaurantInfoDto> deleteRestaurant(@PathVariable UUID restaurantId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(restaurantService.deleteRestaurant(restaurantId, userDetails.getUser()));
     }

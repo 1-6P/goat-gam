@@ -40,7 +40,7 @@ public class FollowController {
     }
 
     @Operation(summary = "팔로우 삭제", description = "언팔로우 합니다.")
-    @PatchMapping("/follow/{followId}")
+    @DeleteMapping("/follow/{followId}")
     public ResponseEntity<FollowResponseDto> unFollow(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID followId){
