@@ -35,9 +35,12 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.WARN)
 class PublicAddressServiceTest {
 
-    @Mock private SidoRepository sidoRepository;
-    @Mock private SigunguRepository sigunguRepository;
-    @Mock private BeopjeongdongRepository beopjeongdongRepository;
+    @Mock
+    private SidoRepository sidoRepository;
+    @Mock
+    private SigunguRepository sigunguRepository;
+    @Mock
+    private BeopjeongdongRepository beopjeongdongRepository;
 
     @InjectMocks
     private PublicAddressService publicAddressService;
@@ -120,12 +123,18 @@ class PublicAddressServiceTest {
     @Nested
     class SearchBeopjeongdong {
 
-        @Captor ArgumentCaptor<String> qLowerCap;
-        @Captor ArgumentCaptor<String> qLikeCap;
-        @Captor ArgumentCaptor<String> qPrefixCap;
-        @Captor ArgumentCaptor<String> sidoCap;
-        @Captor ArgumentCaptor<String> sigunguCap;
-        @Captor ArgumentCaptor<Pageable> pageableCap;
+        @Captor
+        ArgumentCaptor<String> qLowerCap;
+        @Captor
+        ArgumentCaptor<String> qLikeCap;
+        @Captor
+        ArgumentCaptor<String> qPrefixCap;
+        @Captor
+        ArgumentCaptor<String> sidoCap;
+        @Captor
+        ArgumentCaptor<String> sigunguCap;
+        @Captor
+        ArgumentCaptor<Pageable> pageableCap;
 
         @Test
         @DisplayName("성공: qNorm, sidoCode, sigunguCode가 주어지면 lower/like/prefix 및 trim 적용")
