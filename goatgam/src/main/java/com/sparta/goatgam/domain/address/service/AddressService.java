@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.address.service;
 
+import com.sparta.goatgam.domain.address.dto.AddressChangeDto;
 import com.sparta.goatgam.domain.address.dto.AddressCreateRequestDto;
 import com.sparta.goatgam.domain.address.dto.AddressDeleteResponseDto;
 import com.sparta.goatgam.domain.address.dto.AddressResponseDto;
@@ -18,10 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class AddressService {
 
     // 유저 주소 추가
     @Transactional
-    public AddressResponseDto addAddress(Long userId, @Valid AddressCreateRequestDto requestDto) {
+    public AddressResponseDto addAddress(User user, @Valid AddressCreateRequestDto requestDto) {
         String code10 = normalizeCode10(requestDto.getBeopjeongDong());
         if (code10 == null) throw new IllegalArgumentException("법정동형식이 올바르지 않습니다.");
         String base8 = code10.substring(0, 8);
@@ -45,13 +43,13 @@ public class AddressService {
 
         Address newAddress = Address.builder()
                 .id(UUID.randomUUID())
-                .userId(userId)
+                .user(user)
                 .dong(beopjeongdong).sigungu(sigungu).sido(sido)
                 .roadAddress(requestDto.getRoadAddress()).detail(requestDto.getDetail())
                 .isDefault(requestDto.isDefaultAddress()).status(true).build();
 
         if (requestDto.isDefaultAddress()) {
-            addressRepository.findByUserIdAndIsDefaultTrue(userId)
+            addressRepository.findByUserUserIdAndIsDefaultTrue(user.getUserId())
                     .ifPresent(prev -> prev.setDefault(false));
             newAddress.setDefault(true);
         }
@@ -62,7 +60,7 @@ public class AddressService {
 
     // 유저 주소 조회
     public List<AddressResponseDto> getUserAddress(Long userId) {
-        List<Address> a = addressRepository.findByUserId(userId);
+        List<Address> a = addressRepository.findByUserUserId(userId);
         List<AddressResponseDto> response = new ArrayList<>();
         for (Address b : a) {
             if (!b.isStatus()) continue;
@@ -76,18 +74,18 @@ public class AddressService {
 
     // 유저 주소 삭제
     public AddressDeleteResponseDto delete(Long userId, UUID addressId) {
-        Address a = addressRepository.findByUserIdAndId(userId, addressId)
+        Address a = addressRepository.findByUserUserIdAndId(userId, addressId)
                 .orElseThrow(() -> new IllegalArgumentException("유저에게 해당 주소가 존재하지 않습니다."));
         if (!a.isStatus()) {
             return new AddressDeleteResponseDto(
-                    a.getUserId(),
+                    a.getUser().getUserId(),
                     a.getId(),
                     "이미 삭제된 주소입니다.");
         }
         a.setStatus(false);
         a.deleted(userId.toString());
         return new AddressDeleteResponseDto(
-                a.getUserId(),
+                a.getUser().getUserId(),
                 a.getId(),
                 "주소가 성공적으로 삭제되었습니다.");
     }
@@ -119,10 +117,10 @@ public class AddressService {
         Address address = addressRepository.findById(addressId).orElseThrow(() ->
                 new BusinessException(ExceptionCode.ADDRESS_NOT_FOUND));
 
-        if (!address.getUserId().equals(user.getUserId()))
+        if (!address.getUser().getUserId().equals(user.getUserId()))
             throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_ADDRESS);
 
-        Optional<Address> defaultAddress = addressRepository.findByUserIdAndIsDefaultTrue(user.getUserId());
+        Optional<Address> defaultAddress = addressRepository.findByUserUserIdAndIsDefaultTrue(user.getUserId());
 
         defaultAddress.ifPresent(value -> value.setDefault(false));
         address.setDefault(true);
@@ -133,7 +131,7 @@ public class AddressService {
     @Transactional
     public MessageAndIdResponseDto changeAddress(UUID addressId, AddressChangeDto requestDto, User user) {
         Address address = addressRepository.findById(addressId).orElseThrow(() -> new BusinessException(ExceptionCode.ADDRESS_NOT_FOUND));
-        if(address.getUserId() != user.getUserId())
+        if (!Objects.equals(address.getUser().getUserId(), user.getUserId()))
             throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_ADDRESS);
 
         String code10 = normalizeCode10(requestDto.getBeopjeongDong());
@@ -149,7 +147,7 @@ public class AddressService {
 
         Address newAddress = Address.builder()
                 .id(UUID.randomUUID())
-                .userId(user.getUserId())
+                .user(user)
                 .dong(beopjeongdong).sigungu(sigungu).sido(sido)
                 .roadAddress(requestDto.getRoadAddress()).detail(requestDto.getDetail())
                 .isDefault(address.isDefault()).status(true).build();
