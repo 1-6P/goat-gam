@@ -87,6 +87,7 @@ public enum ExceptionCode {
     FORBIDDEN_ORDER_REFUND("ORDER03", "주문에 대한 환불 권한이 없습니다. ", HttpStatus.FORBIDDEN),
     ORDER_EMPTY_CART("ORDER04", "장바구니가 비었습니다.", HttpStatus.GONE),
     ORDER_DEFAULT_ADDRESS_NOT_FOUND("ORDER05", "기본 주소가 지정되어있지 않습니다.", HttpStatus.NOT_FOUND),
+    REGION_NOT_DELIVERABLE("ORDER06", "주문 가능한 지역이 아닙니다.", HttpStatus.BAD_REQUEST),
 
     //리뷰 (RV)
     REVIEW_NOT_FOUND("RV01", "해당 리뷰를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
