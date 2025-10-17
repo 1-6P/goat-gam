@@ -1,5 +1,6 @@
 package com.sparta.goatgam.domain.address.service;
 
+import com.sparta.goatgam.domain.address.dto.AddressChangeDto;
 import com.sparta.goatgam.domain.address.dto.AddressCreateRequestDto;
 import com.sparta.goatgam.domain.address.dto.AddressDeleteResponseDto;
 import com.sparta.goatgam.domain.address.dto.AddressResponseDto;
@@ -133,7 +134,7 @@ public class AddressService {
     @Transactional
     public MessageAndIdResponseDto changeAddress(UUID addressId, AddressChangeDto requestDto, User user) {
         Address address = addressRepository.findById(addressId).orElseThrow(() -> new BusinessException(ExceptionCode.ADDRESS_NOT_FOUND));
-        if(address.getUserId() != user.getUserId())
+        if (address.getUserId().equals(user.getUserId()))
             throw new BusinessException(ExceptionCode.FORBIDDEN_UPDATE_ADDRESS);
 
         String code10 = normalizeCode10(requestDto.getBeopjeongDong());

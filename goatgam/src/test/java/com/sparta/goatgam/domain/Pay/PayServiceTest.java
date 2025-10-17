@@ -74,7 +74,7 @@ class PaymentServiceTest {
             given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
             when(order.getTotalPrice()).thenReturn(BigDecimal.valueOf(10000));
 
-            MessageAndIdResponseDto result = paymentService.varifyAmount(dto, user);
+            MessageAndIdResponseDto result = paymentService.verifyAmount(dto, user);
 
             assertThat(result.getMessage()).isEqualTo("varify success");
         }
@@ -89,7 +89,7 @@ class PaymentServiceTest {
             given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
             BusinessException ex = assertThrows(BusinessException.class,
-                    () -> paymentService.varifyAmount(dto, other));
+                    () -> paymentService.verifyAmount(dto, other));
 
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.INVALID_USER);
         }
@@ -103,7 +103,7 @@ class PaymentServiceTest {
             when(order.getTotalPrice()).thenReturn(BigDecimal.valueOf(10000));
 
             BusinessException ex = assertThrows(BusinessException.class,
-                    () -> paymentService.varifyAmount(dto, user));
+                    () -> paymentService.verifyAmount(dto, user));
 
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.PG_AMOUNT_INCORRECT);
         }
