@@ -1,22 +1,24 @@
 # 🍱 곧감 (GoatGam)
-<img src="https://via.placeholder.com/600x300/6DB33F/ffffff?text=GoatGam" width=600; height=300 />
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/7665745c-cfd9-414a-94a1-fe803e7ec57e" />
+
 <br>
 
 ## ❇️ [프로젝트 개요](https://github.com/goatgam/goatgam/wiki)
 #### 음식 주문과 배달을 효율적으로 관리하는 백엔드 중심 플랫폼
-- [개발과정](#)
-- [ERD](https://www.erdcloud.com/d/7pvT5zGqZexdSBG7o)
-- [API 명세서](#)
-- [Convention](#)
-- [그라운드 룰](#)
+<details>
+<summary>[ERD](https://www.erdcloud.com/d/7pvT5zGqZexdSBG7o)</summary>
+- ![img.png](img.png)
+</details>
+- [API 명세서](https://www.notion.so/27a2dc3ef51481629a77e7ef3666d515)
 
-</br>
+## 서비스 구성 및 실행방법!
+- [포팅 메뉴얼](https://www.notion.so/teamsparta/27e2dc3ef51480af9964e1b9a9435c43)
 
 ## 👨‍👩‍👧‍👦 팀원 소개
-| <div align="center">[강은선](https://github.com/)</div> | <div align="center">[김현수](https://github.com/)</div> | <div align="center">[정인규](https://github.com/JungInGyu)</div> | <div align="center">[김진현](https://github.com/)</div> | <div align="center">[홍태휘](https://github.com/)</div> | <div align="center">[한규원](https://github.com/)</div> |
-| :---------------------------------------------------------------------------- |:---------------------------------------------------------------------------------------------------------------------------------------------------------------------| :---------------------------------------------------------------------------- | :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| <div align="center"><img src="https://via.placeholder.com/150" width=150 /></div> | <div align="center"><img src="https://via.placeholder.com/150" width=150 /></div> | <div align="center"><img src="https://via.placeholder.com/150" width=150 /></div> | <div align="center"><img src="https://via.placeholder.com/150" width=150 /></div> | <div align="center"><img src="https://via.placeholder.com/150" width=150 /></div> | <div align="center"><img src="https://via.placeholder.com/150" width=150 /></div> |
-| <div align="center"> `장바구니` <br>장바구니 CRUD<br/>주문 내역 관리<br/>`공통`<br>예외 처리 핸들러<br>기능 검증 및 보완</div> | <div align="center"> `식당`<br> 식당 API 개발<br> 테스트 코드 작성<br> 카트 테스트<br>`공통`<br>코드 리뷰 </div> | <div align="center"> `팔로우 & 리뷰` <br> 팔로우 API 개발 <br> 리뷰 API 개발 <br> ERD 연관관계 정의<br>`테스트`<br>테스트 코드 작성 </div> | <div align="center"> `식당`<br> 식당 API 개발<br> 테스트 코드 작성<br>`공통`<br>예외 처리<br>문서화 </div> | <div align="center">`인증/인가`<br>JWT 인증 구현<br>Spring Security<br>`인프라`<br>AWS EC2/RDS/IAM<br>주소/지역 관리 </div> | <div align="center">`음식/옵션`<br>음식 API 개발<br>옵션 관리<br>`결제`<br>결제 시스템<br>`배포`<br>Docker<br>GitHub Actions </div> |
+| <div align="center">[강은선](https://github.com/)</div> | <div align="center">[김현수](https://github.com/kinhyunsu)</div> | <div align="center">[정인규](https://github.com/JungInGyu)</div> | <div align="center">[김진현](https://github.com/)</div> | <div align="center">[홍태휘](https://github.com/)</div> | <div align="center">[한규원](https://github.com/akaneblue)</div>                                                                                         |
+| :---------------------------------------------------------------------------- |:---------------------------------------------------------------------------------------------------------------------------------------------------------------------| :---------------------------------------------------------------------------- | :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |:------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <div align="center"><img src="https://github.com/user-attachments/assets/0d3d46c4-2356-4a0f-8f8c-42af7ddd8066" width=150 /></div> | <div align="center"><img src="https://github.com/user-attachments/assets/1f77a8f7-af15-488d-a6c8-58945fe9a146" width=150 /></div> | <div align="center"><img src="https://github.com/user-attachments/assets/ff91dbcc-731c-43f6-8822-8921c23684ea" width=150 /></div> | <div align="center"><img src="https://github.com/user-attachments/assets/96c5ca6f-c366-49d6-9756-7c0939cbed92" width=150 /></div> | <div align="center"><img src="https://via.placeholder.com/150" width=150 /></div> | <div align="center"><img src="https://github.com/user-attachments/assets/277eecc8-b768-42d5-821c-87467a82c5dc" width=150 /></div>                                                                     |
+| <div align="center"> `장바구니` <br>장바구니 CRUD<br/>주문 내역 관리<br/>`공통`<br>예외 처리 핸들러<br>기능 검증 및 보완</div> | <div align="center"> `식당`<br> 식당 API 개발<br> 테스트 코드 작성<br> 카트 테스트<br>`공통`<br>코드 리뷰 </div> | <div align="center"> `팔로우 & 리뷰` <br> 팔로우 API 개발 <br> 리뷰 API 개발 <br> ERD 연관관계 정의<br>`테스트`<br>테스트 코드 작성 </div> | <div align="center"> `식당`<br> 식당 API 개발<br> 테스트 코드 작성<br>`공통`<br>예외 처리<br>문서화 </div> | <div align="center">`인증/인가`<br>JWT 인증 구현<br>Spring Security<br>`인프라`<br>AWS EC2/RDS/IAM<br>주소/지역 관리 </div> | <div align="center">`음식/옵션`<br>음식, 옵션 API 개발<br>`주문처리`<br>주문처리 구현<br>`AI`<br>AI서비스 구현<br>`결제`<br>결제 시스템 구현<br>`배포`<br>Docker<br>GitHub Actions </div> |
 
 ## 🚀 기술 스택
 
@@ -140,8 +142,6 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 
 <br>
 
-## 📊 ERD 설계
-<img src="https://via.placeholder.com/800x500/ffffff/000000?text=ERD+Diagram" width="800px" />
 
 ### 테이블 구조 (총 19개)
 <details>
@@ -178,8 +178,6 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 
 <br>
 
-## 🌐 API 설계
-- [📋 API 명세서](https://www.notion.so/27a2dc3ef51481629a77e7ef3666d515)
 
 ### 도메인 구성
 ```
@@ -265,6 +263,15 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - [x] 시도/시군구/법정동 계층 구조
 - [x] 사용자별 주소 등록/관리
 - [x] 기본 배송지 설정
+</details>
+
+<details>
+  <summary><strong>7️⃣ 팔로우</strong></summary>
+  <br>
+
+- [x] 식당 팔로우/언팔로우
+- [x] 팔로우한 식당 목록 조회
+- [x] 팔로우 상태 확인
 </details>
 
 <br>
