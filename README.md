@@ -165,6 +165,7 @@
 <br/>
 
 ## 📁 아키텍처
+![architecture](images/architecture.png)
 
 ```
 곧감 아키텍처는 다음과 같이 구성됩니다:
