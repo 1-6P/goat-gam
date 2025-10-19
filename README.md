@@ -28,6 +28,10 @@
 'Master' 사용자의 경우 'Manager'를 지정하고 관리할 수 있으며 지정된 'Manager'는 'Customer'과 'Owner' 사용자를 관리하고 사용자의 주문을 관리할 수 있습니다. 또한, 삭제된 식당을
 다시 등록하거나 삭제된 사용자를 다시 가입시켜주는 등 삭제된 데이터에 대한 관리 기능을 수행할 수 있습니다.
 
+### 프로젝트 링크
+ - [Swagger (로컬용)](http://localhost:8080/swagger-ui/index.html#/)
+ - [Swagger (배포용)](3.36.66.112:8080/swagger-ui/index.html)
+
 ## 👨‍👩‍👧‍👦 팀원 소개
 
 | <div align="center">[강은선](https://github.com/dobbi030)</div>                                               | <div align="center">[김현수](https://github.com/kinhyunsu)</div>                            | <div align="center">[정인규](https://github.com/JungInGyu)</div>                                                | <div align="center">[김진현](https://github.com/)</div>                                 | <div align="center">[홍태휘](https://github.com/)</div>                                                       | <div align="center">[한규원](https://github.com/akaneblue)</div>                                                                                         |
